@@ -31,7 +31,7 @@ const FormsRoot = ({ match }) => {
 
   const { data: forms } = useFormEncounters();
 
-  console.log("forms", forms);
+  //console.log("forms", forms);
   return (
     <div style={{ padding: "2rem" }}>
       <h3 style={{ marginBottom: "1.5rem" }}>Forms</h3>
