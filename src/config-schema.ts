@@ -11,7 +11,7 @@ export const configSchema = {
     _description:
       "Organize forms into categories. A form can belong to multiple categories.",
     _elements: {
-      categoryName: {
+      name: {
         _type: Type.String,
         _description: "Category name",
       },
@@ -32,7 +32,7 @@ export const configSchema = {
     },
     _default: [
       {
-        categoryName: "ICRC Forms",
+        name: "ICRC Forms",
         forms: [
           {
             formUUID: "0cefb866-110c-4f16-af58-560932a1db1f",
@@ -41,7 +41,7 @@ export const configSchema = {
         ],
       },
       {
-        categoryName: "Distress Scales",
+        name: "Distress Scales",
         forms: [
           {
             formUUID: "9f26aad4-244a-46ca-be49-1196df1a8c9a",
@@ -51,6 +51,15 @@ export const configSchema = {
       },
     ],
   },
+  formCategoriesToShow: {
+    _type: Type.Array,
+    _description: "Forms to show by default on the forms app home page.",
+    _elements: {
+      _type: Type.String,
+      _description: "Name of category",
+    },
+    _default: ["ICRC Forms", "Distress Scales"],
+  },
 };
 
 export type Form = {
@@ -58,11 +67,12 @@ export type Form = {
   name: Type.String;
 };
 
-export type FormList = {
-  categoryName: String;
+export type Category = {
+  name: String;
   forms: Array<Form>;
 };
 
 export type Config = {
-  formCategories: Array<FormList>;
+  formCategories: Array<Category>;
+  formCategoriesToShow: Array<String>;
 };

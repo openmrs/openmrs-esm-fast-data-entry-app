@@ -41,14 +41,20 @@ const cleanForms = (rawFormData) => {
 const FormsRoot = ({ match }) => {
   const { tab } = match?.params;
   const config = useConfig() as Config;
-  const { formCategories } = config;
+  const { formCategories, formCategoriesToShow } = config;
   const { data: forms } = useFormEncounters();
   const { rows: mockRows } = tableData;
   const cleanRows = cleanForms(forms);
 
-  console.log("forms", forms);
-  console.log("clean forms", cleanRows);
-  console.log("config", formCategories);
+  const categoryRows = formCategoriesToShow.map((name) => {
+    const category = formCategories.find((category) => category.name === name);
+    let rows = [];
+    if (category && cleanRows && cleanRows.length) {
+      const uuids = category.forms?.map((form) => form.formUUID);
+      rows = cleanRows.filter((row) => uuids.includes(row.uuid));
+    }
+    return { ...{ name, rows } };
+  });
 
   return (
     <div style={{ padding: "2rem" }}>
@@ -57,18 +63,11 @@ const FormsRoot = ({ match }) => {
         <Tab label="All Forms">
           <FormsTable rows={cleanRows} />
         </Tab>
-        <Tab label="ICRC Forms">
-          <FormsTable rows={cleanRows} />
-        </Tab>
-        <Tab label="Distress Scales">
-          <FormsTable rows={cleanRows} />
-        </Tab>
-        <Tab label="Functioning Scales">
-          <FormsTable rows={cleanRows} />
-        </Tab>
-        <Tab label="Coping Scales">
-          <FormsTable rows={mockRows} />
-        </Tab>
+        {categoryRows?.map((category) => (
+          <Tab label={category.name}>
+            <FormsTable rows={category.rows} />
+          </Tab>
+        ))}
       </Tabs>
     </div>
   );
