@@ -25,19 +25,4 @@ const rows = [
   },
 ];
 
-const headers = [
-  {
-    key: "name",
-    header: "Form name",
-  },
-  {
-    key: "region",
-    header: "Region",
-  },
-  {
-    key: "actions",
-    header: "Actions",
-  },
-];
-
-export const tableData = { ...{ rows, headers } };
+export const tableData = { ...{ rows } };

@@ -1,5 +1,6 @@
 import {
   DataTable,
+  DataTableSkeleton,
   Table,
   TableBody,
   TableCell,
@@ -14,10 +15,27 @@ import {
 import React from "react";
 import { tableData } from "./mockData";
 
-const FormsTable = () => {
-  const { rows, headers } = tableData;
+const formsHeader = [
+  {
+    key: "name",
+    header: "Form name",
+  },
+  {
+    key: "actions",
+    header: "Actions",
+  },
+];
+
+const FormsTable = ({ rows }) => {
+  const augmenteRows = rows?.map((row) => ({
+    ...row,
+    actions: "Fill Form",
+  }));
+  if (!rows || !rows?.length) {
+    return <DataTableSkeleton />;
+  }
   return (
-    <DataTable rows={rows} headers={headers} isSortable>
+    <DataTable rows={augmenteRows} headers={formsHeader} isSortable>
       {({
         rows,
         headers,
@@ -28,11 +46,20 @@ const FormsTable = () => {
       }) => {
         return (
           <TableContainer>
-            <TableToolbar style={{ position: "relative" }}>
-              <TableToolbarContent>
-                <TableToolbarSearch onChange={onInputChange} />
-              </TableToolbarContent>
-            </TableToolbar>
+            <div
+              style={{
+                position: "relative",
+                display: "flex",
+                height: "3rem",
+                justifyContent: "flex-end",
+              }}
+            >
+              <TableToolbar style={{ width: "20%", minWidth: "200px" }}>
+                <TableToolbarContent>
+                  <TableToolbarSearch onChange={onInputChange} />
+                </TableToolbarContent>
+              </TableToolbar>
+            </div>
             <Table {...getTableProps()}>
               <TableHead>
                 <TableRow>
@@ -44,7 +71,7 @@ const FormsTable = () => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {rows.map((row) => (
+                {rows?.map((row) => (
                   <TableRow {...getRowProps({ row })}>
                     {row.cells.map((cell) => (
                       <TableCell key={cell.id}>{cell.value}</TableCell>
