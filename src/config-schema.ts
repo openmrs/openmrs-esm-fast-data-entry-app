@@ -1,46 +1,78 @@
 import { Type, validator } from "@openmrs/esm-framework";
 
 /**
- * This is the config schema. It expects a configuration object which
- * looks like this:
+ * This is the config schema.
  *
- * ```json
- * { "casualGreeting": true, "whoToGreet": ["Mom"] }
- * ```
- *
- * In OpenMRS Microfrontends, all config parameters are optional. Thus,
- * all elements must have a reasonable default. A good default is one
- * that works well with the reference application.
- *
- * To understand the schema below, please read the configuration system
- * documentation:
- *   https://openmrs.github.io/openmrs-esm-core/#/main/config
- * Note especially the section "How do I make my module configurable?"
- *   https://openmrs.github.io/openmrs-esm-core/#/main/config?id=im-developing-an-esm-module-how-do-i-make-it-configurable
- * and the Schema Reference
- *   https://openmrs.github.io/openmrs-esm-core/#/main/config?id=schema-reference
  */
+
 export const configSchema = {
-  casualGreeting: {
-    _type: Type.Boolean,
-    _default: false,
-    _description: "Whether to use a casual greeting (or a formal one).",
-  },
-  whoToGreet: {
+  formCategories: {
     _type: Type.Array,
-    _default: ["World"],
     _description:
-      "Who should be greeted. Names will be separated by a comma and space.",
+      "Organize forms into categories. A form can belong to multiple categories.",
+    _elements: {
+      name: {
+        _type: Type.String,
+        _description: "Category name",
+      },
+      forms: {
+        _type: Type.Array,
+        _description: "List of forms for this category.",
+        _elements: {
+          formUUID: {
+            _type: Type.UUID,
+            _description: "UUID of form",
+          },
+          name: {
+            _type: Type.String,
+            _description: "Name of form",
+          },
+        },
+      },
+    },
+    _default: [
+      {
+        name: "ICRC Forms",
+        forms: [
+          {
+            formUUID: "0cefb866-110c-4f16-af58-560932a1db1f",
+            name: "Adult Triage",
+          },
+        ],
+      },
+      {
+        name: "Distress Scales",
+        forms: [
+          {
+            formUUID: "9f26aad4-244a-46ca-be49-1196df1a8c9a",
+            name: "POC Sample Form 1",
+          },
+        ],
+      },
+    ],
+  },
+  formCategoriesToShow: {
+    _type: Type.Array,
+    _description: "Forms to show by default on the forms app home page.",
     _elements: {
       _type: Type.String,
+      _description: "Name of category",
     },
-    _validators: [
-      validator((v) => v.length > 0, "At least one person must be greeted."),
-    ],
+    _default: ["ICRC Forms", "Distress Scales"],
   },
 };
 
+export type Form = {
+  formUUID: Type.UUID;
+  name: Type.String;
+};
+
+export type Category = {
+  name: String;
+  forms: Array<Form>;
+};
+
 export type Config = {
-  casualGreeting: boolean;
-  whoToGreet: Array<String>;
+  formCategories: Array<Category>;
+  formCategoriesToShow: Array<String>;
 };
