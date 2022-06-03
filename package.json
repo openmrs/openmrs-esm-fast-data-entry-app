@@ -1,9 +1,9 @@
 {
-  "name": "@openmrs/esm-template-app",
-  "version": "3.0.0",
+  "name": "@openmrs/esm-fast-data-entry-app",
+  "version": "1.0.0",
   "license": "MPL-2.0",
-  "description": "A microfrontend template OpenMRS",
-  "browser": "dist/openmrs-esm-template-app.js",
+  "description": "An OpenMRS 3.x microfrontend",
+  "browser": "dist/openmrs-esm-fast-data-entry-app.js",
   "main": "src/index.ts",
   "source": true,
   "scripts": {
@@ -33,18 +33,18 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/openmrs/openmrs-esm-template-app.git"
+    "url": "git+https://github.com/openmrs/openmrs-esm-fast-data-entry-app.git"
   },
   "resolutions": {
     "@types/react": "17.0.2",
     "@types/react-dom": "17.0.2"
   },
-  "homepage": "https://github.com/openmrs/openmrs-esm-template-app#readme",
+  "homepage": "https://github.com/openmrs/openmrs-esm-fast-data-entry-app#readme",
   "publishConfig": {
     "access": "public"
   },
   "bugs": {
-    "url": "https://github.com/openmrs/openmrs-esm-template-app/issues"
+    "url": "https://github.com/openmrs/openmrs-esm-fast-data-entry-app/issues"
   },
   "dependencies": {
     "@carbon/icons-react": "^10.18.0",
@@ -78,7 +78,7 @@
     "@types/carbon__icons-react": "^10.31.0",
     "@types/jest": "^26.0.23",
     "@types/react-dom": "^16.9.14",
-    "@types/react-router": "^5.1.17",
+    "@types/react-router": "^5.1.14",
     "@types/react-router-dom": "^5.1.7",
     "@types/webpack-env": "^1.16.0",
     "@typescript-eslint/parser": "^5.14.0",
