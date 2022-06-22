@@ -1,11 +1,9 @@
 import { openmrsFetch, useConfig } from "@openmrs/esm-framework";
 import { Tab, Tabs } from "carbon-components-react";
 import React from "react";
-import { from } from "rxjs";
 import useSWR from "swr";
 import { Config } from "../config-schema";
 import FormsTable from "./FormsTable";
-import { tableData } from "./mockData";
 
 export const customFormRepresentation =
   "(uuid,name,display,encounterType:(uuid,name,viewPrivilege,editPrivilege),version,published,retired,resources:(uuid,name,dataType,valueReference))";
@@ -38,12 +36,10 @@ const cleanForms = (rawFormData) => {
   }
 };
 
-const FormsRoot = ({ match }) => {
-  const { tab } = match?.params;
+const FormsRoot = () => {
   const config = useConfig() as Config;
   const { formCategories, formCategoriesToShow } = config;
   const { data: forms } = useFormEncounters();
-  const { rows: mockRows } = tableData;
   const cleanRows = cleanForms(forms);
 
   const categoryRows = formCategoriesToShow.map((name) => {
