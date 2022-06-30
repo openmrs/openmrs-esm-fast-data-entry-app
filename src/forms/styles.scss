@@ -1,0 +1,13 @@
+@import "~@openmrs/esm-styleguide/src/vars";
+
+.breadcrumbsContainer > div > div > nav {
+  background-color: white;
+  padding: 0.5rem;
+  border-bottom: 1px solid $openmrs-background-grey;
+}
+
+.formContainer {
+  display: flex;
+  text-align: center;
+  margin-top: 1rem;
+}
