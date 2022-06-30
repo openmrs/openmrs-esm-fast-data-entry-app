@@ -5,7 +5,11 @@
  * microfrontend.
  */
 
-import { getAsyncLifecycle, defineConfigSchema } from "@openmrs/esm-framework";
+import {
+  getAsyncLifecycle,
+  defineConfigSchema,
+  registerBreadcrumbs,
+} from "@openmrs/esm-framework";
 import { configSchema } from "./config-schema";
 
 /**
@@ -52,6 +56,14 @@ function setupOpenMRS() {
   };
 
   defineConfigSchema(moduleName, configSchema);
+
+  registerBreadcrumbs([
+    {
+      path: `${window.spaBase}/forms`,
+      title: "Forms",
+      parent: `${window.spaBase}/home`,
+    },
+  ]);
 
   return {
     pages: [

@@ -13,7 +13,7 @@ import {
   TableToolbarSearch,
 } from "carbon-components-react";
 import React from "react";
-import { tableData } from "./mockData";
+import { Link } from "react-router-dom";
 
 const formsHeader = [
   {
@@ -29,7 +29,7 @@ const formsHeader = [
 const FormsTable = ({ rows }) => {
   const augmenteRows = rows?.map((row) => ({
     ...row,
-    actions: "Fill Form",
+    actions: <Link to={row.uuid}>Fill Form</Link>,
   }));
   if (!rows || !rows?.length) {
     return <DataTableSkeleton />;
