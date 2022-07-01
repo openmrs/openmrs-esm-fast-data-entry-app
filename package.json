@@ -48,7 +48,6 @@
   "dependencies": {},
   "peerDependencies": {
     "@openmrs/esm-framework": "next",
-    "carbon-components-react": "^8.6.0",
     "carbon-icons": "7.x",
     "dayjs": "1.x",
     "react": "^16.14",
@@ -80,7 +79,6 @@
     "babel-eslint": "^10.1.0",
     "babel-jest": "^27.0.2",
     "babel-preset-minify": "^0.5.1",
-    "carbon-components-react": "^8.6.0",
     "concurrently": "^6.2.0",
     "eslint": "^7.27.0",
     "eslint-config-prettier": "^8.3.0",
