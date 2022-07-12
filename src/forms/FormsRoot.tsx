@@ -14,8 +14,7 @@ export const formEncounterUrlPoc = `/ws/rest/v1/form?v=custom:${customFormRepres
 export function useFormEncounters(cachedOfflineFormsOnly = false) {
   const showHtmlFormEntryForms = true;
   const url = showHtmlFormEntryForms ? formEncounterUrl : formEncounterUrlPoc;
-
-  return useSWR([url, cachedOfflineFormsOnly], async () => {
+  const { data, error } = useSWR([url, cachedOfflineFormsOnly], async () => {
     const res = await openmrsFetch(url);
     // show published forms and hide component forms
     const forms =
@@ -25,6 +24,12 @@ export function useFormEncounters(cachedOfflineFormsOnly = false) {
 
     return forms;
   });
+
+  return {
+    forms: data,
+    isLoading: !error && !data,
+    error,
+  };
 }
 
 const cleanForms = (rawFormData) => {
@@ -34,12 +39,13 @@ const cleanForms = (rawFormData) => {
       id: form.uuid,
     }));
   }
+  return null;
 };
 
 const FormsRoot = () => {
   const config = useConfig() as Config;
   const { formCategories, formCategoriesToShow } = config;
-  const { data: forms } = useFormEncounters();
+  const { forms, isLoading, error } = useFormEncounters();
   const cleanRows = cleanForms(forms);
 
   const categoryRows = formCategoriesToShow.map((name) => {
@@ -57,11 +63,11 @@ const FormsRoot = () => {
       <h3 style={{ marginBottom: "1.5rem" }}>Forms</h3>
       <Tabs type="container">
         <Tab label="All Forms">
-          <FormsTable rows={cleanRows} />
+          <FormsTable rows={cleanRows} {...{ error, isLoading }} />
         </Tab>
         {categoryRows?.map((category) => (
           <Tab label={category.name}>
-            <FormsTable rows={category.rows} />
+            <FormsTable rows={category.rows} {...{ error, isLoading }} />
           </Tab>
         ))}
       </Tabs>

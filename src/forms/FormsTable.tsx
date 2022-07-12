@@ -1,3 +1,4 @@
+import { ErrorState } from "@openmrs/esm-framework";
 import {
   DataTable,
   DataTableSkeleton,
@@ -14,6 +15,7 @@ import {
 } from "carbon-components-react";
 import React from "react";
 import { Link } from "react-router-dom";
+import EmptyState from "../empty-state/EmptyState";
 
 const formsHeader = [
   {
@@ -26,13 +28,28 @@ const formsHeader = [
   },
 ];
 
-const FormsTable = ({ rows }) => {
+const FormsTable = ({ rows, error, isLoading }) => {
   const augmenteRows = rows?.map((row) => ({
     ...row,
     actions: <Link to={row.uuid}>Fill Form</Link>,
   }));
-  if (!rows || !rows?.length) {
-    return <DataTableSkeleton />;
+
+  if (isLoading) return <DataTableSkeleton />;
+  if (error) {
+    return (
+      <EmptyState
+        headerTitle="Error Loading Data"
+        displayText={`Something went wrong loading data from the server. "${error?.response?.status}: ${error?.response?.statusText}"`}
+      />
+    );
+  }
+  if (augmenteRows.length === 0) {
+    return (
+      <EmptyState
+        headerTitle="No Forms To Show"
+        displayText="No forms could be found for this category. Please double check the form concept uuids and access permissions."
+      />
+    );
   }
   return (
     <DataTable rows={augmenteRows} headers={formsHeader} isSortable>

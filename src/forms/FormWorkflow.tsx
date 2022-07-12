@@ -2,7 +2,7 @@ import { Add20, Close20 } from "@carbon/icons-react";
 import { ExtensionSlot } from "@openmrs/esm-framework";
 import { Button } from "carbon-components-react";
 import React, { useState } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import FormEntry from "../FormEntry";
 import PatientCard from "./PatientCard";
 import PatientInfo from "./PatientInfo";
@@ -45,7 +45,7 @@ const PatientSearchHeader = ({
       </span>
       <span style={{ flexGrow: 1 }} />
       <span>
-        <Button kind="ghost" disabled>
+        <Button kind="ghost" href={`${window.spaBase}/forms`}>
           Cancel <Close20 />
         </Button>
       </span>
