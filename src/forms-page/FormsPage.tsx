@@ -5,6 +5,7 @@ import { Config } from "../config-schema";
 import { useGetAllForms } from "../hooks";
 import FormsTable from "../forms-table";
 import styles from "./styles.scss";
+import { useTranslation } from "react-i18next";
 
 const cleanForms = (rawFormData) => {
   if (rawFormData) {
@@ -18,6 +19,7 @@ const cleanForms = (rawFormData) => {
 
 const FormsPage = () => {
   const config = useConfig() as Config;
+  const { t } = useTranslation();
   const { formCategories, formCategoriesToShow } = config;
   const { forms, isLoading, error } = useGetAllForms();
   const cleanRows = cleanForms(forms);
@@ -34,9 +36,9 @@ const FormsPage = () => {
 
   return (
     <div className={styles.mainContent}>
-      <h3 className={styles.pageTitle}>Forms</h3>
+      <h3 className={styles.pageTitle}>{t("forms", "Forms")}</h3>
       <Tabs type="container">
-        <Tab label="All Forms">
+        <Tab label={t("allForms", "All Forms")}>
           <FormsTable rows={cleanRows} {...{ error, isLoading }} />
         </Tab>
         {categoryRows?.map((category, index) => (

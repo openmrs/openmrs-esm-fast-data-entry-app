@@ -8,5 +8,6 @@
   "formName": "Form Name",
   "noFormsFound": "No Forms To Show",
   "noFormsFoundMessage": "No forms could be found for this category. Please double check the form concept uuids and access permissions.",
+  "selectPatientFirst": "Please select a patient first",
   "startGroupSession": "Start Group Session"
 }

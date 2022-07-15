@@ -2,12 +2,13 @@ import { Add20, Close20 } from "@carbon/icons-react";
 import { ExtensionSlot } from "@openmrs/esm-framework";
 import { Button } from "carbon-components-react";
 import React, { useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useHistory, useParams } from "react-router-dom";
 import FormBootstrap from "../FormBootstrap";
 import PatientCard from "../patient-card/PatientCard";
 import PatientBanner from "../patient-banner";
 import styles from "./styles.scss";
 import PatientSearchHeader from "../patient-search-header";
+import { useTranslation } from "react-i18next";
 
 interface ParamTypes {
   formUuid: string;
@@ -15,9 +16,11 @@ interface ParamTypes {
 
 const FormEntryWorkflow = () => {
   const { formUuid } = useParams() as ParamTypes;
+  const history = useHistory();
   const [patientUuids, setPatientUuids] = useState([]);
   const [activePatientUuid, setActivePatientUuid] = useState(null);
   const [encounterUuids, setEncounterUuids] = useState([]);
+  const { t } = useTranslation();
 
   const saveEncounter = (uuid) => {
     setEncounterUuids((encounterUuids) => [...encounterUuids, uuid]);
@@ -44,11 +47,11 @@ const FormEntryWorkflow = () => {
         />
       )}
       {activePatientUuid && <PatientBanner patientUuid={activePatientUuid} />}
-      <div style={{ display: "flex", justifyContent: "center" }}>
-        <div style={{ width: "1100px" }}>
+      <div className={styles.workspaceWrapper}>
+        <div className={styles.workspace}>
           {!patientUuids.length && (
-            <div style={{ margin: "2rem", textAlign: "center" }}>
-              Please select a patient first
+            <div className={styles.selectPatientMessage}>
+              {t("selectPatientFirst", "Please select a patient first")}
             </div>
           )}
           {!!patientUuids.length && (
@@ -62,43 +65,26 @@ const FormEntryWorkflow = () => {
                   }}
                 />
               </div>
-              <div style={{ width: "13rem", textAlign: "left" }}>
+              <div className={styles.rightPanel}>
                 <h4>Forms filled</h4>
-                <div
-                  style={{
-                    margin: "1rem 0",
-                    borderBottom: "1px solid #f4f4f4",
-                  }}
-                >
+                <div className={styles.patientCardsSection}>
                   {patientUuids.map((patientUuid) => (
                     <PatientCard patientUuid={patientUuid} key={patientUuid} />
                   ))}
                 </div>
-                <div
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    rowGap: "0.5rem",
-                  }}
-                >
+                <div className={styles.rightPanelActionButtons}>
                   <Button
                     kind="primary"
                     onClick={() => setActivePatientUuid(null)}
-                    style={{ width: "100%" }}
                   >
-                    Next Patient
+                    {t("nextPatient", "Next Patient")}
                   </Button>
-                  <Button kind="secondary" disabled style={{ width: "100%" }}>
-                    Review & Save
+                  <Button kind="secondary" disabled>
+                    {t("reviewSave", "Review & Save")}
                   </Button>
-                  <Link to="" style={{ textDecoration: "none" }}>
-                    <Button
-                      kind="tertiary"
-                      style={{ width: "100%", textDecoration: "none" }}
-                    >
-                      Cancel
-                    </Button>
-                  </Link>
+                  <Button kind="tertiary" onClick={() => history.push("/")}>
+                    {t("cancel", "Cancel")}
+                  </Button>
                 </div>
               </div>
             </div>
