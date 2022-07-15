@@ -1,6 +1,6 @@
 import { SkeletonText } from "carbon-components-react";
 import React from "react";
-import useGetPatient from "./useGetPatient";
+import useGetPatient from "../hooks/useGetPatient";
 
 const CardContainer = ({ children }) => {
   return <div style={{ padding: "1rem" }}>{children}</div>;

@@ -3,64 +3,35 @@ import { ExtensionSlot } from "@openmrs/esm-framework";
 import { Button } from "carbon-components-react";
 import React, { useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import FormEntry from "../FormEntry";
-import PatientCard from "./PatientCard";
-import PatientInfo from "./PatientInfo";
+import FormBootstrap from "../FormBootstrap";
+import PatientCard from "../patient-card/PatientCard";
+import PatientBanner from "../patient-banner";
 import styles from "./styles.scss";
-
-const PatientSearchHeader = ({
-  patientUuids,
-  setPatientUuids,
-  setActivePatientUuid,
-}) => {
-  const handleSelectPatient = (uuid) => {
-    setPatientUuids([...patientUuids, uuid]), setActivePatientUuid(uuid);
-  };
-
-  return (
-    <div
-      style={{
-        display: "flex",
-        backgroundColor: "white",
-        padding: "2rem 1rem",
-      }}
-    >
-      <span style={{ padding: "1rem" }}>Next patient:</span>
-      <span style={{ minWidth: "35rem" }}>
-        <ExtensionSlot
-          extensionSlotName="patient-search-bar-slot"
-          state={{
-            selectPatientAction: handleSelectPatient,
-            buttonProps: {
-              kind: "primary",
-            },
-          }}
-        />
-      </span>
-      <span style={{ padding: "1rem" }}>or</span>
-      <span>
-        <Button disabled>
-          Create new patient <Add20 />
-        </Button>
-      </span>
-      <span style={{ flexGrow: 1 }} />
-      <span>
-        <Button kind="ghost" href={`${window.spaBase}/forms`}>
-          Cancel <Close20 />
-        </Button>
-      </span>
-    </div>
-  );
-};
+import PatientSearchHeader from "../patient-search-header";
 
 interface ParamTypes {
   formUuid: string;
 }
 
-const FormWorkflow = () => {
+const FormEntryWorkflow = () => {
   const { formUuid } = useParams() as ParamTypes;
   const [patientUuids, setPatientUuids] = useState([]);
   const [activePatientUuid, setActivePatientUuid] = useState(null);
+  const [encounterUuids, setEncounterUuids] = useState([]);
+
+  const saveEncounter = (uuid) => {
+    setEncounterUuids((encounterUuids) => [...encounterUuids, uuid]);
+  };
+
+  const handlePostResponse = (encounter) => {
+    if (
+      encounter &&
+      encounter.uuid &&
+      !encounterUuids.includes(encounter.uuid)
+    ) {
+      saveEncounter(encounter.uuid);
+    }
+  };
 
   return (
     <div>
@@ -72,7 +43,7 @@ const FormWorkflow = () => {
           {...{ patientUuids, setPatientUuids, setActivePatientUuid }}
         />
       )}
-      {activePatientUuid && <PatientInfo patientUuid={activePatientUuid} />}
+      {activePatientUuid && <PatientBanner patientUuid={activePatientUuid} />}
       <div style={{ display: "flex", justifyContent: "center" }}>
         <div style={{ width: "1100px" }}>
           {!patientUuids.length && (
@@ -81,12 +52,13 @@ const FormWorkflow = () => {
             </div>
           )}
           {!!patientUuids.length && (
-            <div className={styles.formContainer}>
-              <div style={{ flexGrow: 1 }}>
-                <FormEntry
+            <div className={styles.formMainContent}>
+              <div className={styles.formContainer}>
+                <FormBootstrap
                   patientUuid={activePatientUuid}
                   {...{
                     formUuid,
+                    handlePostResponse,
                   }}
                 />
               </div>
@@ -119,9 +91,14 @@ const FormWorkflow = () => {
                   <Button kind="secondary" disabled style={{ width: "100%" }}>
                     Review & Save
                   </Button>
-                  <Button kind="tertiary" disabled style={{ width: "100%" }}>
-                    Cancel
-                  </Button>
+                  <Link to="" style={{ textDecoration: "none" }}>
+                    <Button
+                      kind="tertiary"
+                      style={{ width: "100%", textDecoration: "none" }}
+                    >
+                      Cancel
+                    </Button>
+                  </Link>
                 </div>
               </div>
             </div>
@@ -132,4 +109,4 @@ const FormWorkflow = () => {
   );
 };
 
-export default FormWorkflow;
+export default FormEntryWorkflow;

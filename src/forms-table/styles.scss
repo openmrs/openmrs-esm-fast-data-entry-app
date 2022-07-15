@@ -1,0 +1,20 @@
+@import "~@openmrs/esm-styleguide/src/vars";
+@import "~carbon-components/src/globals/scss/vars";
+@import "~carbon-components/src/globals/scss/mixins";
+
+.toolbarWrapper {
+  position: relative;
+  display: flex;
+  height: $spacing-09;
+  justify-content: flex-end;
+}
+
+.tableToolbar {
+  width: 20%;
+  min-width: 12.5rem;
+}
+
+.inactiveLink {
+  color: $carbon--gray-40;
+  cursor: not-allowed;
+}

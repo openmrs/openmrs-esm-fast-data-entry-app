@@ -1,16 +1,16 @@
 import React from "react";
 import { BrowserRouter, Route, Switch } from "react-router-dom";
 import { appPath } from "./constant";
-const FormsRoot = React.lazy(() => import("./forms/FormsRoot"));
-const FormWorkflow = React.lazy(() => import("./forms/FormWorkflow"));
+const FormsPage = React.lazy(() => import("./forms-page"));
+const FormEntryWorkflow = React.lazy(() => import("./form-entry-workflow"));
 
 const Root = () => {
   return (
     <main>
       <BrowserRouter basename={appPath}>
         <Switch>
-          <Route exact path="/" children={<FormsRoot />} />
-          <Route path="/:formUuid?" children={<FormWorkflow />} />
+          <Route exact path="/" children={<FormsPage />} />
+          <Route path="/:formUuid?" children={<FormEntryWorkflow />} />
         </Switch>
       </BrowserRouter>
     </main>

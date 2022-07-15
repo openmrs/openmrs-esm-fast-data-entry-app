@@ -10,11 +10,11 @@ import {
   SkeletonText,
 } from "carbon-components-react";
 import React, { useState } from "react";
-import styles from "./patient-info.scss";
+import styles from "./styles.scss";
 import ChevronDown16 from "@carbon/icons-react/es/chevron--down/16";
 import ChevronUp16 from "@carbon/icons-react/es/chevron--up/16";
 import { useTranslation } from "react-i18next";
-import useGetPatient from "./useGetPatient";
+import useGetPatient from "../hooks/useGetPatient";
 interface PatientInfoProps {
   patientUuid: string;
 }

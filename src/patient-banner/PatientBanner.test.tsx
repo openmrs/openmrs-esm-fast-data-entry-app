@@ -1,9 +1,9 @@
 import React from "react";
 import { render } from "@testing-library/react";
-import PatientInfo from "./PatientInfo";
+import PatientBanner from "./PatientBanner";
 
-describe("PatientInfo", () => {
+describe("PatientBanner", () => {
   it("renders placeholder information when no data is present", () => {
-    render(<PatientInfo patientUuid={null} />);
+    render(<PatientBanner patientUuid={null} />);
   });
 });

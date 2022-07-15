@@ -1,4 +1,7 @@
 @import "~@openmrs/esm-styleguide/src/vars";
+@import "~carbon-components/src/globals/scss/vars";
+@import "~carbon-components/src/globals/scss/mixins";
+
 
 .breadcrumbsContainer > div > div > nav {
   background-color: white;
@@ -6,8 +9,13 @@
   border-bottom: 1px solid $openmrs-background-grey;
 }
 
-.formContainer {
+.formMainContent {
   display: flex;
   text-align: center;
   margin-top: 1rem;
+}
+
+.formContainer {
+  flex-grow: 1;
+  max-height: calc(100vh - 14rem);
 }
