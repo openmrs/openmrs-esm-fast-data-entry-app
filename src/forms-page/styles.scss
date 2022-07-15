@@ -1,0 +1,11 @@
+@import "~@openmrs/esm-styleguide/src/vars";
+@import "~carbon-components/src/globals/scss/vars";
+@import "~carbon-components/src/globals/scss/mixins";
+
+.mainContent {
+  padding: $spacing-07;
+}
+
+.pageTitle {
+  margin-bottom: $spacing-06;
+}

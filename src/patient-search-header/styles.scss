@@ -1,0 +1,17 @@
+@import "~@openmrs/esm-styleguide/src/vars";
+@import "~carbon-components/src/globals/scss/vars";
+@import "~carbon-components/src/globals/scss/mixins";
+
+.searchHeaderContainer {
+  display: flex;
+  background-color: white;
+  padding: $spacing-07 $spacing-05;
+}
+
+.searchBarWrapper {
+  min-width: 35rem;
+}
+
+.padded {
+  padding: $spacing-05;
+}

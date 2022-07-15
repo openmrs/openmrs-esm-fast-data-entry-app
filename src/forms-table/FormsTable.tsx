@@ -1,4 +1,3 @@
-import { ErrorState } from "@openmrs/esm-framework";
 import {
   DataTable,
   DataTableSkeleton,
@@ -14,40 +13,59 @@ import {
   TableToolbarSearch,
 } from "carbon-components-react";
 import React from "react";
+import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import EmptyState from "../empty-state/EmptyState";
-
-const formsHeader = [
-  {
-    key: "name",
-    header: "Form name",
-  },
-  {
-    key: "actions",
-    header: "Actions",
-  },
-];
+import styles from "./styles.scss";
 
 const FormsTable = ({ rows, error, isLoading }) => {
+  const { t } = useTranslation();
+
+  const formsHeader = [
+    {
+      key: "name",
+      header: t("formName", "Form Name"),
+    },
+    {
+      key: "actions",
+      header: t("actions", "Actions"),
+    },
+    {
+      key: "actions2",
+      header: "",
+    },
+  ];
+
   const augmenteRows = rows?.map((row) => ({
     ...row,
-    actions: <Link to={row.uuid}>Fill Form</Link>,
+    actions: <Link to={row.uuid}>{t("fillForm", "Fill Form")}</Link>,
+    actions2: (
+      <Link to="#" className={styles.inactiveLink}>
+        {t("startGroupSession", "Start Group Session")}
+      </Link>
+    ),
   }));
 
   if (isLoading) return <DataTableSkeleton />;
   if (error) {
     return (
       <EmptyState
-        headerTitle="Error Loading Data"
-        displayText={`Something went wrong loading data from the server. "${error?.response?.status}: ${error?.response?.statusText}"`}
+        headerTitle={t("errorLoadingData", "Error Loading Data")}
+        displayText={`${t(
+          "dataErrorMessage",
+          "Something went wrong loading data from the server."
+        )} "${error?.response?.status}: ${error?.response?.statusText}"`}
       />
     );
   }
   if (augmenteRows.length === 0) {
     return (
       <EmptyState
-        headerTitle="No Forms To Show"
-        displayText="No forms could be found for this category. Please double check the form concept uuids and access permissions."
+        headerTitle={t("noFormsFound", "No Forms To Show")}
+        displayText={t(
+          "noFormsFoundMessage",
+          "No forms could be found for this category. Please double check the form concept uuids and access permissions."
+        )}
       />
     );
   }
@@ -63,15 +81,8 @@ const FormsTable = ({ rows, error, isLoading }) => {
       }) => {
         return (
           <TableContainer>
-            <div
-              style={{
-                position: "relative",
-                display: "flex",
-                height: "3rem",
-                justifyContent: "flex-end",
-              }}
-            >
-              <TableToolbar style={{ width: "20%", minWidth: "200px" }}>
+            <div className={styles.toolbarWrapper}>
+              <TableToolbar className={styles.tableToolbar}>
                 <TableToolbarContent>
                   <TableToolbarSearch onChange={onInputChange} />
                 </TableToolbarContent>
