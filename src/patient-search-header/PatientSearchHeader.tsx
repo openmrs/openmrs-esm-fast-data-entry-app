@@ -1,17 +1,15 @@
 import { Add20, Close20 } from "@carbon/icons-react";
 import { ExtensionSlot } from "@openmrs/esm-framework";
 import { Button } from "carbon-components-react";
-import React from "react";
+import React, { useContext } from "react";
 import { Link } from "react-router-dom";
+import FormWorkflowContext from "../context/FormWorkflowContext";
 import styles from "./styles.scss";
 
-const PatientSearchHeader = ({
-  patientUuids,
-  setPatientUuids,
-  setActivePatientUuid,
-}) => {
+const PatientSearchHeader = () => {
+  const { addPatient } = useContext(FormWorkflowContext);
   const handleSelectPatient = (uuid) => {
-    setPatientUuids([...patientUuids, uuid]), setActivePatientUuid(uuid);
+    addPatient(uuid);
   };
 
   return (

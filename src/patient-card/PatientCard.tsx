@@ -1,12 +1,24 @@
 import { SkeletonText } from "carbon-components-react";
-import React from "react";
+import React, { useContext } from "react";
+import FormWorkflowContext from "../context/FormWorkflowContext";
 import useGetPatient from "../hooks/useGetPatient";
+import styles from "./styles.scss";
 
-const CardContainer = ({ children }) => {
-  return <div style={{ padding: "1rem" }}>{children}</div>;
+const CardContainer = ({ active, onClick, children }) => {
+  return (
+    <div
+      className={`${styles.cardContainer} ${!active && styles.hoverable}`}
+      onClick={onClick}
+      role="button"
+      tabIndex={0}
+    >
+      {children}
+    </div>
+  );
 };
 
 const PatientCard = ({ patientUuid }) => {
+  const { activePatientUuid, editEncounter } = useContext(FormWorkflowContext);
   const patient = useGetPatient(patientUuid);
   const givenName = patient?.name?.[0]?.given?.[0];
   const familyName = patient?.name?.[0]?.family;
@@ -14,20 +26,22 @@ const PatientCard = ({ patientUuid }) => {
 
   if (!patient) {
     return (
-      <CardContainer>
-        <SkeletonText style={{ maxWidth: "8rem" }} />
+      <CardContainer onClick={() => {}} active={true}>
+        <SkeletonText className={styles.skeletonText} />
       </CardContainer>
     );
   }
 
+  const active = activePatientUuid === patientUuid;
+
   return (
-    <CardContainer>
+    <CardContainer onClick={() => editEncounter(patientUuid)} active={active}>
+      <div className={styles.identifier}>{identifier}</div>
       <div
-        style={{ fontWeight: 300, fontSize: "0.8rem", lineHeight: "0.9rem" }}
+        className={`${styles.displayName} ${
+          active && styles.activeDisplayName
+        }`}
       >
-        {identifier}
-      </div>
-      <div style={{ fontWeight: "bold" }}>
         {givenName} {familyName}
       </div>
     </CardContainer>
