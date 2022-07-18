@@ -1,14 +1,14 @@
-import { Add20, Close20 } from "@carbon/icons-react";
 import { ExtensionSlot } from "@openmrs/esm-framework";
 import { Button } from "carbon-components-react";
-import React, { useState } from "react";
-import { Link, useHistory, useParams } from "react-router-dom";
+import React, { useContext, useState } from "react";
+import { useHistory, useParams } from "react-router-dom";
 import FormBootstrap from "../FormBootstrap";
 import PatientCard from "../patient-card/PatientCard";
 import PatientBanner from "../patient-banner";
 import styles from "./styles.scss";
 import PatientSearchHeader from "../patient-search-header";
 import { useTranslation } from "react-i18next";
+import FormWorkflowContext from "../context/FormWorkflowContext";
 
 interface ParamTypes {
   formUuid: string;
@@ -17,21 +17,17 @@ interface ParamTypes {
 const FormEntryWorkflow = () => {
   const { formUuid } = useParams() as ParamTypes;
   const history = useHistory();
-  const [patientUuids, setPatientUuids] = useState([]);
-  const [activePatientUuid, setActivePatientUuid] = useState(null);
-  const [encounterUuids, setEncounterUuids] = useState([]);
+  const {
+    patientUuids,
+    activePatientUuid,
+    activeEncounterUuid,
+    openPatientSearch,
+    saveEncounter,
+  } = useContext(FormWorkflowContext);
   const { t } = useTranslation();
 
-  const saveEncounter = (uuid) => {
-    setEncounterUuids((encounterUuids) => [...encounterUuids, uuid]);
-  };
-
   const handlePostResponse = (encounter) => {
-    if (
-      encounter &&
-      encounter.uuid &&
-      !encounterUuids.includes(encounter.uuid)
-    ) {
+    if (encounter && encounter.uuid) {
       saveEncounter(encounter.uuid);
     }
   };
@@ -41,11 +37,7 @@ const FormEntryWorkflow = () => {
       <div className={styles.breadcrumbsContainer}>
         <ExtensionSlot extensionSlotName="breadcrumbs-slot" />
       </div>
-      {!activePatientUuid && (
-        <PatientSearchHeader
-          {...{ patientUuids, setPatientUuids, setActivePatientUuid }}
-        />
-      )}
+      {!activePatientUuid && <PatientSearchHeader />}
       {activePatientUuid && <PatientBanner patientUuid={activePatientUuid} />}
       <div className={styles.workspaceWrapper}>
         <div className={styles.workspace}>
@@ -59,6 +51,7 @@ const FormEntryWorkflow = () => {
               <div className={styles.formContainer}>
                 <FormBootstrap
                   patientUuid={activePatientUuid}
+                  encounterUuid={activeEncounterUuid}
                   {...{
                     formUuid,
                     handlePostResponse,
@@ -73,10 +66,7 @@ const FormEntryWorkflow = () => {
                   ))}
                 </div>
                 <div className={styles.rightPanelActionButtons}>
-                  <Button
-                    kind="primary"
-                    onClick={() => setActivePatientUuid(null)}
-                  >
+                  <Button kind="primary" onClick={() => openPatientSearch()}>
                     {t("nextPatient", "Next Patient")}
                   </Button>
                   <Button kind="secondary" disabled>
