@@ -1,4 +1,4 @@
-import { useConfig, userHasAccess, useSession } from "@openmrs/esm-framework";
+import { useConfig } from "@openmrs/esm-framework";
 import { Tab, Tabs } from "carbon-components-react";
 import React from "react";
 import { Config } from "../config-schema";
@@ -7,8 +7,9 @@ import FormsTable from "../forms-table";
 import styles from "./styles.scss";
 import { useTranslation } from "react-i18next";
 
-// helper function to check which permissions affect which forms
-// useful for debugging
+// helper function useful for debugging
+// given a list of forms, it will organize into permissions
+// and list which forms are associated with that permission
 const getFormPermissions = (forms) => {
   const output = {};
   forms?.forEach(
@@ -21,15 +22,8 @@ const getFormPermissions = (forms) => {
   return output;
 };
 
-const filterByPermissions = (rowFormData, user) => {
-  if (rowFormData) {
-    return rowFormData.filter((form) => {
-      return !!userHasAccess(form.encounterType?.editPrivilege?.display, user);
-    });
-  }
-};
-
 // Function adds `id` field to rows so they will be accepted by DataTable
+// "display" is prefered for display name if present, otherwise fall back on "name'"
 const prepareRowsForTable = (rawFormData) => {
   if (rawFormData) {
     return rawFormData?.map((form) => ({
@@ -46,10 +40,7 @@ const FormsPage = () => {
   const { t } = useTranslation();
   const { formCategories, formCategoriesToShow } = config;
   const { forms, isLoading, error } = useGetAllForms();
-  const session = useSession();
-  const cleanRows = prepareRowsForTable(
-    filterByPermissions(forms, session.user)
-  );
+  const cleanRows = prepareRowsForTable(forms);
 
   const categoryRows = formCategoriesToShow.map((name) => {
     const category = formCategories.find((category) => category.name === name);
