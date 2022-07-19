@@ -24,21 +24,19 @@ export function useGetAllForms(cachedOfflineFormsOnly = false) {
           // forms should be published
           form.published &&
           // forms should not be component forms
-          !/component/i.test(form.name) &&
-          // user should have privileges to edit forms
-          Boolean(
-            userHasAccess(
-              form.encounterType?.editPrivilege?.display,
-              session?.user
-            )
-          )
+          !/component/i.test(form.name)
+        // user should have privileges to edit forms
       ) ?? [];
 
     return forms;
   });
 
   return {
-    forms: data,
+    forms: data?.filter((form) =>
+      Boolean(
+        userHasAccess(form.encounterType?.editPrivilege?.display, session?.user)
+      )
+    ),
     isLoading: !error && !data,
     error,
   };
