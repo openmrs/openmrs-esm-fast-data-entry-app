@@ -23,7 +23,7 @@ const FormsTable = ({ rows, error, isLoading }) => {
 
   const formsHeader = [
     {
-      key: "name",
+      key: "display",
       header: t("formName", "Form Name"),
     },
     {
