@@ -1,4 +1,4 @@
-import { useConfig } from "@openmrs/esm-framework";
+import { useConfig, userHasAccess, useSession } from "@openmrs/esm-framework";
 import { Tab, Tabs } from "carbon-components-react";
 import React from "react";
 import { Config } from "../config-schema";
@@ -7,7 +7,16 @@ import FormsTable from "../forms-table";
 import styles from "./styles.scss";
 import { useTranslation } from "react-i18next";
 
-const cleanForms = (rawFormData) => {
+const filterByPermissions = (rowFormData, user) => {
+  if (rowFormData) {
+    return rowFormData.filter((form) => {
+      return !!userHasAccess(form.encounterType?.editPrivilege?.display, user);
+    });
+  }
+};
+
+// Function adds `id` field to rows so they will be accepted by DataTable
+const prepareRowsForTable = (rawFormData) => {
   if (rawFormData) {
     return rawFormData?.map((form) => ({
       ...form,
@@ -22,7 +31,10 @@ const FormsPage = () => {
   const { t } = useTranslation();
   const { formCategories, formCategoriesToShow } = config;
   const { forms, isLoading, error } = useGetAllForms();
-  const cleanRows = cleanForms(forms);
+  const session = useSession();
+  const cleanRows = prepareRowsForTable(
+    filterByPermissions(forms, session.user)
+  );
 
   const categoryRows = formCategoriesToShow.map((name) => {
     const category = formCategories.find((category) => category.name === name);
