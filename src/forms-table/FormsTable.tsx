@@ -1,3 +1,4 @@
+import { ErrorState } from "@openmrs/esm-framework";
 import {
   DataTable,
   DataTableSkeleton,
@@ -49,12 +50,9 @@ const FormsTable = ({ rows, error, isLoading }) => {
   if (isLoading) return <DataTableSkeleton />;
   if (error) {
     return (
-      <EmptyState
+      <ErrorState
         headerTitle={t("errorLoadingData", "Error Loading Data")}
-        displayText={`${t(
-          "dataErrorMessage",
-          "Something went wrong loading data from the server."
-        )} "${error?.response?.status}: ${error?.response?.statusText}"`}
+        error={error}
       />
     );
   }
