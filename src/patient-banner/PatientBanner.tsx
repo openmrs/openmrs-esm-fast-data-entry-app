@@ -9,15 +9,13 @@ import {
   SkeletonPlaceholder,
   SkeletonText,
 } from "carbon-components-react";
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import styles from "./styles.scss";
 import ChevronDown16 from "@carbon/icons-react/es/chevron--down/16";
 import ChevronUp16 from "@carbon/icons-react/es/chevron--up/16";
 import { useTranslation } from "react-i18next";
 import useGetPatient from "../hooks/useGetPatient";
-interface PatientInfoProps {
-  patientUuid: string;
-}
+import FormWorkflowContext from "../context/FormWorkflowContext";
 
 const SkeletonPatientInfo = () => {
   return (
@@ -54,8 +52,9 @@ const SkeletonPatientInfo = () => {
   );
 };
 
-const PatientInfo: React.FC<PatientInfoProps> = ({ patientUuid }) => {
-  const patient = useGetPatient(patientUuid);
+const PatientBanner = () => {
+  const { activePatientUuid } = useContext(FormWorkflowContext);
+  const patient = useGetPatient(activePatientUuid);
   const { t } = useTranslation();
   const [showContactDetails, setShowContactDetails] = useState<boolean>(false);
   const patientName = `${patient?.name?.[0].given?.join(" ")} ${
@@ -71,6 +70,8 @@ const PatientInfo: React.FC<PatientInfoProps> = ({ patientUuid }) => {
     e.stopPropagation();
     setShowContactDetails((prevState) => !prevState);
   };
+
+  if (!activePatientUuid) return null;
 
   if (!patient) {
     return <SkeletonPatientInfo />;
@@ -137,4 +138,4 @@ const PatientInfo: React.FC<PatientInfoProps> = ({ patientUuid }) => {
   );
 };
 
-export default PatientInfo;
+export default PatientBanner;

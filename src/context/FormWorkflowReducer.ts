@@ -1,5 +1,10 @@
 const reducer = (state, action) => {
   switch (action.type) {
+    case "UPDATE_FORM_STATE":
+      return {
+        ...state,
+        formState: action.formState,
+      };
     case "ADD_PATIENT":
       return {
         ...state,
