@@ -48,10 +48,10 @@ const backendDependencies = {
  * `/openmrs/spa/hello`.
  */
 function setupOpenMRS() {
-  const moduleName = "@openmrs/esm-fast-data-entry";
+  const moduleName = "@openmrs/esm-fast-data-entry-app";
 
   const options = {
-    featureName: "fast-data-entry",
+    featureName: "fast-data-entry-app",
     moduleName,
   };
 
