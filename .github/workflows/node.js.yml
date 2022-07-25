@@ -98,8 +98,8 @@ jobs:
       - name: Prepare Directory
         shell: bash
         run: |
-          mkdir -p dist/${{ env.ESM_NAME }}/${{ env.TIMESTAMP }}_${{ github.sha }}
-          mv packages/${{ env.DIR_NAME }}/dist/*.* dist/${{ env.ESM_NAME }}/${{ env.TIMESTAMP }}_${{ github.sha }}/
+          mkdir -p publish/${{ env.ESM_NAME }}/${{ env.TIMESTAMP }}_${{ github.sha }}
+          mv dist/*.* publish/${{ env.ESM_NAME }}/${{ env.TIMESTAMP }}_${{ github.sha }}/
       - name: Publish to Digital Ocean
         uses: jakejarvis/s3-sync-action@master
         with:
@@ -109,7 +109,7 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.DIGITAL_OCEAN_SPACES_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.DIGITAL_OCEAN_SPACES_ACCESS_KEY }}
           AWS_S3_ENDPOINT: ${{ secrets.DIGITAL_OCEAN_SPACES_ENDPOINT }}
-          SOURCE_DIR: "dist"
+          SOURCE_DIR: "publish"
       - name: Update Importmap
         uses: fjogeleit/http-request-action@master
         with:
