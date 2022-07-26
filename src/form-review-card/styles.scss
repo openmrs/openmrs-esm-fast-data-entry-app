@@ -1,0 +1,38 @@
+@import "~@openmrs/esm-styleguide/src/vars";
+@import "~carbon-components/src/globals/scss/vars";
+@import "~carbon-components/src/globals/scss/mixins";
+
+
+.formReviewCard {
+  background-color: $ui-02;
+  padding: $spacing-02;
+}
+
+.formReviewCard :global(.bx--accordion) :global(.bx--accordion__item) {
+  border: none;
+}
+
+.formReviewCard :global(.bx--accordion__title) {
+  display: flex;
+  align-items: baseline;
+  column-gap: $spacing-05;
+}
+
+.formReviewCard :global(.bx--accordion__content) {
+  padding: $spacing-03;
+}
+
+.dataField {
+  @include carbon--type-style('code-02');
+  background-color: $ui-01;
+  padding: $spacing-03;
+}
+
+.displayName {
+  @include carbon--type-style('productive-heading-02');
+  font-weight: bold;
+}
+
+.identifier {
+  @include carbon--type-style('body-short-01')
+}

@@ -104,6 +104,7 @@ interface FormParams {
   visitUuid?: string;
   visitTypeUuid?: string;
   encounterUuid?: string;
+  showDiscardSubmitButtons?: boolean;
   handlePostResponse?: (Encounter) => void;
 }
 
@@ -132,6 +133,7 @@ const FormBootstrap = ({
             encounterUuid: encounterUuid ?? "",
             closeWorkspace: () => {},
             handlePostResponse,
+            showDiscardSubmitButtons: false,
           }}
         />
       )}

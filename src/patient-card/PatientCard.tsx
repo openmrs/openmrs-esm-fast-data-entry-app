@@ -7,8 +7,8 @@ import styles from "./styles.scss";
 const CardContainer = ({ active, onClick, children }) => {
   return (
     <div
-      className={`${styles.cardContainer} ${!active && styles.hoverable}`}
-      onClick={onClick}
+      className={`${styles.cardContainer} ${!active && styles.inactiveCard}`}
+      onClick={active ? onClick : () => {}}
       role="button"
       tabIndex={0}
     >

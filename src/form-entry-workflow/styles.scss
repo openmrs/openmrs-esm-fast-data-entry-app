@@ -4,9 +4,9 @@
 
 
 .breadcrumbsContainer > div > div > nav {
-  background-color: white;
-  padding: 0.5rem;
-  border-bottom: 1px solid $openmrs-background-grey;
+  background-color: $ui-02;
+  padding: $spacing-04 $spacing-05;
+  height: $spacing-08;
 }
 
 .workspaceWrapper {
@@ -27,28 +27,35 @@
 .formMainContent {
   display: flex;
   text-align: center;
-  margin-top: 1rem;
+  margin-top: $spacing-05;
+  column-gap: $spacing-05;
 }
 
 .formContainer {
   flex-grow: 1;
   max-height: calc(100vh - 14rem);
+  overflow-y: scroll;
+}
+
+.formContainer :global(.bx--form-item) :global(.question-area) {
+  max-width: 100%;
 }
 
 .rightPanel {
   width: 13rem;
   text-align: left;
+  overflow-y: scroll;
 }
 
 .patientCardsSection {
-  margin: 1rem 0;
+  margin: $spacing-05 0;
   border-bottom: 1px solid $carbon--gray-10;
 }
 
 .rightPanelActionButtons {
   display: flex;
   flex-direction: column;
-  row-gap: 0.5rem;
+  row-gap: $spacing-03;
   & button {
     width: 100%;
     text-decoration: "none";
