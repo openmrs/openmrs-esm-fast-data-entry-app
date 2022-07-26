@@ -4,12 +4,7 @@
 
 .cardContainer {
   padding: $spacing-05;
-  &:hover {
-    background-color: $carbon--gray-40;
-  }
 }
-
-
 
 .skeletonText {
   max-width: 8rem;
@@ -27,4 +22,10 @@
 
 .activeDisplayName {
   color: $carbon--blue-50;
+}
+
+.inactiveCard {
+  &:hover {
+    background-color: $carbon--gray-40;
+  }
 }

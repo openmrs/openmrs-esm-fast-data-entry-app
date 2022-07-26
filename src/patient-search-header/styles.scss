@@ -3,9 +3,13 @@
 @import "~carbon-components/src/globals/scss/mixins";
 
 .searchHeaderContainer {
+  height: $spacing-11;
   display: flex;
-  background-color: white;
-  padding: $spacing-07 $spacing-05;
+  align-items: center;
+  background-color: $ui-02;
+  border-top: 0.0125rem solid $ui-03;
+  border-bottom: 0.0125rem solid $ui-03;
+  padding: 0 $spacing-05;
 }
 
 .searchBarWrapper {
