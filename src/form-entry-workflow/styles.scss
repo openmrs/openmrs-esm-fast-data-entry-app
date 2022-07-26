@@ -28,11 +28,13 @@
   display: flex;
   text-align: center;
   margin-top: 1rem;
+  column-gap: 1rem;
 }
 
 .formContainer {
   flex-grow: 1;
   max-height: calc(100vh - 14rem);
+  overflow-y: scroll;
 }
 
 .rightPanel {
