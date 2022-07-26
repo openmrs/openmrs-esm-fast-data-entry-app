@@ -1,0 +1,12 @@
+@import "~@openmrs/esm-styleguide/src/vars";
+@import "~carbon-components/src/globals/scss/vars";
+@import "~carbon-components/src/globals/scss/mixins";
+
+.workspaceWrapper {
+  display: flex;
+  justify-content: center;
+}
+
+.workspace {
+  width: 1100px;
+}

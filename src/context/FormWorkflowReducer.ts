@@ -30,7 +30,7 @@ const reducer = (state, action) => {
             ? "NEW_PATIENT"
             : state.workflowState === "SUBMIT_FOR_REVIEW"
             ? "REVIEW"
-            : "ERROR",
+            : state.workflowState,
       };
     case "EDIT_ENCOUNTER":
       return {

@@ -15,6 +15,7 @@ import { useTranslation } from "react-i18next";
 import FormWorkflowContext, {
   FormWorkflowProvider,
 } from "../context/FormWorkflowContext";
+import WorkflowReview from "../workflow-review";
 
 interface ParamTypes {
   formUuid: string;
@@ -63,19 +64,6 @@ const WorkflowNavigationButtons = () => {
       >
         {t("cancel", "Cancel")}
       </Button>
-      {/* Form State: {formState} */}
-    </div>
-  );
-};
-
-const Review = () => {
-  const { patientUuids } = useContext(FormWorkflowContext);
-  return (
-    <div>
-      <h4>Review</h4>
-      {patientUuids.map((patientUuid) => (
-        <PatientCard patientUuid={patientUuid} key={patientUuid} />
-      ))}
     </div>
   );
 };
@@ -137,7 +125,7 @@ const FormEntryWorkflow = () => {
       <div className={styles.breadcrumbsContainer}>
         <ExtensionSlot extensionSlotName="breadcrumbs-slot" />
       </div>
-      {workflowState === "REVIEW" && <Review />}
+      {workflowState === "REVIEW" && <WorkflowReview />}
       {workflowState !== "REVIEW" && (
         <>
           <PatientSearchHeader />
@@ -147,7 +135,6 @@ const FormEntryWorkflow = () => {
           </div>
         </>
       )}
-      WorkflowState {workflowState}
     </>
   );
 };
