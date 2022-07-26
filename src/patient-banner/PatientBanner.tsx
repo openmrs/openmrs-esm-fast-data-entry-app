@@ -12,7 +12,7 @@ const SkeletonPatientInfo = () => {
       <SkeletonPlaceholder className={styles.photoPlaceholder} />
       <div className={styles.patientInfoContent}>
         <div className={styles.patientInfoRow}>
-          <SkeletonText width="10rem" lineCount={1} />
+          <SkeletonText width="7rem" lineCount={1} />
         </div>
         <div className={styles.patientInfoRow}>
           <span>

@@ -19,6 +19,7 @@
 
 .patientName {
   @include carbon--type-style('productive-heading-03');
+  font-weight: 600;
 }
 
 .patientInfoContent {

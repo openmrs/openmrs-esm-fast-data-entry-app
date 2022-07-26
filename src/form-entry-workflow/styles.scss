@@ -37,9 +37,14 @@
   overflow-y: scroll;
 }
 
+.formContainer :global(.bx--form-item) :global(.question-area) {
+  max-width: 100%;
+}
+
 .rightPanel {
   width: 13rem;
   text-align: left;
+  overflow-y: scroll;
 }
 
 .patientCardsSection {
