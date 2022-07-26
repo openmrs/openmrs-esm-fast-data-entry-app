@@ -1,5 +1,6 @@
 import { Accordion, AccordionItem, Button } from "carbon-components-react";
 import React, { useContext } from "react";
+import { useTranslation } from "react-i18next";
 import FormWorkflowContext from "../context/FormWorkflowContext";
 import { useGetPatient, useGetEncounter } from "../hooks";
 import styles from "./styles.scss";
@@ -12,6 +13,8 @@ const FormReviewCard = ({ patientUuid }) => {
   const identifier = patient?.identifier?.[0]?.value;
   const encounterUuid = encounters?.[patientUuid];
   const { encounter } = useGetEncounter(encounterUuid);
+  const { t } = useTranslation();
+
   return (
     <div className={styles.formReviewCard}>
       <Accordion align="start">
@@ -36,7 +39,7 @@ const FormReviewCard = ({ patientUuid }) => {
             </div>
           )}
           <Button kind="primary" onClick={() => editEncounter(patientUuid)}>
-            Go To Form
+            {t("goToForm", "Go To Form")}
           </Button>
         </AccordionItem>
       </Accordion>

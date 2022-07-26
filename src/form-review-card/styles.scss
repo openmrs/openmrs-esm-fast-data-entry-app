@@ -15,17 +15,17 @@
 .formReviewCard :global(.bx--accordion__title) {
   display: flex;
   align-items: baseline;
-  column-gap: 1rem;
+  column-gap: $spacing-05;
 }
 
 .formReviewCard :global(.bx--accordion__content) {
-  padding: 0.5rem;
+  padding: $spacing-03;
 }
 
 .dataField {
   @include carbon--type-style('code-02');
   background-color: $ui-01;
-  padding: 0.5rem;
+  padding: $spacing-03;
 }
 
 .displayName {
