@@ -33,7 +33,7 @@ const SkeletonPatientInfo = () => {
 };
 
 const PatientBanner = () => {
-  const { activePatientUuid } = useContext(FormWorkflowContext);
+  const { activePatientUuid, workflowState } = useContext(FormWorkflowContext);
   const patient = useGetPatient(activePatientUuid);
   const { t } = useTranslation();
   const patientName = `${patient?.name?.[0].given?.join(" ")} ${
@@ -45,7 +45,7 @@ const PatientBanner = () => {
     [patient?.id, patientName]
   );
 
-  if (!activePatientUuid) return null;
+  if (workflowState === "NEW_PATIENT") return null;
 
   if (!patient) {
     return <SkeletonPatientInfo />;

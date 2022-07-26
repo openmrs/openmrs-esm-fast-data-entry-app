@@ -5,7 +5,7 @@ import {
 } from "@openmrs/esm-framework";
 import { Button } from "carbon-components-react";
 import React, { useContext } from "react";
-import { useHistory, useParams } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 import FormBootstrap from "../FormBootstrap";
 import PatientCard from "../patient-card/PatientCard";
 import PatientBanner from "../patient-banner";
@@ -22,20 +22,69 @@ interface ParamTypes {
 
 const formStore = getGlobalStore("ampath-form-state");
 
-const Status = () => {
-  const { formUuid } = useParams() as ParamTypes;
+const WorkflowNavigationButtons = () => {
+  const {
+    formUuid,
+    submitForReview,
+    submitForNext,
+    workflowState,
+    goToReview,
+  } = useContext(FormWorkflowContext);
+  const history = useHistory();
   const store = useStore(formStore);
   const formState = store[formUuid];
-  return <p>Status {formState}</p>;
+  const navigationDisabled = formState !== "ready";
+  const { t } = useTranslation();
+
+  return (
+    <div className={styles.rightPanelActionButtons}>
+      <Button
+        kind="primary"
+        onClick={() => submitForNext()}
+        disabled={navigationDisabled || workflowState === "NEW_PATIENT"}
+      >
+        {t("nextPatient", "Next Patient")}
+      </Button>
+      <Button
+        kind="secondary"
+        disabled={navigationDisabled}
+        onClick={
+          workflowState === "NEW_PATIENT"
+            ? () => goToReview()
+            : () => submitForReview()
+        }
+      >
+        {t("reviewSave", "Review & Save")}
+      </Button>
+      <Button
+        kind="tertiary"
+        onClick={() => history.push("/")}
+        disabled={navigationDisabled}
+      >
+        {t("cancel", "Cancel")}
+      </Button>
+      {/* Form State: {formState} */}
+    </div>
+  );
+};
+
+const Review = () => {
+  const { patientUuids } = useContext(FormWorkflowContext);
+  return (
+    <div>
+      <h4>Review</h4>
+      {patientUuids.map((patientUuid) => (
+        <PatientCard patientUuid={patientUuid} key={patientUuid} />
+      ))}
+    </div>
+  );
 };
 
 const FormWorkspace = () => {
-  const history = useHistory();
   const {
     patientUuids,
     activePatientUuid,
     activeEncounterUuid,
-    openPatientSearch,
     saveEncounter,
     formUuid,
   } = useContext(FormWorkflowContext);
@@ -73,29 +122,7 @@ const FormWorkspace = () => {
                 <PatientCard patientUuid={patientUuid} key={patientUuid} />
               ))}
             </div>
-            <div className={styles.rightPanelActionButtons}>
-              <Button kind="primary" onClick={() => openPatientSearch()}>
-                {t("nextPatient", "Next Patient")}
-              </Button>
-              <Button kind="secondary" disabled>
-                {t("reviewSave", "Review & Save")}
-              </Button>
-              <Button kind="tertiary" onClick={() => history.push("/")}>
-                {t("cancel", "Cancel")}
-              </Button>
-              <Button
-                onClick={() =>
-                  window.dispatchEvent(
-                    new CustomEvent("ampath-form-action", {
-                      detail: { formUuid, action: "onSubmit" },
-                    })
-                  )
-                }
-              >
-                Submit
-              </Button>
-              <Status />
-            </div>
+            <WorkflowNavigationButtons />
           </div>
         </div>
       )}
@@ -104,18 +131,33 @@ const FormWorkspace = () => {
 };
 
 const FormEntryWorkflow = () => {
+  const { workflowState } = useContext(FormWorkflowContext);
   return (
-    <FormWorkflowProvider>
+    <>
       <div className={styles.breadcrumbsContainer}>
         <ExtensionSlot extensionSlotName="breadcrumbs-slot" />
       </div>
-      <PatientSearchHeader />
-      <PatientBanner />
-      <div className={styles.workspaceWrapper}>
-        <FormWorkspace />
-      </div>
+      {workflowState === "REVIEW" && <Review />}
+      {workflowState !== "REVIEW" && (
+        <>
+          <PatientSearchHeader />
+          <PatientBanner />
+          <div className={styles.workspaceWrapper}>
+            <FormWorkspace />
+          </div>
+        </>
+      )}
+      WorkflowState {workflowState}
+    </>
+  );
+};
+
+const FormEntryWorkflowWrapper = () => {
+  return (
+    <FormWorkflowProvider>
+      <FormEntryWorkflow />
     </FormWorkflowProvider>
   );
 };
 
-export default FormEntryWorkflow;
+export default FormEntryWorkflowWrapper;

@@ -7,12 +7,12 @@ import FormWorkflowContext from "../context/FormWorkflowContext";
 import styles from "./styles.scss";
 
 const PatientSearchHeader = () => {
-  const { activePatientUuid, addPatient } = useContext(FormWorkflowContext);
+  const { addPatient, workflowState } = useContext(FormWorkflowContext);
   const handleSelectPatient = (uuid) => {
     addPatient(uuid);
   };
 
-  if (activePatientUuid) return null;
+  if (workflowState !== "NEW_PATIENT") return null;
 
   return (
     <div className={styles.searchHeaderContainer}>
