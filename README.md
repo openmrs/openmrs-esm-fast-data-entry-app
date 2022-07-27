@@ -14,8 +14,11 @@ The Forms page lists all forms able to be seen by a user, filtered by that user'
 Forms can be entered quickly with the Form Entry Workflow. This workflow depends on a state machine managed by the [FormWorkflowReducer](src/context/FormWorkflowReducer.ts).
 
 See the video below of a normal workflow.
-![Form Workflow Movie](docs/fde-workflow.mov)
+
+https://github.com/openmrs/openmrs-esm-fast-data-entry-app/blob/main/docs/fde-workflow.mov
+
 State diagram for the Form Workflow.
+
 ![Form Workflow State Diagram](docs/form-workflow-state-diagram.png)
 
 ## Running this code
