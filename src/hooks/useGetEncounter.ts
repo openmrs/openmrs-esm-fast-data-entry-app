@@ -1,5 +1,4 @@
-import { fetchCurrentPatient, openmrsFetch } from "@openmrs/esm-framework";
-import { useEffect, useState } from "react";
+import { openmrsFetch } from "@openmrs/esm-framework";
 import useSWR from "swr";
 
 const encounterUrl = "/ws/rest/v1/encounter/";

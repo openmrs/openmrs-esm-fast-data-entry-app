@@ -17,10 +17,6 @@ import FormWorkflowContext, {
 } from "../context/FormWorkflowContext";
 import WorkflowReview from "../workflow-review";
 
-interface ParamTypes {
-  formUuid: string;
-}
-
 const formStore = getGlobalStore("ampath-form-state");
 
 const WorkflowNavigationButtons = () => {

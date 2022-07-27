@@ -8,7 +8,7 @@ const CardContainer = ({ active, onClick, children }) => {
   return (
     <div
       className={`${styles.cardContainer} ${!active && styles.inactiveCard}`}
-      onClick={active ? onClick : () => {}}
+      onClick={active ? onClick : () => undefined}
       role="button"
       tabIndex={0}
     >
@@ -26,7 +26,7 @@ const PatientCard = ({ patientUuid }) => {
 
   if (!patient) {
     return (
-      <CardContainer onClick={() => {}} active={true}>
+      <CardContainer onClick={() => undefined} active={true}>
         <SkeletonText className={styles.skeletonText} />
       </CardContainer>
     );

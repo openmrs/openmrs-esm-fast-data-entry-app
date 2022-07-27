@@ -69,7 +69,7 @@ export interface Observation {
       display: string;
     };
   }>;
-  value: any;
+  value: unknown;
   obsDatetime: string;
 }
 
@@ -131,7 +131,7 @@ const FormBootstrap = ({
             patientUuid,
             patient,
             encounterUuid: encounterUuid ?? "",
-            closeWorkspace: () => {},
+            closeWorkspace: () => undefined,
             handlePostResponse,
             showDiscardSubmitButtons: false,
           }}
