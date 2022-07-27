@@ -2,7 +2,7 @@
 
 Configuration of which Form Categories to show, and which forms exist within each category is possible via configuration of Fast Data Entry App (config-schema)[../src/config-schema.ts]. For example, the configuration would setup one category "ICRC Forms" which contains one form, DASS-21. Note that formUUID must match the form UUID on the backend instance, and name is only for human readability and has no actual function.
 
-```
+```json
 {
   "@openmrs/esm-fast-data-entry-app": {
     "formCategories": [
@@ -31,7 +31,7 @@ Note that All Forms is always present and contains all forms the system can find
 
 Let's see another example. The following config will load up one more form category called "Other Forms" to show, but both entries in that form category are not able to be found in the system, so no forms will render when we navigate to the "Other Forms". Also note that "Third Category of Forms" is declared, but since it's not included in the formCategoriesToShow array it is not displayed on the UI.
 
-```
+```json
 {
   "@openmrs/esm-fast-data-entry-app": {
     "formCategories": [{

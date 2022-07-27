@@ -29,7 +29,8 @@ yarn start  # to run the dev server
 ```
 
 To customize your development build pass other arguments to yarn start (which under the hood is running `npx openmrs develop`). For example to point to a backend other than (dev3)[https://dev3.openmrs.org/]  specify the `--backend` option. See the full example below for running against an ICRC backend.
-``` 
+
+```sh
 yarn start --importmap "https://spa-modules.nyc3.digitaloceanspaces.com/import-map.json" --backend "https://openmrs-dev-v2.test.icrc.org/" --add-cookie "MRHSession=abcdefghijklmnop012345678910" --spa-path "/ui"
 ```
 
