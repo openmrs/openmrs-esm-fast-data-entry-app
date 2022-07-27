@@ -10,7 +10,7 @@ import { useTranslation } from "react-i18next";
 // helper function useful for debugging
 // given a list of forms, it will organize into permissions
 // and list which forms are associated with that permission
-const getFormPermissions = (forms) => {
+export const getFormPermissions = (forms) => {
   const output = {};
   forms?.forEach(
     (form) =>

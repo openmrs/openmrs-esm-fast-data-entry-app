@@ -12,13 +12,13 @@ const initialState = {
   activeEncounterUuid: null,
   encounters: {},
   workflowState: null,
-  addPatient: (uuid: string | number) => {},
-  openPatientSearch: () => {},
-  saveEncounter: (encounterUuid: string | number) => {},
-  editEncounter: (patientUuid: string | number) => {},
-  submitForNext: () => {},
-  submitForReview: () => {},
-  goToReview: () => {},
+  addPatient: (uuid: string | number) => undefined,
+  openPatientSearch: () => undefined,
+  saveEncounter: (encounterUuid: string | number) => undefined,
+  editEncounter: (patientUuid: string | number) => undefined,
+  submitForNext: () => undefined,
+  submitForReview: () => undefined,
+  goToReview: () => undefined,
 };
 
 const FormWorkflowContext = React.createContext(initialState);
