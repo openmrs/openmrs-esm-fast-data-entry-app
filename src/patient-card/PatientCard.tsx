@@ -4,11 +4,11 @@ import FormWorkflowContext from "../context/FormWorkflowContext";
 import useGetPatient from "../hooks/useGetPatient";
 import styles from "./styles.scss";
 
-const CardContainer = ({ active, onClick, children }) => {
+const CardContainer = ({ onClick = () => undefined, active, children }) => {
   return (
     <div
+      onClick={onClick}
       className={`${styles.cardContainer} ${!active && styles.inactiveCard}`}
-      onClick={active ? onClick : () => {}}
       role="button"
       tabIndex={0}
     >
@@ -26,7 +26,7 @@ const PatientCard = ({ patientUuid }) => {
 
   if (!patient) {
     return (
-      <CardContainer onClick={() => {}} active={true}>
+      <CardContainer active={true}>
         <SkeletonText className={styles.skeletonText} />
       </CardContainer>
     );
@@ -35,7 +35,10 @@ const PatientCard = ({ patientUuid }) => {
   const active = activePatientUuid === patientUuid;
 
   return (
-    <CardContainer onClick={() => editEncounter(patientUuid)} active={active}>
+    <CardContainer
+      onClick={active ? () => undefined : () => editEncounter(patientUuid)}
+      active={active}
+    >
       <div className={styles.identifier}>{identifier}</div>
       <div
         className={`${styles.displayName} ${
