@@ -68,11 +68,11 @@ export type Form = {
 };
 
 export type Category = {
-  name: String;
+  name: string;
   forms: Array<Form>;
 };
 
 export type Config = {
   formCategories: Array<Category>;
-  formCategoriesToShow: Array<String>;
+  formCategoriesToShow: Array<string>;
 };
