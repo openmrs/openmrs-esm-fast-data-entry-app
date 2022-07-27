@@ -15,7 +15,7 @@ Forms can be entered quickly with the Form Entry Workflow. This workflow depends
 
 See the video below of a normal workflow.
 
-https://github.com/openmrs/openmrs-esm-fast-data-entry-app/blob/main/docs/fde-workflow.mov
+https://user-images.githubusercontent.com/5445264/181378774-341b2a2f-3ecc-4052-b960-d61ba07980fb.mov
 
 State diagram for the Form Workflow.
 
