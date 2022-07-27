@@ -1,6 +1,6 @@
 # Configuring Form Categories for Fast Data Entry App
 
-Configuration of which Form Categories to show, and which forms exist within each category is possible via configuration of Fast Data Entry App (config-schema)[../src/config-schema.ts]. For example, the configuration would setup one category "ICRC Forms" which contains one form, DASS-21. Note that formUUID must match the form UUID on the backend instance, and name is only for human readability and has no actual function.
+Configuration of which Form Categories to show, and which forms exist within each category is possible via configuration of Fast Data Entry App [config-schema](../src/config-schema.ts). For example, the configuration would setup one category "ICRC Forms" which contains one form, DASS-21. Note that formUUID must match the form UUID on the backend instance, and name is only for human readability and has no actual function.
 
 ```json
 {
@@ -25,7 +25,7 @@ Configuration of which Form Categories to show, and which forms exist within eac
 
 This config results in the following UI:
 
-!(Configure ICRC Forms)[config-icrc-forms.png]
+![Configure ICRC Forms](config-icrc-forms.png)
 
 Note that All Forms is always present and contains all forms the system can find.
 
@@ -71,7 +71,7 @@ Let's see another example. The following config will load up one more form categ
 
 This will render the following UI
 
-!(Configure Other Forms)[config-other-forms.png]
+![Configure Other Forms](config-other-forms.png)
 
 
-For more information on using the OpenMRS configuration system see (this page)[https://o3-dev.docs.openmrs.org/#/main/config]
+For more information on using the OpenMRS configuration system see [this page](https://o3-dev.docs.openmrs.org/#/main/config)
