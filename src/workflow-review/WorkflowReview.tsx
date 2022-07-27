@@ -3,7 +3,6 @@ import React, { useContext } from "react";
 import { useHistory } from "react-router-dom";
 import FormWorkflowContext from "../context/FormWorkflowContext";
 import FormReviewCard from "../form-review-card";
-import PatientCard from "../patient-card";
 import styles from "./styles.scss";
 
 const WorkflowReview = () => {

@@ -5,6 +5,7 @@ import { ConfigurableLink } from "@openmrs/esm-framework";
 export default function OfflineToolsAppMenuLink() {
   const { t } = useTranslation();
   return (
+    // eslint-disable-next-line
     <ConfigurableLink to="${openmrsSpaBase}/forms">
       {t("formsAppMenuLink", "Forms")}
     </ConfigurableLink>
