@@ -5,13 +5,7 @@ interface ParamTypes {
   formUuid: string;
 }
 
-const initialState = {
-  formUuid: null,
-  patientUuids: [],
-  activePatientUuid: null,
-  activeEncounterUuid: null,
-  encounters: {},
-  workflowState: null,
+const initialActions = {
   addPatient: (uuid: string | number) => undefined,
   openPatientSearch: () => undefined,
   saveEncounter: (encounterUuid: string | number) => undefined,
@@ -21,14 +15,36 @@ const initialState = {
   goToReview: () => undefined,
 };
 
-const FormWorkflowContext = React.createContext(initialState);
+export const initialWorkflowState = {
+  // activeFormUuid and forms are the only two real values stored at state root level
+  activeFormUuid: null, // the corrently open form
+  forms: {}, // object containing all forms session data
+  // the following fields will be available in context but are not stored at the
+  //     state root level, but refer to nested values for the current
+  //     aciveFormUuid
+  workflowState: null, // pseudo field from state[activeFormUuid].workflowState
+  activePatientUuid: null, // pseudo field from state[activeFormUuid].activePatientUuid
+  activeEncounterUuid: null, // pseudo field from state[activeFormUuid].encounterUuid
+  patientUuids: [], // pseudo field from state[activeFormUuid].patientUuids
+  encounters: {}, // pseudo field from state[activeFormUuid].encounters
+};
+
+const FormWorkflowContext = React.createContext({
+  ...initialWorkflowState,
+  ...initialActions,
+});
 
 const FormWorkflowProvider = ({ children }) => {
   const { formUuid: paramFormUuid } = useParams() as ParamTypes;
-  const [state, dispatch] = useReducer(reducer, { ...initialState });
+  const [state, dispatch] = useReducer(reducer, {
+    ...initialWorkflowState,
+    ...initialActions,
+  });
 
   const actions = useMemo(
     () => ({
+      initializeWorkflowState: (activeFormUuid) =>
+        dispatch({ type: "INITIALIZE_WORKFLOW_STATE", activeFormUuid }),
       addPatient: (patientUuid) =>
         dispatch({ type: "ADD_PATIENT", patientUuid }),
       openPatientSearch: () => dispatch({ type: "OPEN_PATIENT_SEARCH" }),
@@ -47,18 +63,35 @@ const FormWorkflowProvider = ({ children }) => {
   );
 
   // if formUuid isn't a part of state yet, grab it from the url params
+  // this is the entry into the workflow system
   useEffect(() => {
-    if (!state.formUuid && paramFormUuid) {
-      dispatch({ type: "UPDATE_FORM_UUID", formUuid: paramFormUuid });
+    if (state?.workflowState === null && paramFormUuid) {
+      actions.initializeWorkflowState(paramFormUuid);
     }
-  }, [paramFormUuid, state.formUuid]);
-
-  useEffect(() => {
-    actions.openPatientSearch();
-  }, [actions]);
+  }, [paramFormUuid, state?.workflowState, actions]);
 
   return (
-    <FormWorkflowContext.Provider value={{ ...state, ...actions }}>
+    <FormWorkflowContext.Provider
+      value={{
+        ...state,
+        ...actions,
+        workflowState:
+          state.forms?.[state.activeFormUuid]?.workflowState ??
+          initialWorkflowState.workflowState,
+        activePatientUuid:
+          state.forms?.[state.activeFormUuid]?.activePatientUuid ??
+          initialWorkflowState.activePatientUuid,
+        activeEncounterUuid:
+          state.forms?.[state.activeFormUuid]?.activeEncounterUuid ??
+          initialWorkflowState.activeEncounterUuid,
+        patientUuids:
+          state.forms?.[state.activeFormUuid]?.patientUuids ??
+          initialWorkflowState.patientUuids,
+        encounters:
+          state.forms?.[state.activeFormUuid]?.encounters ??
+          initialWorkflowState.encounters,
+      }}
+    >
       {children}
     </FormWorkflowContext.Provider>
   );

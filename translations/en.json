@@ -9,6 +9,7 @@
   "goToForm": "Go To Form",
   "noFormsFound": "No Forms To Show",
   "noFormsFoundMessage": "No forms could be found for this category. Please double check the form concept uuids and access permissions.",
+  "resumeSession": "Resume Session",
   "selectPatientFirst": "Please select a patient first",
   "startGroupSession": "Start Group Session"
 }
