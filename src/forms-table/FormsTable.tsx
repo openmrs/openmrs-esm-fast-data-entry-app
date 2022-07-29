@@ -19,7 +19,7 @@ import { Link } from "react-router-dom";
 import EmptyState from "../empty-state/EmptyState";
 import styles from "./styles.scss";
 
-const FormsTable = ({ rows, error, isLoading }) => {
+const FormsTable = ({ rows, error, isLoading, activeForms }) => {
   const { t } = useTranslation();
 
   const formsHeader = [
@@ -39,7 +39,13 @@ const FormsTable = ({ rows, error, isLoading }) => {
 
   const augmenteRows = rows?.map((row) => ({
     ...row,
-    actions: <Link to={row.uuid}>{t("fillForm", "Fill Form")}</Link>,
+    actions: (
+      <Link to={row.uuid}>
+        {activeForms.includes(row.uuid)
+          ? t("resumeSession", "Resume Session")
+          : t("fillForm", "Fill Form")}
+      </Link>
+    ),
     actions2: (
       <Link to="#" className={styles.inactiveLink}>
         {t("startGroupSession", "Start Group Session")}

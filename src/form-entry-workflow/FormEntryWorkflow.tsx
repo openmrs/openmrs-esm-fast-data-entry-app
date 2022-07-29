@@ -21,7 +21,7 @@ const formStore = getGlobalStore("ampath-form-state");
 
 const WorkflowNavigationButtons = () => {
   const {
-    formUuid,
+    activeFormUuid,
     submitForReview,
     submitForNext,
     workflowState,
@@ -29,9 +29,11 @@ const WorkflowNavigationButtons = () => {
   } = useContext(FormWorkflowContext);
   const history = useHistory();
   const store = useStore(formStore);
-  const formState = store[formUuid];
+  const formState = store[activeFormUuid];
   const navigationDisabled = formState !== "ready";
   const { t } = useTranslation();
+
+  if (!workflowState) return null;
 
   return (
     <div className={styles.rightPanelActionButtons}>
@@ -70,7 +72,7 @@ const FormWorkspace = () => {
     activePatientUuid,
     activeEncounterUuid,
     saveEncounter,
-    formUuid,
+    activeFormUuid,
   } = useContext(FormWorkflowContext);
   const { t } = useTranslation();
 
@@ -94,7 +96,7 @@ const FormWorkspace = () => {
               patientUuid={activePatientUuid}
               encounterUuid={activeEncounterUuid}
               {...{
-                formUuid,
+                formUuid: activeFormUuid,
                 handlePostResponse,
               }}
             />

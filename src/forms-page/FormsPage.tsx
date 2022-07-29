@@ -6,6 +6,10 @@ import { useGetAllForms } from "../hooks";
 import FormsTable from "../forms-table";
 import styles from "./styles.scss";
 import { useTranslation } from "react-i18next";
+import {
+  fdeWorkflowStorageName,
+  fdeWorkflowStorageVersion,
+} from "../context/FormWorkflowReducer";
 
 // helper function useful for debugging
 // given a list of forms, it will organize into permissions
@@ -41,6 +45,18 @@ const FormsPage = () => {
   const { formCategories, formCategoriesToShow } = config;
   const { forms, isLoading, error } = useGetAllForms();
   const cleanRows = prepareRowsForTable(forms);
+  const savedData = localStorage.getItem(fdeWorkflowStorageName);
+  const activeForms = [];
+  if (
+    savedData &&
+    JSON.parse(savedData)?.["_storageVersion"] === fdeWorkflowStorageVersion
+  ) {
+    Object.entries(JSON.parse(savedData).forms).forEach(
+      ([formUuid, form]: [string, { [key: string]: unknown }]) => {
+        if (form.workflowState) activeForms.push(formUuid);
+      }
+    );
+  }
 
   const categoryRows = formCategoriesToShow.map((name) => {
     const category = formCategories.find((category) => category.name === name);
@@ -61,11 +77,14 @@ const FormsPage = () => {
             cleanRows ? cleanRows?.length : "??"
           })`}
         >
-          <FormsTable rows={cleanRows} {...{ error, isLoading }} />
+          <FormsTable rows={cleanRows} {...{ error, isLoading, activeForms }} />
         </Tab>
         {categoryRows?.map((category, index) => (
           <Tab label={`${category.name} (${category.rows.length})`} key={index}>
-            <FormsTable rows={category.rows} {...{ error, isLoading }} />
+            <FormsTable
+              rows={category.rows}
+              {...{ error, isLoading, activeForms }}
+            />
           </Tab>
         ))}
       </Tabs>
