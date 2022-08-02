@@ -1,5 +1,9 @@
 import { Add20, Close20 } from "@carbon/icons-react";
-import { ExtensionSlot } from "@openmrs/esm-framework";
+import {
+  ExtensionSlot,
+  interpolateUrl,
+  navigate,
+} from "@openmrs/esm-framework";
 import { Button } from "carbon-components-react";
 import React, { useContext } from "react";
 import { Link } from "react-router-dom";
@@ -7,12 +11,20 @@ import FormWorkflowContext from "../context/FormWorkflowContext";
 import styles from "./styles.scss";
 
 const PatientSearchHeader = () => {
-  const { addPatient, workflowState } = useContext(FormWorkflowContext);
+  const { addPatient, workflowState, activeFormUuid } =
+    useContext(FormWorkflowContext);
   const handleSelectPatient = (uuid) => {
     addPatient(uuid);
   };
 
   if (workflowState !== "NEW_PATIENT") return null;
+
+  const afterUrl = encodeURIComponent(
+    `\${openmrsSpaBase}/forms/${activeFormUuid}?patientUuid=\${patientUuid}`
+  );
+  const patientRegistrationUrl = interpolateUrl(
+    `\${openmrsSpaBase}/patient-registration?afterUrl=${afterUrl}`
+  );
 
   return (
     <div className={styles.searchHeaderContainer}>
@@ -30,7 +42,7 @@ const PatientSearchHeader = () => {
       </span>
       <span className={styles.padded}>or</span>
       <span>
-        <Button disabled>
+        <Button onClick={() => navigate({ to: patientRegistrationUrl })}>
           Create new patient <Add20 />
         </Button>
       </span>

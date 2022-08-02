@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useReducer } from "react";
 import reducer from "./FormWorkflowReducer";
-import { useParams } from "react-router-dom";
+import { useParams, useLocation } from "react-router-dom";
 interface ParamTypes {
   formUuid: string;
 }
@@ -35,7 +35,10 @@ const FormWorkflowContext = React.createContext({
 });
 
 const FormWorkflowProvider = ({ children }) => {
-  const { formUuid: paramFormUuid } = useParams() as ParamTypes;
+  const { formUuid } = useParams() as ParamTypes;
+  const activeFormUuid = formUuid.split("&")[0];
+  const { search } = useLocation();
+  const newPatientUuid = new URLSearchParams(search).get("patientUuid");
   const [state, dispatch] = useReducer(reducer, {
     ...initialWorkflowState,
     ...initialActions,
@@ -43,8 +46,12 @@ const FormWorkflowProvider = ({ children }) => {
 
   const actions = useMemo(
     () => ({
-      initializeWorkflowState: (activeFormUuid) =>
-        dispatch({ type: "INITIALIZE_WORKFLOW_STATE", activeFormUuid }),
+      initializeWorkflowState: ({ activeFormUuid, newPatientUuid }) =>
+        dispatch({
+          type: "INITIALIZE_WORKFLOW_STATE",
+          activeFormUuid,
+          newPatientUuid,
+        }),
       addPatient: (patientUuid) =>
         dispatch({ type: "ADD_PATIENT", patientUuid }),
       openPatientSearch: () => dispatch({ type: "OPEN_PATIENT_SEARCH" }),
@@ -65,10 +72,10 @@ const FormWorkflowProvider = ({ children }) => {
   // if formUuid isn't a part of state yet, grab it from the url params
   // this is the entry into the workflow system
   useEffect(() => {
-    if (state?.workflowState === null && paramFormUuid) {
-      actions.initializeWorkflowState(paramFormUuid);
+    if (state?.workflowState === null && activeFormUuid) {
+      actions.initializeWorkflowState({ activeFormUuid, newPatientUuid });
     }
-  }, [paramFormUuid, state?.workflowState, actions]);
+  }, [activeFormUuid, newPatientUuid, state?.workflowState, actions]);
 
   return (
     <FormWorkflowContext.Provider

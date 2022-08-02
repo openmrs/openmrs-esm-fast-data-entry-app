@@ -1,6 +1,6 @@
 import { initialWorkflowState } from "./FormWorkflowContext";
 
-export const fdeWorkflowStorageVersion = "1.0.6";
+export const fdeWorkflowStorageVersion = "1.0.12";
 export const fdeWorkflowStorageName = "openmrs:fastDataEntryWorkflowState";
 const persistData = (data) => {
   localStorage.setItem(fdeWorkflowStorageName, JSON.stringify(data));
@@ -18,18 +18,49 @@ const reducer = (state, action) => {
   switch (action.type) {
     case "INITIALIZE_WORKFLOW_STATE": {
       const savedData = localStorage.getItem(fdeWorkflowStorageName);
+      const savedDataObject = savedData ? JSON.parse(savedData) : {};
       let newState: { [key: string]: unknown } = {};
+      const newPatient = action.newPatientUuid
+        ? {
+            activePatientUuid: action.newPatientUuid,
+            workflowState: "EDIT_FORM",
+          }
+        : {};
+
       if (
         savedData &&
-        JSON.parse(savedData)?.["_storageVersion"] === fdeWorkflowStorageVersion
+        savedDataObject["_storageVersion"] === fdeWorkflowStorageVersion
       ) {
-        // there is a save data and it is still valid
+        // there is localStorage data and it is still valid
         newState = {
-          ...JSON.parse(savedData),
+          ...savedDataObject,
           activeFormUuid: action.activeFormUuid,
+          forms: {
+            ...savedDataObject.forms,
+            // initialize this particular form if it hasn't been created already
+            [action.activeFormUuid]: {
+              ...initialFormState,
+              ...savedDataObject.forms[action.activeFormUuid],
+              // if we receive activePatientUuid from a query parameter use that one
+              ...newPatient,
+              patientUuids:
+                savedDataObject.forms[action.activeFormUuid]?.patientUuids ||
+                initialFormState.patientUuids,
+            },
+          },
         };
+        if (
+          action.newPatientUuid &&
+          !newState.forms[action.activeFormUuid].patientUuids.includes(
+            action.newPatientUuid
+          )
+        ) {
+          newState.forms[action.activeFormUuid].patientUuids.push(
+            action.newPatientUuid
+          );
+        }
       } else {
-        // no save data, or we should void it
+        // no localStorage data, or we should void it
         newState = {
           ...initialWorkflowState,
           _storageVersion: fdeWorkflowStorageVersion,
