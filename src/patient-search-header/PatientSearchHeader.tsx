@@ -1,5 +1,9 @@
 import { Add20, Close20 } from "@carbon/icons-react";
-import { ExtensionSlot, navigate } from "@openmrs/esm-framework";
+import {
+  ExtensionSlot,
+  interpolateUrl,
+  navigate,
+} from "@openmrs/esm-framework";
 import { Button } from "carbon-components-react";
 import React, { useContext } from "react";
 import { Link } from "react-router-dom";
@@ -15,8 +19,12 @@ const PatientSearchHeader = () => {
 
   if (workflowState !== "NEW_PATIENT") return null;
 
-  const redirectUrl = `\${openmrsSpaBase}/forms/${activeFormUuid}`;
-  const patientRegistrationUrl = `\${openmrsSpaBase}/patient-registration?afterUrl=${redirectUrl}&includePatientUuidInAfterUrl=true`;
+  const afterUrl = encodeURIComponent(
+    `\${openmrsSpaBase}/forms/${activeFormUuid}?patientUuid=\${patientUuid}`
+  );
+  const patientRegistrationUrl = interpolateUrl(
+    `\${openmrsSpaBase}/patient-registration?afterUrl=${afterUrl}`
+  );
 
   return (
     <div className={styles.searchHeaderContainer}>

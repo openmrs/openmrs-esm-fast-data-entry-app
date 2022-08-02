@@ -1,6 +1,6 @@
 import { initialWorkflowState } from "./FormWorkflowContext";
 
-export const fdeWorkflowStorageVersion = "1.0.7";
+export const fdeWorkflowStorageVersion = "1.0.12";
 export const fdeWorkflowStorageName = "openmrs:fastDataEntryWorkflowState";
 const persistData = (data) => {
   localStorage.setItem(fdeWorkflowStorageName, JSON.stringify(data));
@@ -43,14 +43,22 @@ const reducer = (state, action) => {
               ...savedDataObject.forms[action.activeFormUuid],
               // if we receive activePatientUuid from a query parameter use that one
               ...newPatient,
-              patientUuids: [
-                ...(savedDataObject.forms[action.activeFormUuid]
-                  ?.patientUuids || initialFormState.patientUuids),
-                action.newPatientUuid || null,
-              ],
+              patientUuids:
+                savedDataObject.forms[action.activeFormUuid]?.patientUuids ||
+                initialFormState.patientUuids,
             },
           },
         };
+        if (
+          action.newPatientUuid &&
+          !newState.forms[action.activeFormUuid].patientUuids.includes(
+            action.newPatientUuid
+          )
+        ) {
+          newState.forms[action.activeFormUuid].patientUuids.push(
+            action.newPatientUuid
+          );
+        }
       } else {
         // no localStorage data, or we should void it
         newState = {
