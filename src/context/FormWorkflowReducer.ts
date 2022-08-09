@@ -213,6 +213,24 @@ const reducer = (state, action) => {
       persistData(newState);
       return newState;
     }
+    case "DESTROY_SESSION": {
+      const { [state.activeFormUuid]: activeForm, ...formRest } = state.forms;
+      const newState = {
+        ...state,
+        forms: formRest,
+        activeFormUuid: null,
+      };
+      persistData(newState);
+      return newState;
+    }
+    case "CLOSE_SESSION": {
+      const newState = {
+        ...state,
+        activeFormUuid: null,
+      };
+      persistData(newState);
+      return newState;
+    }
     default:
       return state;
   }

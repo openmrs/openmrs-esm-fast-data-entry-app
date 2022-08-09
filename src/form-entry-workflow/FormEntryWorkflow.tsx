@@ -3,8 +3,14 @@ import {
   getGlobalStore,
   useStore,
 } from "@openmrs/esm-framework";
-import { Button } from "carbon-components-react";
-import React, { useContext } from "react";
+import {
+  Button,
+  ComposedModal,
+  ModalBody,
+  ModalFooter,
+  ModalHeader,
+} from "carbon-components-react";
+import React, { useContext, useState } from "react";
 import { useHistory } from "react-router-dom";
 import FormBootstrap from "../FormBootstrap";
 import PatientCard from "../patient-card/PatientCard";
@@ -26,43 +32,71 @@ const WorkflowNavigationButtons = () => {
     submitForNext,
     workflowState,
     goToReview,
+    destroySession,
+    closeSession,
   } = useContext(FormWorkflowContext);
   const history = useHistory();
   const store = useStore(formStore);
   const formState = store[activeFormUuid];
   const navigationDisabled = formState !== "ready";
+  const [modalOpen, setModalOpen] = useState(false);
   const { t } = useTranslation();
+
+  const discard = () => {
+    destroySession();
+    setModalOpen(false);
+    history.push("/");
+  };
+
+  const saveAndClose = () => {
+    closeSession();
+    setModalOpen(false);
+    history.push("/");
+  };
 
   if (!workflowState) return null;
 
   return (
-    <div className={styles.rightPanelActionButtons}>
-      <Button
-        kind="primary"
-        onClick={() => submitForNext()}
-        disabled={navigationDisabled || workflowState === "NEW_PATIENT"}
-      >
-        {t("nextPatient", "Next Patient")}
-      </Button>
-      <Button
-        kind="secondary"
-        disabled={navigationDisabled}
-        onClick={
-          workflowState === "NEW_PATIENT"
-            ? () => goToReview()
-            : () => submitForReview()
-        }
-      >
-        {t("reviewSave", "Review & Save")}
-      </Button>
-      <Button
-        kind="tertiary"
-        onClick={() => history.push("/")}
-        disabled={navigationDisabled}
-      >
-        {t("cancel", "Cancel")}
-      </Button>
-    </div>
+    <>
+      <div className={styles.rightPanelActionButtons}>
+        formState {formState}
+        <Button
+          kind="primary"
+          onClick={() => submitForNext()}
+          disabled={navigationDisabled || workflowState === "NEW_PATIENT"}
+        >
+          {t("nextPatient", "Next Patient")}
+        </Button>
+        <Button
+          kind="secondary"
+          onClick={
+            workflowState === "NEW_PATIENT"
+              ? () => goToReview()
+              : () => submitForReview()
+          }
+        >
+          {t("reviewSave", "Review & Save")}
+        </Button>
+        <Button kind="tertiary" onClick={() => setModalOpen(true)}>
+          {t("cancel", "Cancel")}
+        </Button>
+      </div>
+      <ComposedModal open={modalOpen}>
+        <ModalHeader>Confirm</ModalHeader>
+        <ModalBody>Are you sure?</ModalBody>
+        <ModalFooter>
+          <Button kind="secondary" onClick={() => setModalOpen(false)}>
+            Cancel
+          </Button>
+          <Button kind="danger" onClick={discard}>
+            Discard
+          </Button>
+          <Button kind="primary" onClick={saveAndClose}>
+            Save Session
+          </Button>
+        </ModalFooter>
+      </ComposedModal>
+    </>
   );
 };
 
@@ -133,6 +167,7 @@ const FormEntryWorkflow = () => {
           </div>
         </>
       )}
+      WorkflowState: {workflowState}
     </>
   );
 };

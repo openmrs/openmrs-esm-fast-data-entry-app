@@ -13,6 +13,8 @@ const initialActions = {
   submitForNext: () => undefined,
   submitForReview: () => undefined,
   goToReview: () => undefined,
+  destroySession: () => undefined,
+  closeSession: () => undefined,
 };
 
 export const initialWorkflowState = {
@@ -65,6 +67,7 @@ const FormWorkflowProvider = ({ children }) => {
       editEncounter: (patientUuid) =>
         dispatch({ type: "EDIT_ENCOUNTER", patientUuid }),
       goToReview: () => dispatch({ type: "GO_TO_REVIEW" }),
+      destroySession: () => dispatch({ type: "DESTROY_SESSION" }),
     }),
     []
   );
