@@ -1,15 +1,20 @@
 {
   "actions": "Actions",
-  "casualGreeting": "hey",
+  "areYouSure": "Are you sure?",
+  "cancelExplanation": "You will lose any unsaved changes on the current form. Do you want to discard the current session?",
+  "complete": "Complete",
   "dataErrorMessage": "Something went wrong loading data from the server.",
+  "discard": "Discard",
   "errorLoadingData": "Error Loading Data",
   "fillForm": "Fill Form",
-  "formalGreeting": "hello",
   "formName": "Form Name",
   "goToForm": "Go To Form",
   "noFormsFound": "No Forms To Show",
   "noFormsFoundMessage": "No forms could be found for this category. Please double check the form concept uuids and access permissions.",
   "resumeSession": "Resume Session",
+  "saveAndComplete": "Save & Complete",
+  "saveExplanation": "Do you want to save the current form and exit the workflow?",
+  "saveSession": "Save Session",
   "selectPatientFirst": "Please select a patient first",
   "startGroupSession": "Start Group Session"
 }

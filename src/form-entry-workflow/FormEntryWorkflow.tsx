@@ -25,41 +25,92 @@ import WorkflowReview from "../workflow-review";
 
 const formStore = getGlobalStore("ampath-form-state");
 
-const WorkflowNavigationButtons = () => {
-  const {
-    activeFormUuid,
-    submitForReview,
-    submitForNext,
-    workflowState,
-    goToReview,
-    destroySession,
-    closeSession,
-  } = useContext(FormWorkflowContext);
-  const history = useHistory();
-  const store = useStore(formStore);
-  const formState = store[activeFormUuid];
-  const navigationDisabled = formState !== "ready";
-  const [modalOpen, setModalOpen] = useState(false);
+const CancelModal = ({ open, setOpen }) => {
+  const { destroySession, closeSession } = useContext(FormWorkflowContext);
   const { t } = useTranslation();
+  const history = useHistory();
 
   const discard = () => {
     destroySession();
-    setModalOpen(false);
+    setOpen(false);
     history.push("/");
   };
 
   const saveAndClose = () => {
     closeSession();
-    setModalOpen(false);
+    setOpen(false);
     history.push("/");
   };
+
+  return (
+    <ComposedModal open={open}>
+      <ModalHeader>{t("areYouSure", "Are you sure?")}</ModalHeader>
+      <ModalBody>
+        {t(
+          "cancelExplanation",
+          "You will lose any unsaved changes on the current form. Do you want to discard the current session?"
+        )}
+      </ModalBody>
+      <ModalFooter>
+        <Button kind="secondary" onClick={() => setOpen(false)}>
+          {t("cancel", "Cancel")}
+        </Button>
+        <Button kind="danger" onClick={discard}>
+          {t("discard", "Discard")}
+        </Button>
+        <Button kind="primary" onClick={saveAndClose}>
+          {t("saveSession", "Save Session")}
+        </Button>
+      </ModalFooter>
+    </ComposedModal>
+  );
+};
+
+const CompleteModal = ({ open, setOpen }) => {
+  const { submitForComplete } = useContext(FormWorkflowContext);
+  const { t } = useTranslation();
+
+  const completeSession = () => {
+    submitForComplete();
+    setOpen(false);
+  };
+
+  return (
+    <ComposedModal open={open}>
+      <ModalHeader>{t("areYouSure", "Are you sure?")}</ModalHeader>
+      <ModalBody>
+        {t(
+          "saveExplanation",
+          "Do you want to save the current form and exit the workflow?"
+        )}
+      </ModalBody>
+      <ModalFooter>
+        <Button kind="secondary" onClick={() => setOpen(false)}>
+          {t("cancel", "Cancel")}
+        </Button>
+        <Button kind="primary" onClick={completeSession}>
+          {t("complete", "Complete")}
+        </Button>
+      </ModalFooter>
+    </ComposedModal>
+  );
+};
+
+const WorkflowNavigationButtons = () => {
+  const { activeFormUuid, submitForNext, workflowState, destroySession } =
+    useContext(FormWorkflowContext);
+  const store = useStore(formStore);
+  const formState = store[activeFormUuid];
+  const navigationDisabled = formState !== "ready";
+  const [cancelModalOpen, setCancelModalOpen] = useState(false);
+  const [completeModalOpen, setCompleteModalOpen] = useState(false);
+  const { t } = useTranslation();
 
   if (!workflowState) return null;
 
   return (
     <>
       <div className={styles.rightPanelActionButtons}>
-        formState {formState}
         <Button
           kind="primary"
           onClick={() => submitForNext()}
@@ -71,31 +122,18 @@ const WorkflowNavigationButtons = () => {
           kind="secondary"
           onClick={
             workflowState === "NEW_PATIENT"
-              ? () => goToReview()
-              : () => submitForReview()
+              ? () => destroySession()
+              : () => setCompleteModalOpen(true)
           }
         >
-          {t("reviewSave", "Review & Save")}
+          {t("saveAndComplete", "Save & Complete")}
         </Button>
-        <Button kind="tertiary" onClick={() => setModalOpen(true)}>
+        <Button kind="tertiary" onClick={() => setCancelModalOpen(true)}>
           {t("cancel", "Cancel")}
         </Button>
       </div>
-      <ComposedModal open={modalOpen}>
-        <ModalHeader>Confirm</ModalHeader>
-        <ModalBody>Are you sure?</ModalBody>
-        <ModalFooter>
-          <Button kind="secondary" onClick={() => setModalOpen(false)}>
-            Cancel
-          </Button>
-          <Button kind="danger" onClick={discard}>
-            Discard
-          </Button>
-          <Button kind="primary" onClick={saveAndClose}>
-            Save Session
-          </Button>
-        </ModalFooter>
-      </ComposedModal>
+      <CancelModal open={cancelModalOpen} setOpen={setCancelModalOpen} />
+      <CompleteModal open={completeModalOpen} setOpen={setCompleteModalOpen} />
     </>
   );
 };
@@ -167,7 +205,6 @@ const FormEntryWorkflow = () => {
           </div>
         </>
       )}
-      WorkflowState: {workflowState}
     </>
   );
 };

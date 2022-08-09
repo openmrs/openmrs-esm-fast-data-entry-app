@@ -12,6 +12,7 @@ const initialActions = {
   editEncounter: (patientUuid: string | number) => undefined,
   submitForNext: () => undefined,
   submitForReview: () => undefined,
+  submitForComplete: () => undefined,
   goToReview: () => undefined,
   destroySession: () => undefined,
   closeSession: () => undefined,
@@ -64,10 +65,12 @@ const FormWorkflowProvider = ({ children }) => {
         }),
       submitForNext: () => dispatch({ type: "SUBMIT_FOR_NEXT" }),
       submitForReview: () => dispatch({ type: "SUBMIT_FOR_REVIEW" }),
+      submitForComplete: () => dispatch({ type: "SUBMIT_FOR_COMPLETE" }),
       editEncounter: (patientUuid) =>
         dispatch({ type: "EDIT_ENCOUNTER", patientUuid }),
       goToReview: () => dispatch({ type: "GO_TO_REVIEW" }),
       destroySession: () => dispatch({ type: "DESTROY_SESSION" }),
+      closeSession: () => dispatch({ type: "CLOSE_SESSION" }),
     }),
     []
   );
