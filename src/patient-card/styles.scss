@@ -4,6 +4,7 @@
 
 .cardContainer {
   padding: $spacing-05;
+  display: flex;
 }
 
 .skeletonText {
@@ -28,4 +29,16 @@
   &:hover {
     background-color: $carbon--gray-40;
   }
+}
+
+.patientInfo {
+  flex-grow: 1;
+}
+
+.statusSuccess {
+  fill: $support-02;
+}
+
+.statusWarning  {
+  fill: $support-03;
 }

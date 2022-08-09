@@ -1,3 +1,4 @@
+import { CheckmarkOutline16, WarningAlt16 } from "@carbon/icons-react";
 import { SkeletonText } from "carbon-components-react";
 import React, { useContext } from "react";
 import FormWorkflowContext from "../context/FormWorkflowContext";
@@ -18,7 +19,8 @@ const CardContainer = ({ onClick = () => undefined, active, children }) => {
 };
 
 const PatientCard = ({ patientUuid }) => {
-  const { activePatientUuid, editEncounter } = useContext(FormWorkflowContext);
+  const { activePatientUuid, editEncounter, encounters } =
+    useContext(FormWorkflowContext);
   const patient = useGetPatient(patientUuid);
   const givenName = patient?.name?.[0]?.given?.[0];
   const familyName = patient?.name?.[0]?.family;
@@ -39,13 +41,22 @@ const PatientCard = ({ patientUuid }) => {
       onClick={active ? () => undefined : () => editEncounter(patientUuid)}
       active={active}
     >
-      <div className={styles.identifier}>{identifier}</div>
-      <div
-        className={`${styles.displayName} ${
-          active && styles.activeDisplayName
-        }`}
-      >
-        {givenName} {familyName}
+      <div className={styles.patientInfo}>
+        <div className={styles.identifier}>{identifier}</div>
+        <div
+          className={`${styles.displayName} ${
+            active && styles.activeDisplayName
+          }`}
+        >
+          {givenName} {familyName}
+        </div>
+      </div>
+      <div>
+        {patientUuid in encounters ? (
+          <CheckmarkOutline16 className={styles.statusSuccess} />
+        ) : (
+          <WarningAlt16 className={styles.statusWarning} />
+        )}
       </div>
     </CardContainer>
   );
