@@ -3,8 +3,14 @@ import {
   getGlobalStore,
   useStore,
 } from "@openmrs/esm-framework";
-import { Button } from "carbon-components-react";
-import React, { useContext } from "react";
+import {
+  Button,
+  ComposedModal,
+  ModalBody,
+  ModalFooter,
+  ModalHeader,
+} from "carbon-components-react";
+import React, { useContext, useState } from "react";
 import { useHistory } from "react-router-dom";
 import FormBootstrap from "../FormBootstrap";
 import PatientCard from "../patient-card/PatientCard";
@@ -19,50 +25,116 @@ import WorkflowReview from "../workflow-review";
 
 const formStore = getGlobalStore("ampath-form-state");
 
-const WorkflowNavigationButtons = () => {
-  const {
-    activeFormUuid,
-    submitForReview,
-    submitForNext,
-    workflowState,
-    goToReview,
-  } = useContext(FormWorkflowContext);
+const CancelModal = ({ open, setOpen }) => {
+  const { destroySession, closeSession } = useContext(FormWorkflowContext);
+  const { t } = useTranslation();
   const history = useHistory();
+
+  const discard = () => {
+    destroySession();
+    setOpen(false);
+    history.push("/");
+  };
+
+  const saveAndClose = () => {
+    closeSession();
+    setOpen(false);
+    history.push("/");
+  };
+
+  return (
+    <ComposedModal open={open}>
+      <ModalHeader>{t("areYouSure", "Are you sure?")}</ModalHeader>
+      <ModalBody>
+        {t(
+          "cancelExplanation",
+          "You will lose any unsaved changes on the current form. Do you want to discard the current session?"
+        )}
+      </ModalBody>
+      <ModalFooter>
+        <Button kind="secondary" onClick={() => setOpen(false)}>
+          {t("cancel", "Cancel")}
+        </Button>
+        <Button kind="danger" onClick={discard}>
+          {t("discard", "Discard")}
+        </Button>
+        <Button kind="primary" onClick={saveAndClose}>
+          {t("saveSession", "Save Session")}
+        </Button>
+      </ModalFooter>
+    </ComposedModal>
+  );
+};
+
+const CompleteModal = ({ open, setOpen }) => {
+  const { submitForComplete } = useContext(FormWorkflowContext);
+  const { t } = useTranslation();
+
+  const completeSession = () => {
+    submitForComplete();
+    setOpen(false);
+  };
+
+  return (
+    <ComposedModal open={open}>
+      <ModalHeader>{t("areYouSure", "Are you sure?")}</ModalHeader>
+      <ModalBody>
+        {t(
+          "saveExplanation",
+          "Do you want to save the current form and exit the workflow?"
+        )}
+      </ModalBody>
+      <ModalFooter>
+        <Button kind="secondary" onClick={() => setOpen(false)}>
+          {t("cancel", "Cancel")}
+        </Button>
+        <Button kind="primary" onClick={completeSession}>
+          {t("complete", "Complete")}
+        </Button>
+      </ModalFooter>
+    </ComposedModal>
+  );
+};
+
+const WorkflowNavigationButtons = () => {
+  const { activeFormUuid, submitForNext, workflowState, destroySession } =
+    useContext(FormWorkflowContext);
   const store = useStore(formStore);
   const formState = store[activeFormUuid];
   const navigationDisabled = formState !== "ready";
+  const [cancelModalOpen, setCancelModalOpen] = useState(false);
+  const [completeModalOpen, setCompleteModalOpen] = useState(false);
   const { t } = useTranslation();
 
   if (!workflowState) return null;
 
   return (
-    <div className={styles.rightPanelActionButtons}>
-      <Button
-        kind="primary"
-        onClick={() => submitForNext()}
-        disabled={navigationDisabled || workflowState === "NEW_PATIENT"}
-      >
-        {t("nextPatient", "Next Patient")}
-      </Button>
-      <Button
-        kind="secondary"
-        disabled={navigationDisabled}
-        onClick={
-          workflowState === "NEW_PATIENT"
-            ? () => goToReview()
-            : () => submitForReview()
-        }
-      >
-        {t("reviewSave", "Review & Save")}
-      </Button>
-      <Button
-        kind="tertiary"
-        onClick={() => history.push("/")}
-        disabled={navigationDisabled}
-      >
-        {t("cancel", "Cancel")}
-      </Button>
-    </div>
+    <>
+      <div className={styles.rightPanelActionButtons}>
+        <Button
+          kind="primary"
+          onClick={() => submitForNext()}
+          disabled={navigationDisabled || workflowState === "NEW_PATIENT"}
+        >
+          {t("nextPatient", "Next Patient")}
+        </Button>
+        <Button
+          kind="secondary"
+          onClick={
+            workflowState === "NEW_PATIENT"
+              ? () => destroySession()
+              : () => setCompleteModalOpen(true)
+          }
+        >
+          {t("saveAndComplete", "Save & Complete")}
+        </Button>
+        <Button kind="tertiary" onClick={() => setCancelModalOpen(true)}>
+          {t("cancel", "Cancel")}
+        </Button>
+      </div>
+      <CancelModal open={cancelModalOpen} setOpen={setCancelModalOpen} />
+      <CompleteModal open={completeModalOpen} setOpen={setCompleteModalOpen} />
+    </>
   );
 };
 

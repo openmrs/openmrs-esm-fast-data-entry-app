@@ -1,3 +1,4 @@
+import { navigate } from "@openmrs/esm-framework";
 import { initialWorkflowState } from "./FormWorkflowContext";
 
 export const fdeWorkflowStorageVersion = "1.0.12";
@@ -111,32 +112,48 @@ const reducer = (state, action) => {
       return newState;
     }
     case "SAVE_ENCOUNTER": {
-      const newState = {
-        ...state,
-        forms: {
-          ...state.forms,
-          [state.activeFormUuid]: {
-            ...state.forms[state.activeFormUuid],
-            encounters: {
-              ...state.forms[state.activeFormUuid].encounters,
-              [state.forms[state.activeFormUuid].activePatientUuid]:
-                action.encounterUuid,
+      if (
+        state.forms[state.activeFormUuid].workflowState ===
+        "SUBMIT_FOR_COMPLETE"
+      ) {
+        const { [state.activeFormUuid]: activeForm, ...formRest } = state.forms;
+        const newState = {
+          ...state,
+          forms: formRest,
+          activeFormUuid: null,
+        };
+        persistData(newState);
+        // eslint-disable-next-line
+        navigate({ to: "${openmrsSpaBase}/forms" });
+        return newState;
+      } else {
+        const newState = {
+          ...state,
+          forms: {
+            ...state.forms,
+            [state.activeFormUuid]: {
+              ...state.forms[state.activeFormUuid],
+              encounters: {
+                ...state.forms[state.activeFormUuid].encounters,
+                [state.forms[state.activeFormUuid].activePatientUuid]:
+                  action.encounterUuid,
+              },
+              activePatientUuid: null,
+              activeEncounterUuid: null,
+              workflowState:
+                state.forms[state.activeFormUuid].workflowState ===
+                "SUBMIT_FOR_NEXT"
+                  ? "NEW_PATIENT"
+                  : state.forms[state.activeFormUuid].workflowState ===
+                    "SUBMIT_FOR_REVIEW"
+                  ? "REVIEW"
+                  : state.forms[state.activeFormUuid].workflowState,
             },
-            activePatientUuid: null,
-            activeEncounterUuid: null,
-            workflowState:
-              state.forms[state.activeFormUuid].workflowState ===
-              "SUBMIT_FOR_NEXT"
-                ? "NEW_PATIENT"
-                : state.forms[state.activeFormUuid].workflowState ===
-                  "SUBMIT_FOR_REVIEW"
-                ? "REVIEW"
-                : state.forms[state.activeFormUuid].workflowState,
           },
-        },
-      };
-      persistData(newState);
-      return newState;
+        };
+        persistData(newState);
+        return newState;
+      }
     }
     case "EDIT_ENCOUNTER": {
       const newState = {
@@ -197,6 +214,27 @@ const reducer = (state, action) => {
           },
         },
       };
+    case "SUBMIT_FOR_COMPLETE":
+      // this state should not be persisted
+      window.dispatchEvent(
+        new CustomEvent("ampath-form-action", {
+          detail: {
+            formUuid: state.activeFormUuid,
+            patientUuid: state.forms[state.activeFormUuid].activePatientUuid,
+            action: "onSubmit",
+          },
+        })
+      );
+      return {
+        ...state,
+        forms: {
+          ...state.forms,
+          [state.activeFormUuid]: {
+            ...state.forms[state.activeFormUuid],
+            workflowState: "SUBMIT_FOR_COMPLETE",
+          },
+        },
+      };
     case "GO_TO_REVIEW": {
       const newState = {
         ...state,
@@ -209,6 +247,24 @@ const reducer = (state, action) => {
             workflowState: "REVIEW",
           },
         },
+      };
+      persistData(newState);
+      return newState;
+    }
+    case "DESTROY_SESSION": {
+      const { [state.activeFormUuid]: activeForm, ...formRest } = state.forms;
+      const newState = {
+        ...state,
+        forms: formRest,
+        activeFormUuid: null,
+      };
+      persistData(newState);
+      return newState;
+    }
+    case "CLOSE_SESSION": {
+      const newState = {
+        ...state,
+        activeFormUuid: null,
       };
       persistData(newState);
       return newState;
