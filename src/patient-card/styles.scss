@@ -1,9 +1,10 @@
-@import "~@openmrs/esm-styleguide/src/vars";
-@import "~carbon-components/src/globals/scss/vars";
-@import "~carbon-components/src/globals/scss/mixins";
+@use '@carbon/styles/scss/spacing';
+@use '@carbon/colors';
+// @use '@carbon/styles/scss/type';
+// @import '~@openmrs/esm-styleguide/src/vars';
 
 .cardContainer {
-  padding: $spacing-05;
+  padding: spacing.$spacing-05;
   display: flex;
 }
 
@@ -22,12 +23,12 @@
 }
 
 .activeDisplayName {
-  color: $carbon--blue-50;
+  color: colors.$blue-50;
 }
 
 .inactiveCard {
   &:hover {
-    background-color: $carbon--gray-40;
+    background-color: colors.$gray-30;
   }
 }
 
@@ -36,9 +37,9 @@
 }
 
 .statusSuccess {
-  fill: $support-02;
+  fill: colors.$green-60;
 }
 
 .statusWarning  {
-  fill: $support-03;
+  fill: colors.$yellow-40;
 }

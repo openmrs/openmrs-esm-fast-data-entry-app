@@ -1,5 +1,5 @@
 import { useConfig } from "@openmrs/esm-framework";
-import { Tab, Tabs } from "carbon-components-react";
+import { Tab, Tabs, TabList, TabPanels, TabPanel } from "@carbon/react";
 import React from "react";
 import { Config } from "../config-schema";
 import { useGetAllForms } from "../hooks";
@@ -71,22 +71,35 @@ const FormsPage = () => {
   return (
     <div className={styles.mainContent}>
       <h3 className={styles.pageTitle}>{t("forms", "Forms")}</h3>
-      <Tabs type="container">
-        <Tab
-          label={`${t("allForms", "All Forms")} (${
-            cleanRows ? cleanRows?.length : "??"
-          })`}
-        >
-          <FormsTable rows={cleanRows} {...{ error, isLoading, activeForms }} />
-        </Tab>
-        {categoryRows?.map((category, index) => (
-          <Tab label={`${category.name} (${category.rows.length})`} key={index}>
+      <Tabs>
+        <TabList>
+          <Tab label={t("allForms", "All Forms")}>
+            {`${t("allForms", "All Forms")} (${
+              cleanRows ? cleanRows?.length : "??"
+            })`}
+          </Tab>
+          {categoryRows?.map((category, index) => (
+            <Tab label={category.name} key={index}>
+              {`${category.name} (${category.rows.length})`}
+            </Tab>
+          ))}
+        </TabList>
+        <TabPanels>
+          <TabPanel>
             <FormsTable
-              rows={category.rows}
+              rows={cleanRows}
               {...{ error, isLoading, activeForms }}
             />
-          </Tab>
-        ))}
+          </TabPanel>
+          {categoryRows?.map((category, index) => (
+            <TabPanel key={index}>
+              <FormsTable
+                rows={category.rows}
+                {...{ error, isLoading, activeForms }}
+              />
+            </TabPanel>
+          ))}
+        </TabPanels>
       </Tabs>
     </div>
   );
