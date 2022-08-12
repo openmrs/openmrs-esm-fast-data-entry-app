@@ -48,7 +48,7 @@ const PatientSearchHeader = () => {
       </span>
       <span style={{ flexGrow: 1 }} />
       <span>
-        <Link to="">
+        <Link to="../">
           <Button kind="ghost">
             Cancel <Close size={20} />
           </Button>

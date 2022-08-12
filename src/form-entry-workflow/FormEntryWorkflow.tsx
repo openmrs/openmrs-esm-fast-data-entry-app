@@ -30,16 +30,16 @@ const CancelModal = ({ open, setOpen }) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
-  const discard = () => {
-    destroySession();
+  const discard = async () => {
+    await destroySession();
     setOpen(false);
-    navigate("/");
+    navigate("../");
   };
 
-  const saveAndClose = () => {
-    closeSession();
+  const saveAndClose = async () => {
+    await closeSession();
     setOpen(false);
-    navigate("/");
+    navigate("../");
   };
 
   return (
