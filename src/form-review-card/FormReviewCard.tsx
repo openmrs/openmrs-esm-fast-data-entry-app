@@ -1,4 +1,4 @@
-import { Accordion, AccordionItem, Button } from "carbon-components-react";
+import { Accordion, AccordionItem, Button } from "@carbon/react";
 import React, { useContext } from "react";
 import { useTranslation } from "react-i18next";
 import FormWorkflowContext from "../context/FormWorkflowContext";

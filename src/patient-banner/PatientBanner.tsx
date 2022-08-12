@@ -1,5 +1,5 @@
 import { age, ExtensionSlot } from "@openmrs/esm-framework";
-import { SkeletonPlaceholder, SkeletonText } from "carbon-components-react";
+import { SkeletonPlaceholder, SkeletonText } from "@carbon/react";
 import React, { useContext } from "react";
 import styles from "./styles.scss";
 import { useTranslation } from "react-i18next";

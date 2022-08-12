@@ -12,7 +12,7 @@ import {
   TableToolbar,
   TableToolbarContent,
   TableToolbarSearch,
-} from "carbon-components-react";
+} from "@carbon/react";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";

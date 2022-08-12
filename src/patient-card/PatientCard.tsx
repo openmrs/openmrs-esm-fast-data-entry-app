@@ -1,5 +1,5 @@
-import { CheckmarkOutline16, WarningAlt16 } from "@carbon/icons-react";
-import { SkeletonText } from "carbon-components-react";
+import { CheckmarkOutline, WarningAlt } from "@carbon/react/icons";
+import { SkeletonText } from "@carbon/react";
 import React, { useContext } from "react";
 import FormWorkflowContext from "../context/FormWorkflowContext";
 import useGetPatient from "../hooks/useGetPatient";
@@ -53,9 +53,9 @@ const PatientCard = ({ patientUuid }) => {
       </div>
       <div>
         {patientUuid in encounters ? (
-          <CheckmarkOutline16 className={styles.statusSuccess} />
+          <CheckmarkOutline size={16} className={styles.statusSuccess} />
         ) : (
-          <WarningAlt16 className={styles.statusWarning} />
+          <WarningAlt size={16} className={styles.statusWarning} />
         )}
       </div>
     </CardContainer>

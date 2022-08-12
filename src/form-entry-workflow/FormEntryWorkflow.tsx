@@ -9,9 +9,9 @@ import {
   ModalBody,
   ModalFooter,
   ModalHeader,
-} from "carbon-components-react";
+} from "@carbon/react";
 import React, { useContext, useState } from "react";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import FormBootstrap from "../FormBootstrap";
 import PatientCard from "../patient-card/PatientCard";
 import PatientBanner from "../patient-banner";
@@ -28,18 +28,18 @@ const formStore = getGlobalStore("ampath-form-state");
 const CancelModal = ({ open, setOpen }) => {
   const { destroySession, closeSession } = useContext(FormWorkflowContext);
   const { t } = useTranslation();
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const discard = () => {
     destroySession();
     setOpen(false);
-    history.push("/");
+    navigate("/");
   };
 
   const saveAndClose = () => {
     closeSession();
     setOpen(false);
-    history.push("/");
+    navigate("/");
   };
 
   return (

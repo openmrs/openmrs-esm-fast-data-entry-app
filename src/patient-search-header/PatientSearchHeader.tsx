@@ -1,10 +1,10 @@
-import { Add20, Close20 } from "@carbon/icons-react";
+import { Add, Close } from "@carbon/react/icons";
 import {
   ExtensionSlot,
   interpolateUrl,
   navigate,
 } from "@openmrs/esm-framework";
-import { Button } from "carbon-components-react";
+import { Button } from "@carbon/react";
 import React, { useContext } from "react";
 import { Link } from "react-router-dom";
 import FormWorkflowContext from "../context/FormWorkflowContext";
@@ -43,14 +43,14 @@ const PatientSearchHeader = () => {
       <span className={styles.padded}>or</span>
       <span>
         <Button onClick={() => navigate({ to: patientRegistrationUrl })}>
-          Create new patient <Add20 />
+          Create new patient <Add size={20} />
         </Button>
       </span>
       <span style={{ flexGrow: 1 }} />
       <span>
         <Link to="">
           <Button kind="ghost">
-            Cancel <Close20 />
+            Cancel <Close size={20} />
           </Button>
         </Link>
       </span>
