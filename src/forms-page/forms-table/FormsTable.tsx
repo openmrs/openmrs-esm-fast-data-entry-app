@@ -16,10 +16,16 @@ import {
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
-import EmptyState from "../empty-state/EmptyState";
+import EmptyState from "../../empty-state/EmptyState";
 import styles from "./styles.scss";
 
-const FormsTable = ({ rows, error, isLoading, activeForms }) => {
+const FormsTable = ({
+  rows,
+  error,
+  isLoading,
+  activeForms,
+  activeGroupForms,
+}) => {
   const { t } = useTranslation();
 
   const formsHeader = [
@@ -40,15 +46,17 @@ const FormsTable = ({ rows, error, isLoading, activeForms }) => {
   const augmenteRows = rows?.map((row) => ({
     ...row,
     actions: (
-      <Link to={row.uuid}>
+      <Link to={`form/${row.uuid}`}>
         {activeForms.includes(row.uuid)
           ? t("resumeSession", "Resume Session")
           : t("fillForm", "Fill Form")}
       </Link>
     ),
     actions2: (
-      <Link to="#" className={styles.inactiveLink}>
-        {t("startGroupSession", "Start Group Session")}
+      <Link to={`groupform/${row.uuid}`}>
+        {activeGroupForms.includes(row.uuid)
+          ? t("resumeGroupSession", "Resume Group Session")
+          : t("startGroupSession", "Start Group Session")}
       </Link>
     ),
   }));

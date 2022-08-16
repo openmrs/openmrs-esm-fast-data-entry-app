@@ -7,8 +7,9 @@ import {
 import { Button } from "@carbon/react";
 import React, { useContext } from "react";
 import { Link } from "react-router-dom";
-import FormWorkflowContext from "../context/FormWorkflowContext";
+import FormWorkflowContext from "../../context/FormWorkflowContext";
 import styles from "./styles.scss";
+import { useTranslation } from "react-i18next";
 
 const PatientSearchHeader = () => {
   const { addPatient, workflowState, activeFormUuid } =
@@ -16,11 +17,12 @@ const PatientSearchHeader = () => {
   const handleSelectPatient = (uuid) => {
     addPatient(uuid);
   };
+  const { t } = useTranslation();
 
   if (workflowState !== "NEW_PATIENT") return null;
 
   const afterUrl = encodeURIComponent(
-    `\${openmrsSpaBase}/forms/${activeFormUuid}?patientUuid=\${patientUuid}`
+    `\${openmrsSpaBase}/forms/form/${activeFormUuid}?patientUuid=\${patientUuid}`
   );
   const patientRegistrationUrl = interpolateUrl(
     `\${openmrsSpaBase}/patient-registration?afterUrl=${afterUrl}`
@@ -28,7 +30,7 @@ const PatientSearchHeader = () => {
 
   return (
     <div className={styles.searchHeaderContainer}>
-      <span className={styles.padded}>Next patient:</span>
+      <span className={styles.padded}>{t("nextPatient", "Next patient")}:</span>
       <span className={styles.searchBarWrapper}>
         <ExtensionSlot
           extensionSlotName="patient-search-bar-slot"
@@ -40,17 +42,17 @@ const PatientSearchHeader = () => {
           }}
         />
       </span>
-      <span className={styles.padded}>or</span>
+      <span className={styles.padded}>{t("or", "or")}</span>
       <span>
         <Button onClick={() => navigate({ to: patientRegistrationUrl })}>
-          Create new patient <Add size={20} />
+          {t("createNewPatient", "Create new patient")} <Add size={20} />
         </Button>
       </span>
       <span style={{ flexGrow: 1 }} />
       <span>
         <Link to="../">
           <Button kind="ghost">
-            Cancel <Close size={20} />
+            {t("cancel", "Cancel")} <Close size={20} />
           </Button>
         </Link>
       </span>

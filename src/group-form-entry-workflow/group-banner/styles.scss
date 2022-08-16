@@ -1,0 +1,45 @@
+@use '@carbon/styles/scss/spacing';
+// @use '@carbon/colors';
+@use '@carbon/styles/scss/type';
+@import '~@openmrs/esm-styleguide/src/vars';
+
+.container {
+  height: spacing.$spacing-11;
+  display: flex;
+  align-items: center;
+  background-color: $ui-02;
+  border-top: 0.0125rem solid $ui-03;
+  border-bottom: 0.0125rem solid $ui-03;
+  padding: 0 spacing.$spacing-05;
+}
+
+.photoPlaceholder {
+  height: 48px;
+  width: 48px;
+}
+
+.patientName {
+  @include type.type-style('heading-03');
+  font-weight: 600;
+}
+
+.patientInfoContent {
+  width: 100%;
+  margin-left: 1rem;
+}
+
+.patientInfoRow {
+  display: flex;
+  align-items: center;
+  & > button {
+    min-height: 2rem;
+  }
+  @include type.type-style('body-compact-02');
+  color: $text-02;
+  column-gap: 0.8rem;
+}
+
+.patientEditBtn {
+  color: $ui-05;
+  margin: spacing.$spacing-03;
+}

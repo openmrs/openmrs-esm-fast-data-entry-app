@@ -1,8 +1,8 @@
 import { Accordion, AccordionItem, Button } from "@carbon/react";
 import React, { useContext } from "react";
 import { useTranslation } from "react-i18next";
-import FormWorkflowContext from "../context/FormWorkflowContext";
-import { useGetPatient, useGetEncounter } from "../hooks";
+import FormWorkflowContext from "../../context/FormWorkflowContext";
+import { useGetPatient, useGetEncounter } from "../../hooks";
 import styles from "./styles.scss";
 
 const FormReviewCard = ({ patientUuid }) => {

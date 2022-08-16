@@ -9,24 +9,26 @@ import {
   ModalBody,
   ModalFooter,
   ModalHeader,
+  Layer,
+  Tile,
+  TextInput,
+  Dropdown,
 } from "@carbon/react";
 import React, { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import FormBootstrap from "../FormBootstrap";
 import PatientCard from "../patient-card/PatientCard";
+import GroupBanner from "./group-banner";
 import styles from "./styles.scss";
-import PatientSearchHeader from "./patient-search-header";
 import { useTranslation } from "react-i18next";
-import FormWorkflowContext, {
-  FormWorkflowProvider,
-} from "../context/FormWorkflowContext";
-import WorkflowReview from "./workflow-review";
-import PatientBanner from "./patient-banner";
+import GroupFormWorkflowContext, {
+  GroupFormWorkflowProvider,
+} from "../context/GroupFormWorkflowContext";
+import GroupSearchHeader from "./group-search-header";
 
 const formStore = getGlobalStore("ampath-form-state");
 
 const CancelModal = ({ open, setOpen }) => {
-  const { destroySession, closeSession } = useContext(FormWorkflowContext);
+  const { destroySession, closeSession } = useContext(GroupFormWorkflowContext);
   const { t } = useTranslation();
   const navigate = useNavigate();
 
@@ -67,7 +69,7 @@ const CancelModal = ({ open, setOpen }) => {
 };
 
 const CompleteModal = ({ open, setOpen }) => {
-  const { submitForComplete } = useContext(FormWorkflowContext);
+  const { submitForComplete } = useContext(GroupFormWorkflowContext);
   const { t } = useTranslation();
 
   const completeSession = () => {
@@ -98,7 +100,7 @@ const CompleteModal = ({ open, setOpen }) => {
 
 const WorkflowNavigationButtons = () => {
   const { activeFormUuid, submitForNext, workflowState, destroySession } =
-    useContext(FormWorkflowContext);
+    useContext(GroupFormWorkflowContext);
   const store = useStore(formStore);
   const formState = store[activeFormUuid];
   const navigationDisabled = formState !== "ready";
@@ -138,14 +140,42 @@ const WorkflowNavigationButtons = () => {
   );
 };
 
-const FormWorkspace = () => {
+const practitioners = ["Jeff", "Martha"];
+
+const SessionDetails = () => {
+  return (
+    <div className={styles.formSection}>
+      <h4>1. Session details</h4>
+      <div>
+        <p>All fields are required unless marked optional</p>
+      </div>
+      <Layer>
+        <Tile className={styles.formSectionTile}>
+          <div
+            style={{ display: "flex", flexDirection: "column", rowGap: "1rem" }}
+          >
+            <Dropdown
+              id="dropdown"
+              titleText="Practitioner Name"
+              label="Select a practitioner"
+              items={practitioners}
+            />
+            <TextInput id="text" type="text" labelText="Session Name" />
+          </div>
+        </Tile>
+      </Layer>
+    </div>
+  );
+};
+
+const GroupFormWorkspace = () => {
   const {
     patientUuids,
     activePatientUuid,
     activeEncounterUuid,
     saveEncounter,
     activeFormUuid,
-  } = useContext(FormWorkflowContext);
+  } = useContext(GroupFormWorkflowContext);
   const { t } = useTranslation();
 
   const handlePostResponse = (encounter) => {
@@ -156,52 +186,45 @@ const FormWorkspace = () => {
 
   return (
     <div className={styles.workspace}>
-      {!patientUuids.length && (
-        <div className={styles.selectPatientMessage}>
-          {t("selectPatientFirst", "Please select a patient first")}
-        </div>
-      )}
-      {!!patientUuids.length && (
-        <div className={styles.formMainContent}>
-          <div className={styles.formContainer}>
-            <FormBootstrap
+      <div className={styles.formMainContent}>
+        <div className={styles.formContainer}>
+          <SessionDetails />
+          {/* <FormBootstrap
               patientUuid={activePatientUuid}
               encounterUuid={activeEncounterUuid}
               {...{
                 formUuid: activeFormUuid,
                 handlePostResponse,
               }}
-            />
-          </div>
-          <div className={styles.rightPanel}>
-            <h4>Forms filled</h4>
-            <div className={styles.patientCardsSection}>
-              {patientUuids.map((patientUuid) => (
-                <PatientCard patientUuid={patientUuid} key={patientUuid} />
-              ))}
-            </div>
-            <WorkflowNavigationButtons />
-          </div>
+            /> */}
         </div>
-      )}
+        <div className={styles.rightPanel}>
+          <h4>Forms filled</h4>
+          <div className={styles.patientCardsSection}>
+            {patientUuids?.map((patientUuid) => (
+              <PatientCard patientUuid={patientUuid} key={patientUuid} />
+            ))}
+          </div>
+          <WorkflowNavigationButtons />
+        </div>
+      </div>
     </div>
   );
 };
 
-const FormEntryWorkflow = () => {
-  const { workflowState } = useContext(FormWorkflowContext);
+const GroupFormEntryWorkflow = () => {
+  const { workflowState } = useContext(GroupFormWorkflowContext);
   return (
     <>
       <div className={styles.breadcrumbsContainer}>
         <ExtensionSlot extensionSlotName="breadcrumbs-slot" />
       </div>
-      {workflowState === "REVIEW" && <WorkflowReview />}
       {workflowState !== "REVIEW" && (
         <>
-          <PatientSearchHeader />
-          <PatientBanner />
+          <GroupSearchHeader />
+          <GroupBanner />
           <div className={styles.workspaceWrapper}>
-            <FormWorkspace />
+            <GroupFormWorkspace />
           </div>
         </>
       )}
@@ -209,12 +232,12 @@ const FormEntryWorkflow = () => {
   );
 };
 
-const FormEntryWorkflowWrapper = () => {
+const GroupFormEntryWorkflowWrapper = () => {
   return (
-    <FormWorkflowProvider>
-      <FormEntryWorkflow />
-    </FormWorkflowProvider>
+    <GroupFormWorkflowProvider>
+      <GroupFormEntryWorkflow />
+    </GroupFormWorkflowProvider>
   );
 };
 
-export default FormEntryWorkflowWrapper;
+export default GroupFormEntryWorkflowWrapper;
