@@ -1,38 +1,39 @@
-@import "~@openmrs/esm-styleguide/src/vars";
-@import "~carbon-components/src/globals/scss/vars";
-@import "~carbon-components/src/globals/scss/mixins";
+@use '@carbon/styles/scss/spacing';
+// @use '@carbon/colors';
+@use '@carbon/styles/scss/type';
+@import '~@openmrs/esm-styleguide/src/vars';
 
 
 .formReviewCard {
   background-color: $ui-02;
-  padding: $spacing-02;
+  padding: spacing.$spacing-02;
 }
 
-.formReviewCard :global(.bx--accordion) :global(.bx--accordion__item) {
+.formReviewCard :global(.cds--accordion) :global(.cds--accordion__item) {
   border: none;
 }
 
-.formReviewCard :global(.bx--accordion__title) {
+.formReviewCard :global(.cds--accordion__title) {
   display: flex;
   align-items: baseline;
-  column-gap: $spacing-05;
+  column-gap: spacing.$spacing-05;
 }
 
-.formReviewCard :global(.bx--accordion__content) {
-  padding: $spacing-03;
+.formReviewCard :global(.cds--accordion__content) {
+  padding: spacing.$spacing-03;
 }
 
 .dataField {
-  @include carbon--type-style('code-02');
+  @include type.type-style('code-02');
   background-color: $ui-01;
-  padding: $spacing-03;
+  padding: spacing.$spacing-03;
 }
 
 .displayName {
-  @include carbon--type-style('productive-heading-02');
+  @include type.type-style('heading-02');
   font-weight: bold;
 }
 
 .identifier {
-  @include carbon--type-style('body-short-01')
+  @include type.type-style('body-compact-01')
 }
