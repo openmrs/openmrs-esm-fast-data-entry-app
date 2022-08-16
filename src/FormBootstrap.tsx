@@ -1,5 +1,5 @@
-import React from "react";
-import { ExtensionSlot } from "@openmrs/esm-framework";
+import React, { useEffect } from "react";
+import { detach, ExtensionSlot } from "@openmrs/esm-framework";
 import useGetPatient from "./hooks/useGetPatient";
 
 export interface Order {
@@ -118,6 +118,9 @@ const FormBootstrap = ({
 }: FormParams) => {
   const patient = useGetPatient(patientUuid);
 
+  useEffect(() => {
+    return () => detach("form-widget-slot", "form-widget-slot");
+  });
   return (
     <div>
       {formUuid && patientUuid && patient && (

@@ -1,12 +1,13 @@
-@import "~@openmrs/esm-styleguide/src/vars";
-@import "~carbon-components/src/globals/scss/vars";
-@import "~carbon-components/src/globals/scss/mixins";
+@use '@carbon/styles/scss/spacing';
+@use '@carbon/colors';
+@use '@carbon/styles/scss/type';
+@import '~@openmrs/esm-styleguide/src/vars';
 
 
 .breadcrumbsContainer > div > div > nav {
   background-color: $ui-02;
-  padding: $spacing-04 $spacing-05;
-  height: $spacing-08;
+  padding: spacing.$spacing-04 spacing.$spacing-05;
+  height: spacing.$spacing-08;
 }
 
 .workspaceWrapper {
@@ -19,16 +20,16 @@
 }
 
 .selectPatientMessage {
-  @include carbon--type-style('productive-heading-03');
-  margin: $spacing-07;
+  @include type.type-style('productive-heading-03');
+  margin: spacing.$spacing-07;
   text-align: center;
 }
 
 .formMainContent {
   display: flex;
   text-align: center;
-  margin-top: $spacing-05;
-  column-gap: $spacing-05;
+  margin-top: spacing.$spacing-05;
+  column-gap: spacing.$spacing-05;
 }
 
 .formContainer {
@@ -37,7 +38,7 @@
   overflow-y: scroll;
 }
 
-.formContainer :global(.bx--form-item) :global(.question-area) {
+.formContainer :global(.cds--form-item) :global(.question-area) {
   max-width: 100%;
 }
 
@@ -48,14 +49,14 @@
 }
 
 .patientCardsSection {
-  margin: $spacing-05 0;
-  border-bottom: 1px solid $carbon--gray-10;
+  margin: spacing.$spacing-05 0;
+  border-bottom: 1px solid colors.$gray-10;
 }
 
 .rightPanelActionButtons {
   display: flex;
   flex-direction: column;
-  row-gap: $spacing-03;
+  row-gap: spacing.$spacing-03;
   & button {
     width: 100%;
     text-decoration: "none";
