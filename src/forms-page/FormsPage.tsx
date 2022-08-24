@@ -88,7 +88,9 @@ const FormsPage = () => {
 
   return (
     <div className={styles.mainContent}>
-      <h3 className={styles.pageTitle}>{t("forms", "Forms")}</h3>
+      <h3 className={styles.pageTitle}>
+        {t("fastDataEntry", "Fast Data Entry")}
+      </h3>
       <Tabs>
         <TabList>
           <Tab label={t("allForms", "All Forms")}>

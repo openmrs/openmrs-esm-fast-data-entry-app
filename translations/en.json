@@ -8,6 +8,7 @@
   "dataErrorMessage": "Something went wrong loading data from the server.",
   "discard": "Discard",
   "errorLoadingData": "Error Loading Data",
+  "fastDataEntry": "Fast Data Entry",
   "fillForm": "Fill Form",
   "formName": "Form Name",
   "goToForm": "Go To Form",

@@ -7,7 +7,7 @@ export default function FormsAppMenuLink() {
   return (
     // eslint-disable-next-line
     <ConfigurableLink to="${openmrsSpaBase}/forms">
-      {t("formsAppMenuLink", "Forms")}
+      {t("formsAppMenuLink", "Fast Data Entry")}
     </ConfigurableLink>
   );
 }
