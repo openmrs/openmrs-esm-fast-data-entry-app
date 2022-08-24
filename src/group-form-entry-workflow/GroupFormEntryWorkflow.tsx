@@ -154,13 +154,14 @@ const SessionDetails = () => {
           <div
             style={{ display: "flex", flexDirection: "column", rowGap: "1rem" }}
           >
+            <TextInput id="text" type="text" labelText="Session Name" />
             <Dropdown
               id="dropdown"
               titleText="Practitioner Name"
               label="Select a practitioner"
               items={practitioners}
             />
-            <TextInput id="text" type="text" labelText="Session Name" />
+            <TextInput id="text" type="text" labelText="Session Date" />
           </div>
         </Tile>
       </Layer>
