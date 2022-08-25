@@ -7,6 +7,8 @@
   "complete": "Complete",
   "dataErrorMessage": "Something went wrong loading data from the server.",
   "discard": "Discard",
+  "error": "Error",
+  "errorCoppy": "Sorry, there was an error. You can try to reload this page, or contact the site administrator and quote the error code above.",
   "errorLoadingData": "Error Loading Data",
   "fastDataEntry": "Fast Data Entry",
   "fillForm": "Fill Form",
@@ -16,12 +18,16 @@
   "nextPatient": "Next Patient",
   "noFormsFound": "No Forms To Show",
   "noFormsFoundMessage": "No forms could be found for this category. Please double check the form concept uuids and access permissions.",
+  "noGroupsFoundMessage": "Sorry, no groups have been found",
   "or": "or",
+  "orLabelName": "OR label name",
   "resumeSession": "Resume Session",
   "resumeGroupSession": "Resume Group Session",
   "saveAndComplete": "Save & Complete",
   "saveExplanation": "Do you want to save the current form and exit the workflow?",
   "saveSession": "Save Session",
+  "searchResultsText": "search result(s)",
   "selectPatientFirst": "Please select a patient first",
-  "startGroupSession": "Start Group Session"
+  "startGroupSession": "Start Group Session",
+  "trySearchWithPatientUniqueID": "Try searching with the cohort's description"
 }
