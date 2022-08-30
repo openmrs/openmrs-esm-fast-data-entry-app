@@ -1,11 +1,8 @@
 @use '@carbon/styles/scss/spacing';
 @use '@carbon/styles/scss/type';
-@import '../root.scss';
+@import '~@openmrs/esm-styleguide/src/vars';
 
-// FIX: This is not ideal
-:global(.cds--side-nav) {
-  z-index: 0;
-}
+
 
 .searchResultsContainer {
   width: 100%;

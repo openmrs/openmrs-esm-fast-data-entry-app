@@ -1,35 +1,43 @@
-import React, { useCallback, useState } from "react";
-import PatientSearch from "./patient-search.component";
-import PatientSearchBar from "../patient-search-bar/patient-search-bar.component";
-import styles from "./compact-patient-search.scss";
+import React, { useState } from "react";
+import styles from "./compact-group-search.scss";
+import GroupSearch from "./GroupSearch";
+import GroupSearchBar from "./GroupSearchBar";
 
 interface CompactGroupSearchProps {
-  isSearchPage: boolean;
-  initialSearchTerm: string;
-  selectPatientAction?: (patientUuid: string) => undefined;
-  shouldNavigateToPatientSearchPage?: boolean;
+  selectGroupAction?: (patientUuids: [string]) => undefined;
 }
 
 const CompactGroupSearch: React.FC<CompactGroupSearchProps> = ({
-  selectPatientAction,
-  initialSearchTerm,
-  isSearchPage,
+  selectGroupAction,
 }) => {
+  const [query, setQuery] = useState("");
+  const [dropdownShown, setDropdownShown] = useState(false);
+
+  const onGroupSelect = (uuids: [string]) => {
+    selectGroupAction(uuids);
+    setDropdownShown(false);
+    setQuery("");
+  };
+
   return (
     <div className={styles.patientSearchBar}>
-      <PatientSearchBar
+      <GroupSearchBar
         small
-        initialSearchTerm={initialSearchTerm ?? ""}
-        onChange={setSearchTerm}
-        onSubmit={onSubmit}
-        onClear={onClear}
+        onChange={(e) => {
+          setQuery(e);
+          if (e.length) {
+            setDropdownShown(true);
+          } else {
+            setDropdownShown(false);
+          }
+        }}
+        value={query}
+        onSubmit={() => undefined}
+        onClear={() => undefined}
       />
-      {!!searchTerm && !isSearchPage && (
+      {dropdownShown && (
         <div className={styles.floatingSearchResultsContainer}>
-          <PatientSearch
-            query={searchTerm}
-            selectPatientAction={selectPatientAction}
-          />
+          <GroupSearch query={query} selectGroupAction={onGroupSelect} />
         </div>
       )}
     </div>
