@@ -194,18 +194,18 @@ const SessionDetails = () => {
 const GroupFormWorkspace = () => {
   const {
     patientUuids,
-    activePatientUuid,
-    activeEncounterUuid,
-    saveEncounter,
-    activeFormUuid,
+    // activePatientUuid,
+    // activeEncounterUuid,
+    // saveEncounter,
+    // activeFormUuid,
   } = useContext(GroupFormWorkflowContext);
-  const { t } = useTranslation();
+  // const { t } = useTranslation();
 
-  const handlePostResponse = (encounter) => {
-    if (encounter && encounter.uuid) {
-      saveEncounter(encounter.uuid);
-    }
-  };
+  // const handlePostResponse = (encounter) => {
+  //   if (encounter && encounter.uuid) {
+  //     saveEncounter(encounter.uuid);
+  //   }
+  // };
 
   return (
     <div className={styles.workspace}>

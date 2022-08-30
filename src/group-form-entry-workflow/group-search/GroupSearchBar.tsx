@@ -4,7 +4,6 @@ import { Button, Search } from "@carbon/react";
 import styles from "./group-search-bar.scss";
 
 interface PatientSearchBarProps {
-  buttonProps?: any;
   initialSearchTerm?: string;
   onChange?: (searchTerm) => void;
   onClear: () => void;
@@ -14,7 +13,6 @@ interface PatientSearchBarProps {
 }
 
 const GroupSearchBar: React.FC<PatientSearchBarProps> = ({
-  buttonProps,
   onChange,
   onClear,
   small,
@@ -35,12 +33,7 @@ const GroupSearchBar: React.FC<PatientSearchBarProps> = ({
         size={small ? "sm" : "lg"}
         value={value}
       />
-      <Button
-        type="submit"
-        kind="secondary"
-        size={small ? "sm" : "lg"}
-        {...buttonProps}
-      >
+      <Button type="submit" kind="secondary" size={small ? "sm" : "lg"}>
         {t("search", "Search")}
       </Button>
     </form>
