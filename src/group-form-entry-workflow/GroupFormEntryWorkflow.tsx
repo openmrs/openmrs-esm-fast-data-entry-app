@@ -12,7 +12,9 @@ import {
   Layer,
   Tile,
   TextInput,
-  Dropdown,
+  TextArea,
+  DatePicker,
+  DatePickerInput,
 } from "@carbon/react";
 import React, { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -140,9 +142,8 @@ const WorkflowNavigationButtons = () => {
   );
 };
 
-const practitioners = ["Jeff", "Martha"];
-
 const SessionDetails = () => {
+  const { t } = useTranslation();
   return (
     <div className={styles.formSection}>
       <h4>1. Session details</h4>
@@ -151,18 +152,39 @@ const SessionDetails = () => {
       </div>
       <Layer>
         <Tile className={styles.formSectionTile}>
-          <div
-            style={{ display: "flex", flexDirection: "column", rowGap: "1rem" }}
-          >
-            <TextInput id="text" type="text" labelText="Session Name" />
-            <Dropdown
-              id="dropdown"
-              titleText="Practitioner Name"
-              label="Select a practitioner"
-              items={practitioners}
-            />
-            <TextInput id="text" type="text" labelText="Session Date" />
-          </div>
+          <Layer>
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                rowGap: "1.5rem",
+              }}
+            >
+              <TextInput
+                id="text"
+                type="text"
+                labelText={t("sessionName", "Session Name")}
+              />
+              <TextInput
+                id="text"
+                type="text"
+                labelText={t("practitionerName", "Practitioner Name")}
+              />
+              <DatePicker datePickerType="single" size="md">
+                <DatePickerInput
+                  id="session-date"
+                  labelText={t("sessionDate", "Session Date")}
+                  placeholder="mm/dd/yyyy"
+                  size="md"
+                />
+              </DatePicker>
+              <TextArea
+                id="text"
+                type="text"
+                labelText={t("description", "Description")}
+              />
+            </div>
+          </Layer>
         </Tile>
       </Layer>
     </div>
