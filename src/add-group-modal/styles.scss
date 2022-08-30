@@ -1,0 +1,17 @@
+// @use '@carbon/styles/scss/spacing';
+// @use '@carbon/colors';
+// @use '@carbon/styles/scss/type';
+// @import '~@openmrs/esm-styleguide/src/vars';
+
+.modal {
+  :global(.cds--modal) {
+    z-index: 90;
+  }
+  :global(.cds--modal-container) {
+    height: 600px;
+  }
+  :global(.cds--modal-content) {
+    height: 100%;
+  }
+}
+
