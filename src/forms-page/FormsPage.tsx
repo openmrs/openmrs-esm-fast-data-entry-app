@@ -53,6 +53,7 @@ const FormsPage = () => {
   const savedGroupFormsData = localStorage.getItem(fdeGroupWorkflowStorageName);
   const activeForms = [];
   const activeGroupForms = [];
+
   if (
     savedFormsData &&
     JSON.parse(savedFormsData)?.["_storageVersion"] ===

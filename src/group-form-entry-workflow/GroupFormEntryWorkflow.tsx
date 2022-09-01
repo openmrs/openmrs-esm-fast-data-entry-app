@@ -144,6 +144,7 @@ const WorkflowNavigationButtons = () => {
 
 const SessionDetails = () => {
   const { t } = useTranslation();
+
   return (
     <div className={styles.formSection}>
       <h4>1. Session details</h4>

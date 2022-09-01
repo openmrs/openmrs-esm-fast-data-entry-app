@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import {
   ComposedModal,
   Button,
@@ -13,15 +13,65 @@ import { useTranslation } from "react-i18next";
 import { ExtensionSlot } from "@openmrs/esm-framework";
 import styles from "./styles.scss";
 
+const NameField = () => {
+  const { t } = useTranslation();
+  const [name, setName] = useState("");
+
+  const updateName = useCallback((e) => {
+    e.preventDefault();
+    setName(e.target.value);
+  }, []);
+
+  return (
+    <TextInput
+      labelText={t("newGroupName", "New Group Name")}
+      value={name}
+      onChange={updateName}
+    />
+  );
+};
+
+const NewGroupForm = () => {
+  const [patientList, setPatientList] = useState([]);
+  const handleSelectPatient = useCallback(
+    (id) => {
+      setPatientList([...patientList, id]);
+    },
+    [patientList, setPatientList]
+  );
+
+  return (
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        rowGap: "1rem",
+      }}
+    >
+      <NameField />
+      <FormLabel>Patients in group</FormLabel>
+      <ul>
+        {patientList?.map((item, index) => (
+          <li key={index}>{item}</li>
+        ))}
+      </ul>
+      <FormLabel>Search for patients to add to group</FormLabel>
+      <ExtensionSlot
+        extensionSlotName="patient-search-bar-slot"
+        state={{
+          selectPatientAction: handleSelectPatient,
+          buttonProps: {
+            kind: "primary",
+          },
+        }}
+      />
+    </div>
+  );
+};
+
 const AddGroupModal = () => {
   const { t } = useTranslation();
   const [open, setOpen] = useState(false);
-  const [name, setName] = useState("");
-  const [patientList, setPatientList] = useState([]);
-
-  const handleSelectPatient = (id) => {
-    setPatientList([...patientList, id]);
-  };
 
   return (
     <div className={styles.modal}>
@@ -31,35 +81,7 @@ const AddGroupModal = () => {
       <ComposedModal open={open} onClose={() => setOpen(false)}>
         <ModalHeader>{t("createNewGroup", "Create New Group")}</ModalHeader>
         <ModalBody>
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              rowGap: "1rem",
-            }}
-          >
-            <TextInput
-              labelText={t("newGroupName", "New Group Name")}
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-            />
-            <FormLabel>Patients in group</FormLabel>
-            <ul>
-              {patientList?.map((item, index) => (
-                <li key={index}>{item}</li>
-              ))}
-            </ul>
-            <FormLabel>Search for patients to add to group</FormLabel>
-            <ExtensionSlot
-              extensionSlotName="patient-search-bar-slot"
-              state={{
-                selectPatientAction: handleSelectPatient,
-                buttonProps: {
-                  kind: "primary",
-                },
-              }}
-            />
-          </div>
+          <NewGroupForm />
         </ModalBody>
         <ModalFooter>
           <Button kind="secondary" onClick={() => setOpen(false)}>
@@ -75,3 +97,5 @@ const AddGroupModal = () => {
 };
 
 export default AddGroupModal;
+
+export { NameField };
