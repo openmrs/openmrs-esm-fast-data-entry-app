@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useReducer } from "react";
 import reducer from "./FormWorkflowReducer";
-import { useParams, useLocation } from "react-router-dom";
+import { useParams } from "react-router-dom";
 interface ParamTypes {
   formUuid?: string;
 }
