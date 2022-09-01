@@ -40,8 +40,6 @@ const GroupFormWorkflowContext = React.createContext({
 const GroupFormWorkflowProvider = ({ children }) => {
   const { formUuid } = useParams() as ParamTypes;
   const activeFormUuid = formUuid.split("&")[0];
-  const { search } = useLocation();
-  const newPatientUuid = new URLSearchParams(search).get("patientUuid");
   const [state, dispatch] = useReducer(reducer, {
     ...initialWorkflowState,
     ...initialActions,
@@ -49,11 +47,10 @@ const GroupFormWorkflowProvider = ({ children }) => {
 
   const actions = useMemo(
     () => ({
-      initializeWorkflowState: ({ activeFormUuid, newPatientUuid }) =>
+      initializeWorkflowState: ({ activeFormUuid }) =>
         dispatch({
           type: "INITIALIZE_WORKFLOW_STATE",
           activeFormUuid,
-          newPatientUuid,
         }),
       addPatient: (patientUuid) =>
         dispatch({ type: "ADD_PATIENT", patientUuid }),
@@ -79,9 +76,9 @@ const GroupFormWorkflowProvider = ({ children }) => {
   // this is the entry into the workflow system
   useEffect(() => {
     if (state?.workflowState === null && activeFormUuid) {
-      actions.initializeWorkflowState({ activeFormUuid, newPatientUuid });
+      actions.initializeWorkflowState({ activeFormUuid });
     }
-  }, [activeFormUuid, newPatientUuid, state?.workflowState, actions]);
+  }, [activeFormUuid, state?.workflowState, actions]);
 
   return (
     <GroupFormWorkflowContext.Provider

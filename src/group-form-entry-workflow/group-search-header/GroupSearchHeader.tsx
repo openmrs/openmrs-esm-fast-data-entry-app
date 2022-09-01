@@ -29,7 +29,7 @@ const GroupSearchHeader = () => {
       </span>
       <span style={{ flexGrow: 1 }} />
       <span>
-        <Link to="../">
+        <Link to="..">
           <Button kind="ghost">
             {t("cancel", "Cancel")} <Close size={20} />
           </Button>

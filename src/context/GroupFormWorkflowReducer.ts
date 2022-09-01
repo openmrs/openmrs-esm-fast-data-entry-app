@@ -22,12 +22,10 @@ const reducer = (state, action) => {
       const savedData = localStorage.getItem(fdeGroupWorkflowStorageName);
       const savedDataObject = savedData ? JSON.parse(savedData) : {};
       let newState: { [key: string]: unknown } = {};
-      const newPatient = action.newPatientUuid
-        ? {
-            activePatientUuid: action.newPatientUuid,
-            workflowState: "EDIT_FORM",
-          }
-        : {};
+      const newForm = {
+        workflowState: "EDIT_FORM",
+      };
+      // this logic isn't complete yet
 
       if (
         savedData &&
@@ -44,7 +42,7 @@ const reducer = (state, action) => {
               ...initialFormState,
               ...savedDataObject.forms[action.activeFormUuid],
               // if we receive activePatientUuid from a query parameter use that one
-              ...newPatient,
+              ...newForm,
               patientUuids:
                 savedDataObject.forms[action.activeFormUuid]?.patientUuids ||
                 initialFormState.patientUuids,

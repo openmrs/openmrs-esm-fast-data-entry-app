@@ -29,6 +29,7 @@ const GroupSearchBar: React.FC<PatientSearchBarProps> = ({
         labelText=""
         onChange={(event) => onChange(event.target.value)}
         onClear={onClear}
+        onSubmit={() => undefined}
         placeholder={t("searchForGroup", "Search for a group by name")}
         size={small ? "sm" : "lg"}
         value={value}

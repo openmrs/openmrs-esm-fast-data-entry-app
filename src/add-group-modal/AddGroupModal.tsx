@@ -75,8 +75,12 @@ const AddGroupModal = () => {
 
   return (
     <div className={styles.modal}>
-      <Button onClick={() => setOpen(true)}>
-        {t("createNewGroup", "Create new group")} <Add size={20} />
+      <Button
+        onClick={() => setOpen(true)}
+        renderIcon={Add}
+        iconDescription="Add"
+      >
+        {t("createNewGroup", "Create New Group")}
       </Button>
       <ComposedModal open={open} onClose={() => setOpen(false)}>
         <ModalHeader>{t("createNewGroup", "Create New Group")}</ModalHeader>

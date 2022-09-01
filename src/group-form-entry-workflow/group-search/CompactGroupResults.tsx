@@ -2,8 +2,10 @@ import React from "react";
 import { SkeletonIcon, SkeletonText } from "@carbon/react";
 import { Events } from "@carbon/react/icons";
 import styles from "./compact-group-result.scss";
+import { useTranslation } from "react-i18next";
 
 const CompactGroupResults = ({ groups, selectGroupAction }) => {
+  const { t } = useTranslation();
   return (
     <>
       {groups.map((group) => (
@@ -20,7 +22,7 @@ const CompactGroupResults = ({ groups, selectGroupAction }) => {
           <div>
             <h2 className={styles.patientName}>{group.name}</h2>
             <p className={styles.demographics}>
-              {group.patients.length} members
+              {group.patients.length} {t("members", "members")}
               <span className={styles.middot}>&middot;</span>{" "}
               {group.description}
             </p>

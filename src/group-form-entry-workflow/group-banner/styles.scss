@@ -1,5 +1,4 @@
 @use '@carbon/styles/scss/spacing';
-// @use '@carbon/colors';
 @use '@carbon/styles/scss/type';
 @import '~@openmrs/esm-styleguide/src/vars';
 
@@ -25,7 +24,7 @@
 
 .patientInfoContent {
   width: 100%;
-  margin-left: 1rem;
+  margin-left: spacing.$spacing-05;
 }
 
 .patientInfoRow {
