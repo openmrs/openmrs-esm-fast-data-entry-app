@@ -34,8 +34,8 @@ const NameField = () => {
 const NewGroupForm = () => {
   const [patientList, setPatientList] = useState([]);
   const handleSelectPatient = useCallback(
-    (id) => {
-      setPatientList([...patientList, id]);
+    (patient) => {
+      setPatientList([...patientList, patient]);
     },
     [patientList, setPatientList]
   );
@@ -51,8 +51,8 @@ const NewGroupForm = () => {
       <NameField />
       <FormLabel>Patients in group</FormLabel>
       <ul>
-        {patientList?.map((item, index) => (
-          <li key={index}>{item}</li>
+        {patientList?.map((patient, index) => (
+          <li key={index}>{patient?.display}</li>
         ))}
       </ul>
       <FormLabel>Search for patients to add to group</FormLabel>
