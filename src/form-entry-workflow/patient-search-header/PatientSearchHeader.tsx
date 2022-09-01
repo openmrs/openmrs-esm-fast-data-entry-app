@@ -14,8 +14,8 @@ import { useTranslation } from "react-i18next";
 const PatientSearchHeader = () => {
   const { addPatient, workflowState, activeFormUuid } =
     useContext(FormWorkflowContext);
-  const handleSelectPatient = (uuid) => {
-    addPatient(uuid);
+  const handleSelectPatient = (patient) => {
+    addPatient(patient.uuid);
   };
   const { t } = useTranslation();
 

@@ -1,7 +1,7 @@
 import { navigate } from "@openmrs/esm-framework";
 import { initialWorkflowState } from "./FormWorkflowContext";
 
-export const fdeWorkflowStorageVersion = "1.0.12";
+export const fdeWorkflowStorageVersion = "1.0.13";
 export const fdeWorkflowStorageName = "openmrs:fastDataEntryWorkflowState";
 const persistData = (data) => {
   localStorage.setItem(fdeWorkflowStorageName, JSON.stringify(data));
