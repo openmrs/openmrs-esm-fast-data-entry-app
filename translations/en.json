@@ -1,5 +1,6 @@
 {
   "actions": "Actions",
+  "allFieldsRequired": "All fields are required unless marked optional",
   "areYouSure": "Are you sure?",
   "cancel": "Cancel",
   "cancelExplanation": "You will lose any unsaved changes on the current form. Do you want to discard the current session?",
@@ -35,6 +36,7 @@
   "searchResultsText": "search result(s)",
   "selectPatientFirst": "Please select a patient first",
   "sessionDate": "Session Date",
+  "sessionDetails": "Session details",
   "sessionName": "Session Name",
   "startGroupSession": "Start Group Session",
   "trySearchWithPatientUniqueID": "Try searching with the cohort's description"

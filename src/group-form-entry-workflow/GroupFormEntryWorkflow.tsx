@@ -147,9 +147,14 @@ const SessionDetails = () => {
 
   return (
     <div className={styles.formSection}>
-      <h4>1. Session details</h4>
+      <h4>{t("sessionDetails", "Session details")}</h4>
       <div>
-        <p>All fields are required unless marked optional</p>
+        <p>
+          {t(
+            "allFieldsRequired",
+            "All fields are required unless marked optional"
+          )}
+        </p>
       </div>
       <Layer>
         <Tile className={styles.formSectionTile}>
@@ -193,34 +198,13 @@ const SessionDetails = () => {
 };
 
 const GroupFormWorkspace = () => {
-  const {
-    patientUuids,
-    // activePatientUuid,
-    // activeEncounterUuid,
-    // saveEncounter,
-    // activeFormUuid,
-  } = useContext(GroupFormWorkflowContext);
-  // const { t } = useTranslation();
-
-  // const handlePostResponse = (encounter) => {
-  //   if (encounter && encounter.uuid) {
-  //     saveEncounter(encounter.uuid);
-  //   }
-  // };
+  const { patientUuids } = useContext(GroupFormWorkflowContext);
 
   return (
     <div className={styles.workspace}>
       <div className={styles.formMainContent}>
         <div className={styles.formContainer}>
           <SessionDetails />
-          {/* <FormBootstrap
-              patientUuid={activePatientUuid}
-              encounterUuid={activeEncounterUuid}
-              {...{
-                formUuid: activeFormUuid,
-                handlePostResponse,
-              }}
-            /> */}
         </div>
         <div className={styles.rightPanel}>
           <h4>Forms filled</h4>

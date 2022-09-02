@@ -13,8 +13,8 @@
 }
 
 .photoPlaceholder {
-  height: 48px;
-  width: 48px;
+  height: spacing.$spacing-09;
+  width: spacing.$spacing-09;
 }
 
 .patientName {
@@ -31,7 +31,7 @@
   display: flex;
   align-items: center;
   & > button {
-    min-height: 2rem;
+    min-height: spacing.$spacing-07;
   }
   @include type.type-style('body-compact-02');
   color: $text-02;
