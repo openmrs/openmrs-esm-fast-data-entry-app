@@ -133,7 +133,13 @@ const AddGroupModal = () => {
 
   const updatePatientList = useCallback(
     (patient) => {
-      setPatientList((patientList) => [...patientList, patient]);
+      setPatientList((patientList) => {
+        if (!patientList.find((p) => p.uuid === patient.uuid)) {
+          return [...patientList, patient];
+        } else {
+          return patientList;
+        }
+      });
       setErrors((errors) => ({ ...errors, patientList: null }));
     },
     [setPatientList]
