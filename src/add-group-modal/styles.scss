@@ -1,4 +1,6 @@
 
+@use '@carbon/colors';
+
 .modal {
   :global(.cds--modal) {
     z-index: 90;
@@ -11,3 +13,18 @@
   }
 }
 
+.searchBar > div > div > div {
+  width: 100%
+}
+
+.formError {
+  color: red;
+}
+
+.patientRow {
+   display: flex;
+   width: "100%";
+  & :hover {
+    background-color: colors.$gray-20;
+  }
+}
