@@ -3,8 +3,8 @@ import { SkeletonPlaceholder, SkeletonText } from "@carbon/react";
 import React, { useContext } from "react";
 import styles from "./styles.scss";
 import { useTranslation } from "react-i18next";
-import useGetPatient from "../hooks/useGetPatient";
-import FormWorkflowContext from "../context/FormWorkflowContext";
+import useGetPatient from "../../hooks/useGetPatient";
+import FormWorkflowContext from "../../context/FormWorkflowContext";
 
 const SkeletonPatientInfo = () => {
   return (

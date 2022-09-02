@@ -1,10 +1,11 @@
 import { navigate } from "@openmrs/esm-framework";
 import { initialWorkflowState } from "./FormWorkflowContext";
 
-export const fdeWorkflowStorageVersion = "1.0.13";
-export const fdeWorkflowStorageName = "openmrs:fastDataEntryWorkflowState";
+export const fdeGroupWorkflowStorageVersion = "1.0.14";
+export const fdeGroupWorkflowStorageName =
+  "openmrs:fastDataEntryGroupWorkflowState";
 const persistData = (data) => {
-  localStorage.setItem(fdeWorkflowStorageName, JSON.stringify(data));
+  localStorage.setItem(fdeGroupWorkflowStorageName, JSON.stringify(data));
 };
 
 const initialFormState = {
@@ -18,19 +19,17 @@ const initialFormState = {
 const reducer = (state, action) => {
   switch (action.type) {
     case "INITIALIZE_WORKFLOW_STATE": {
-      const savedData = localStorage.getItem(fdeWorkflowStorageName);
+      const savedData = localStorage.getItem(fdeGroupWorkflowStorageName);
       const savedDataObject = savedData ? JSON.parse(savedData) : {};
       let newState: { [key: string]: unknown } = {};
-      const newPatient = action.newPatientUuid
-        ? {
-            activePatientUuid: action.newPatientUuid,
-            workflowState: "EDIT_FORM",
-          }
-        : {};
+      const newForm = {
+        workflowState: "EDIT_FORM",
+      };
+      // this logic isn't complete yet
 
       if (
         savedData &&
-        savedDataObject["_storageVersion"] === fdeWorkflowStorageVersion
+        savedDataObject["_storageVersion"] === fdeGroupWorkflowStorageVersion
       ) {
         // there is localStorage data and it is still valid
         newState = {
@@ -43,7 +42,7 @@ const reducer = (state, action) => {
               ...initialFormState,
               ...savedDataObject.forms[action.activeFormUuid],
               // if we receive activePatientUuid from a query parameter use that one
-              ...newPatient,
+              ...newForm,
               patientUuids:
                 savedDataObject.forms[action.activeFormUuid]?.patientUuids ||
                 initialFormState.patientUuids,
@@ -64,7 +63,7 @@ const reducer = (state, action) => {
         // no localStorage data, or we should void it
         newState = {
           ...initialWorkflowState,
-          _storageVersion: fdeWorkflowStorageVersion,
+          _storageVersion: fdeGroupWorkflowStorageVersion,
           forms: {
             [action.activeFormUuid]: initialFormState,
           },

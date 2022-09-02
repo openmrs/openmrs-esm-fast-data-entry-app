@@ -3,13 +3,17 @@ import { Tab, Tabs, TabList, TabPanels, TabPanel } from "@carbon/react";
 import React from "react";
 import { Config } from "../config-schema";
 import { useGetAllForms } from "../hooks";
-import FormsTable from "../forms-table";
+import FormsTable from "./forms-table";
 import styles from "./styles.scss";
 import { useTranslation } from "react-i18next";
 import {
   fdeWorkflowStorageName,
   fdeWorkflowStorageVersion,
 } from "../context/FormWorkflowReducer";
+import {
+  fdeGroupWorkflowStorageName,
+  fdeGroupWorkflowStorageVersion,
+} from "../context/GroupFormWorkflowReducer";
 
 // helper function useful for debugging
 // given a list of forms, it will organize into permissions
@@ -45,15 +49,30 @@ const FormsPage = () => {
   const { formCategories, formCategoriesToShow } = config;
   const { forms, isLoading, error } = useGetAllForms();
   const cleanRows = prepareRowsForTable(forms);
-  const savedData = localStorage.getItem(fdeWorkflowStorageName);
+  const savedFormsData = localStorage.getItem(fdeWorkflowStorageName);
+  const savedGroupFormsData = localStorage.getItem(fdeGroupWorkflowStorageName);
   const activeForms = [];
+  const activeGroupForms = [];
+
   if (
-    savedData &&
-    JSON.parse(savedData)?.["_storageVersion"] === fdeWorkflowStorageVersion
+    savedFormsData &&
+    JSON.parse(savedFormsData)?.["_storageVersion"] ===
+      fdeWorkflowStorageVersion
   ) {
-    Object.entries(JSON.parse(savedData).forms).forEach(
+    Object.entries(JSON.parse(savedFormsData).forms).forEach(
       ([formUuid, form]: [string, { [key: string]: unknown }]) => {
         if (form.workflowState) activeForms.push(formUuid);
+      }
+    );
+  }
+  if (
+    savedGroupFormsData &&
+    JSON.parse(savedGroupFormsData)?.["_storageVersion"] ===
+      fdeGroupWorkflowStorageVersion
+  ) {
+    Object.entries(JSON.parse(savedGroupFormsData).forms).forEach(
+      ([formUuid, form]: [string, { [key: string]: unknown }]) => {
+        if (form.workflowState) activeGroupForms.push(formUuid);
       }
     );
   }
@@ -70,7 +89,9 @@ const FormsPage = () => {
 
   return (
     <div className={styles.mainContent}>
-      <h3 className={styles.pageTitle}>{t("forms", "Forms")}</h3>
+      <h3 className={styles.pageTitle}>
+        {t("fastDataEntry", "Fast Data Entry")}
+      </h3>
       <Tabs>
         <TabList>
           <Tab label={t("allForms", "All Forms")}>
@@ -88,14 +109,14 @@ const FormsPage = () => {
           <TabPanel>
             <FormsTable
               rows={cleanRows}
-              {...{ error, isLoading, activeForms }}
+              {...{ error, isLoading, activeForms, activeGroupForms }}
             />
           </TabPanel>
           {categoryRows?.map((category, index) => (
             <TabPanel key={index}>
               <FormsTable
                 rows={category.rows}
-                {...{ error, isLoading, activeForms }}
+                {...{ error, isLoading, activeForms, activeGroupForms }}
               />
             </TabPanel>
           ))}

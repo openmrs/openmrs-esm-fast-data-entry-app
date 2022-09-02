@@ -1,0 +1,20 @@
+@use '@carbon/styles/scss/spacing';
+@import '~@openmrs/esm-styleguide/src/vars';
+
+.searchHeaderContainer {
+  height: spacing.$spacing-11;
+  display: flex;
+  align-items: center;
+  background-color: $ui-02;
+  border-top: 0.0125rem solid $ui-03;
+  border-bottom: 0.0125rem solid $ui-03;
+  padding: 0 spacing.$spacing-05;
+}
+
+.searchBarWrapper {
+  min-width: 35rem;
+}
+
+.padded {
+  padding: spacing.$spacing-05;
+}
