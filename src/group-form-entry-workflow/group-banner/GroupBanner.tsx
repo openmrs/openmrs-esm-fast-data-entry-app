@@ -1,35 +1,8 @@
-import { SkeletonPlaceholder, SkeletonText } from "@carbon/react";
 import React, { useContext } from "react";
 import { Events } from "@carbon/react/icons";
 import styles from "./styles.scss";
 import { useTranslation } from "react-i18next";
 import GroupFormWorkflowContext from "../../context/GroupFormWorkflowContext";
-
-const SkeletonGroupInfo = () => {
-  return (
-    <div className={styles.container}>
-      <SkeletonPlaceholder className={styles.photoPlaceholder} />
-      <div className={styles.patientInfoContent}>
-        <div className={styles.patientInfoRow}>
-          <SkeletonText width="7rem" lineCount={1} />
-        </div>
-        <div className={styles.patientInfoRow}>
-          <span>
-            <SkeletonText width="1rem" lineCount={1} />
-          </span>
-          <span>&middot;</span>
-          <span>
-            <SkeletonText width="1rem" lineCount={1} />
-          </span>
-          <span>&middot;</span>
-          <span>
-            <SkeletonText width="1rem" lineCount={1} />
-          </span>
-        </div>
-      </div>
-    </div>
-  );
-};
 
 const GroupBanner = () => {
   const { activeGroupName, activeGroupUuid, patientUuids } = useContext(

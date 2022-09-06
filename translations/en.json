@@ -7,6 +7,7 @@
   "createNewPatient": "Create new patient",
   "createGroup": "Create Group",
   "createNewGroup": "Create New Group",
+  "createNewSession": "Create New Session",
   "complete": "Complete",
   "dataErrorMessage": "Something went wrong loading data from the server.",
   "description": "Description",

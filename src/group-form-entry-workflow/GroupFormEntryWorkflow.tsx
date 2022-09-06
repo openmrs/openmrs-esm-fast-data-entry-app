@@ -100,6 +100,32 @@ const CompleteModal = ({ open, setOpen }) => {
   );
 };
 
+const NewGroupWorkflowButtons = () => {
+  const { t } = useTranslation();
+  const { workflowState } = useContext(GroupFormWorkflowContext);
+  const [cancelModalOpen, setCancelModalOpen] = useState(false);
+  if (workflowState !== "NEW_GROUP_SESSION") return null;
+
+  return (
+    <>
+      <div className={styles.rightPanelActionButtons}>
+        <Button kind="secondary" onClick={() => {}}>
+          {t("createNewSession", "Create New Session")}
+        </Button>
+        <Button
+          kind="tertiary"
+          onClick={() => {
+            setCancelModalOpen(true);
+          }}
+        >
+          {t("cancel", "Cancel")}
+        </Button>
+      </div>
+      <CancelModal open={cancelModalOpen} setOpen={setCancelModalOpen} />
+    </>
+  );
+};
+
 const WorkflowNavigationButtons = () => {
   const { activeFormUuid, submitForNext, workflowState, destroySession } =
     useContext(GroupFormWorkflowContext);
@@ -110,7 +136,7 @@ const WorkflowNavigationButtons = () => {
   const [completeModalOpen, setCompleteModalOpen] = useState(false);
   const { t } = useTranslation();
 
-  if (!workflowState) return null;
+  if (workflowState === "NEW_GROUP_SESSION") return null;
 
   return (
     <>
@@ -198,7 +224,8 @@ const SessionDetails = () => {
 };
 
 const GroupFormWorkspace = () => {
-  const { patientUuids } = useContext(GroupFormWorkflowContext);
+  const { t } = useTranslation();
+  const { patientUuids, workflowState } = useContext(GroupFormWorkflowContext);
 
   return (
     <div className={styles.workspace}>
@@ -207,12 +234,23 @@ const GroupFormWorkspace = () => {
           <SessionDetails />
         </div>
         <div className={styles.rightPanel}>
-          <h4>Forms filled</h4>
-          <div className={styles.patientCardsSection}>
-            {patientUuids?.map((patientUuid) => (
-              <PatientCard patientUuid={patientUuid} key={patientUuid} />
-            ))}
-          </div>
+          {workflowState !== "NEW_GROUP_SESSION" && (
+            <>
+              <h4>Forms filled</h4>
+              <div className={styles.patientCardsSection}>
+                {patientUuids?.map((patientUuid) => (
+                  <PatientCard patientUuid={patientUuid} key={patientUuid} />
+                ))}
+              </div>
+            </>
+          )}
+          {workflowState === "NEW_GROUP_SESSION" && (
+            <>
+              <h4>{t("newGroupSession", "New Group Session")}</h4>
+              <hr style={{ width: "100%" }} />
+              <NewGroupWorkflowButtons />
+            </>
+          )}
           <WorkflowNavigationButtons />
         </div>
       </div>
