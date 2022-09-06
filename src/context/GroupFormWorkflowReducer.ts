@@ -1,7 +1,7 @@
 import { navigate } from "@openmrs/esm-framework";
 import { initialWorkflowState } from "./FormWorkflowContext";
 
-export const fdeGroupWorkflowStorageVersion = "1.0.14";
+export const fdeGroupWorkflowStorageVersion = "1.0.4";
 export const fdeGroupWorkflowStorageName =
   "openmrs:fastDataEntryGroupWorkflowState";
 const persistData = (data) => {
@@ -9,7 +9,7 @@ const persistData = (data) => {
 };
 
 const initialFormState = {
-  workflowState: "NEW_PATIENT",
+  workflowState: "NEW_GROUP_SESSION",
   activePatientUuid: null,
   activeEncounterUuid: null,
   patientUuids: [],
@@ -23,7 +23,7 @@ const reducer = (state, action) => {
       const savedDataObject = savedData ? JSON.parse(savedData) : {};
       let newState: { [key: string]: unknown } = {};
       const newForm = {
-        workflowState: "EDIT_FORM",
+        workflowState: initialFormState.workflowState,
       };
       // this logic isn't complete yet
 
@@ -49,16 +49,6 @@ const reducer = (state, action) => {
             },
           },
         };
-        if (
-          action.newPatientUuid &&
-          !newState.forms[action.activeFormUuid].patientUuids.includes(
-            action.newPatientUuid
-          )
-        ) {
-          newState.forms[action.activeFormUuid].patientUuids.push(
-            action.newPatientUuid
-          );
-        }
       } else {
         // no localStorage data, or we should void it
         newState = {
@@ -73,40 +63,40 @@ const reducer = (state, action) => {
       persistData(newState);
       return { ...newState };
     }
-    case "ADD_PATIENT": {
+    case "SET_GROUP": {
       const newState = {
         ...state,
         forms: {
           ...state.forms,
           [state.activeFormUuid]: {
             ...state.forms[state.activeFormUuid],
-            patientUuids: [
-              ...state.forms[state.activeFormUuid].patientUuids,
-              action.patientUuid,
-            ],
-            activePatientUuid: action.patientUuid,
+            groupUuid: action.group.id,
+            groupName: action.group.name,
+            patientUuids: action.group.members,
+            activePatientUuid: null,
             activeEncounterUuid: null,
-            workflowState: "EDIT_FORM",
           },
         },
       };
       persistData(newState);
       return newState;
     }
-    case "OPEN_PATIENT_SEARCH": {
+    case "START_FORMS": {
       const newState = {
         ...state,
         forms: {
           ...state.forms,
           [state.activeFormUuid]: {
-            ...state.forms[state.activeFormUuid],
-            activePatientUuid: null,
-            activeEncounterUuid: null,
-            workflowState: "NEW_PATIENT",
+            activePatientUuid:
+              state.forms[state.activeFormUuid].members[0].uuid,
+            activeEncounterUuid:
+              state.forms[state.activeFormUuid].encounters[
+                state.forms[state.activeFormUuid].members[0].uuid
+              ] || null,
+            workflowState: "EDIT_FORM",
           },
         },
       };
-      // the persist here is optional...
       persistData(newState);
       return newState;
     }

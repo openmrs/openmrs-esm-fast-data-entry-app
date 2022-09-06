@@ -1,12 +1,19 @@
 import React, { useEffect, useMemo, useReducer } from "react";
-import reducer from "./FormWorkflowReducer";
+import reducer from "./GroupFormWorkflowReducer";
 import { useParams } from "react-router-dom";
+import { Type } from "@openmrs/esm-framework";
 interface ParamTypes {
   formUuid?: string;
 }
 
+export interface GroupType {
+  id: string;
+  name: string;
+  members: Array<Type.Object>;
+}
+
 const initialActions = {
-  addPatient: (uuid: string | number) => undefined,
+  setGroup: (group: GroupType) => undefined,
   openPatientSearch: () => undefined,
   saveEncounter: (encounterUuid: string | number) => undefined,
   editEncounter: (patientUuid: string | number) => undefined,
@@ -30,6 +37,8 @@ export const initialWorkflowState = {
   activeEncounterUuid: null, // pseudo field from state[activeFormUuid].encounterUuid
   patientUuids: [], // pseudo field from state[activeFormUuid].patientUuids
   encounters: {}, // pseudo field from state[activeFormUuid].encounters
+  activeGroupUuid: null,
+  activeGroupName: null,
 };
 
 const GroupFormWorkflowContext = React.createContext({
@@ -52,8 +61,7 @@ const GroupFormWorkflowProvider = ({ children }) => {
           type: "INITIALIZE_WORKFLOW_STATE",
           activeFormUuid,
         }),
-      addPatient: (patientUuid) =>
-        dispatch({ type: "ADD_PATIENT", patientUuid }),
+      setGroup: (group) => dispatch({ type: "SET_GROUP", group }),
       openPatientSearch: () => dispatch({ type: "OPEN_PATIENT_SEARCH" }),
       saveEncounter: (encounterUuid) =>
         dispatch({
@@ -100,6 +108,12 @@ const GroupFormWorkflowProvider = ({ children }) => {
         encounters:
           state.forms?.[state.activeFormUuid]?.encounters ??
           initialWorkflowState.encounters,
+        activeGroupUuid:
+          state.forms?.[state.activeFormUuid]?.groupUuid ??
+          initialWorkflowState.activeGroupUuid,
+        activeGroupName:
+          state.forms?.[state.activeFormUuid]?.groupName ??
+          initialWorkflowState.activeGroupName,
       }}
     >
       {children}

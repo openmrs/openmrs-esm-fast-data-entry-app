@@ -1,4 +1,4 @@
-import React, { useCallback, useRef, useState } from "react";
+import React, { useCallback, useContext, useState } from "react";
 import {
   ComposedModal,
   Button,
@@ -12,6 +12,7 @@ import { Add } from "@carbon/react/icons";
 import { useTranslation } from "react-i18next";
 import { ExtensionSlot } from "@openmrs/esm-framework";
 import styles from "./styles.scss";
+import GroupFormWorkflowContext from "../context/GroupFormWorkflowContext";
 
 const MemExtension = React.memo(ExtensionSlot);
 
@@ -88,6 +89,7 @@ const NewGroupForm = (props) => {
 };
 
 const AddGroupModal = () => {
+  const { setGroup } = useContext(GroupFormWorkflowContext);
   const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const [errors, setErrors] = useState({});
@@ -147,7 +149,7 @@ const AddGroupModal = () => {
 
   const handleSubmit = () => {
     if (validate()) {
-      alert(`submitting! ${name} ${patientList}`);
+      setGroup({ id: "1234", name: name, members: patientList });
     }
   };
 

@@ -17,6 +17,13 @@
   width: spacing.$spacing-09;
 }
 
+.patientAvatar {
+  width: spacing.$spacing-09;
+  height: spacing.$spacing-09;
+  margin: spacing.$spacing-03 spacing.$spacing-05 spacing.$spacing-03 0;
+  border-radius: 1px;
+}
+
 .patientName {
   @include type.type-style('heading-03');
   font-weight: 600;

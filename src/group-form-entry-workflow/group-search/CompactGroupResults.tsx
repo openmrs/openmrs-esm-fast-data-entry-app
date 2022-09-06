@@ -10,7 +10,7 @@ const CompactGroupResults = ({ groups, selectGroupAction }) => {
     <>
       {groups.map((group) => (
         <div
-          onClick={selectGroupAction}
+          onClick={() => selectGroupAction(group)}
           key={group.id}
           className={styles.patientSearchResult}
           role="button"
@@ -22,7 +22,7 @@ const CompactGroupResults = ({ groups, selectGroupAction }) => {
           <div>
             <h2 className={styles.patientName}>{group.name}</h2>
             <p className={styles.demographics}>
-              {group.patients.length} {t("members", "members")}
+              {group.members.length} {t("members", "members")}
               <span className={styles.middot}>&middot;</span>{" "}
               {group.description}
             </p>

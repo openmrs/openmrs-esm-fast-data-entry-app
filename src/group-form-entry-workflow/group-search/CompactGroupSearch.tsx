@@ -1,10 +1,11 @@
 import React, { useState } from "react";
+import { GroupType } from "../../context/GroupFormWorkflowContext";
 import styles from "./compact-group-search.scss";
 import GroupSearch from "./GroupSearch";
 import GroupSearchBar from "./GroupSearchBar";
 
 interface CompactGroupSearchProps {
-  selectGroupAction?: (patientUuids: [string]) => undefined;
+  selectGroupAction?: (group: GroupType) => void;
 }
 
 const CompactGroupSearch: React.FC<CompactGroupSearchProps> = ({
@@ -13,8 +14,8 @@ const CompactGroupSearch: React.FC<CompactGroupSearchProps> = ({
   const [query, setQuery] = useState("");
   const [dropdownShown, setDropdownShown] = useState(false);
 
-  const onGroupSelect = (uuids: [string]) => {
-    selectGroupAction(uuids);
+  const onGroupSelect = (group) => {
+    selectGroupAction(group);
     setDropdownShown(false);
     setQuery("");
   };

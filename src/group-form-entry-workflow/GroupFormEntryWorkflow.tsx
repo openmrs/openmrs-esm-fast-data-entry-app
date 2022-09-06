@@ -221,7 +221,10 @@ const GroupFormWorkspace = () => {
 };
 
 const GroupFormEntryWorkflow = () => {
-  const { workflowState } = useContext(GroupFormWorkflowContext);
+  const { workflowState, activeGroupUuid } = useContext(
+    GroupFormWorkflowContext
+  );
+
   return (
     <>
       <div className={styles.breadcrumbsContainer}>
@@ -236,6 +239,8 @@ const GroupFormEntryWorkflow = () => {
           </div>
         </>
       )}
+      WorkflowState: {workflowState}
+      Group: {activeGroupUuid}
     </>
   );
 };
