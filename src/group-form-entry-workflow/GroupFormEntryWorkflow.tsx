@@ -26,6 +26,12 @@ import GroupFormWorkflowContext, {
   GroupFormWorkflowProvider,
 } from "../context/GroupFormWorkflowContext";
 import GroupSearchHeader from "./group-search-header";
+import {
+  Controller,
+  FormProvider,
+  useForm,
+  useFormContext,
+} from "react-hook-form";
 
 const formStore = getGlobalStore("ampath-form-state");
 
@@ -109,7 +115,7 @@ const NewGroupWorkflowButtons = () => {
   return (
     <>
       <div className={styles.rightPanelActionButtons}>
-        <Button kind="secondary" onClick={() => {}}>
+        <Button kind="secondary" type="submit">
           {t("createNewSession", "Create New Session")}
         </Button>
         <Button
@@ -170,6 +176,13 @@ const WorkflowNavigationButtons = () => {
 
 const SessionDetails = () => {
   const { t } = useTranslation();
+  const {
+    register,
+    formState: { errors },
+    control,
+  } = useFormContext();
+
+  console.log("errors", errors);
 
   return (
     <div className={styles.formSection}>
@@ -196,24 +209,47 @@ const SessionDetails = () => {
                 id="text"
                 type="text"
                 labelText={t("sessionName", "Session Name")}
+                {...register("sessionName", { required: true })}
+                invalid={errors.sessionName}
+                invalidText={"This field is required"}
               />
               <TextInput
                 id="text"
                 type="text"
                 labelText={t("practitionerName", "Practitioner Name")}
+                {...register("practitionerName", { required: true })}
+                invalid={errors.practitionerName}
+                invalidText={"This field is required"}
               />
-              <DatePicker datePickerType="single" size="md">
-                <DatePickerInput
-                  id="session-date"
-                  labelText={t("sessionDate", "Session Date")}
-                  placeholder="mm/dd/yyyy"
-                  size="md"
-                />
-              </DatePicker>
+              <Controller
+                name="sessionDate"
+                control={control}
+                rules={{ required: true }}
+                render={({ field }) => (
+                  <DatePicker
+                    datePickerType="single"
+                    size="md"
+                    maxDate={new Date()}
+                    {...field}
+                  >
+                    <DatePickerInput
+                      id="session-date"
+                      labelText={t("sessionDate", "Session Date")}
+                      placeholder="mm/dd/yyyy"
+                      size="md"
+                      invalid={errors.sessionDate}
+                      invalidText={"This field is required"}
+                    />
+                  </DatePicker>
+                )}
+              />
               <TextArea
                 id="text"
                 type="text"
                 labelText={t("description", "Description")}
+                {...register("description", { required: true })}
+                invalid={errors.description}
+                invalidText={"This field is required"}
               />
             </div>
           </Layer>
@@ -223,34 +259,71 @@ const SessionDetails = () => {
   );
 };
 
-const GroupFormWorkspace = () => {
+const SessionMetaWorkspace = () => {
   const { t } = useTranslation();
-  const { patientUuids, workflowState } = useContext(GroupFormWorkflowContext);
+  const { patientUuids, workflowState, setSessionMeta } = useContext(
+    GroupFormWorkflowContext
+  );
+  const methods = useForm();
+
+  const onSubmit = (data) => {
+    const { sessionDate, ...rest } = data;
+    setSessionMeta({ ...rest, sessionDate: sessionDate[0] });
+  };
+
+  return (
+    <FormProvider {...methods}>
+      <form onSubmit={methods.handleSubmit(onSubmit)}>
+        <div className={styles.workspace}>
+          <div className={styles.formMainContent}>
+            <div className={styles.formContainer}>
+              <SessionDetails />
+            </div>
+            <div className={styles.rightPanel}>
+              {workflowState !== "NEW_GROUP_SESSION" && (
+                <>
+                  <h4>Forms filled</h4>
+                  <div className={styles.patientCardsSection}>
+                    {patientUuids?.map((patientUuid) => (
+                      <PatientCard
+                        patientUuid={patientUuid}
+                        key={patientUuid}
+                      />
+                    ))}
+                  </div>
+                </>
+              )}
+              {workflowState === "NEW_GROUP_SESSION" && (
+                <>
+                  <h4>{t("newGroupSession", "New Group Session")}</h4>
+                  <hr style={{ width: "100%" }} />
+                  <NewGroupWorkflowButtons />
+                </>
+              )}
+              <WorkflowNavigationButtons />
+            </div>
+          </div>
+        </div>
+      </form>
+    </FormProvider>
+  );
+};
+
+const GroupSessionWorkspace = () => {
+  const { t } = useTranslation();
+  const { patientUuids } = useContext(GroupFormWorkflowContext);
 
   return (
     <div className={styles.workspace}>
       <div className={styles.formMainContent}>
-        <div className={styles.formContainer}>
-          <SessionDetails />
-        </div>
+        <div className={styles.formContainer}>forms go here</div>
         <div className={styles.rightPanel}>
-          {workflowState !== "NEW_GROUP_SESSION" && (
-            <>
-              <h4>Forms filled</h4>
-              <div className={styles.patientCardsSection}>
-                {patientUuids?.map((patientUuid) => (
-                  <PatientCard patientUuid={patientUuid} key={patientUuid} />
-                ))}
-              </div>
-            </>
-          )}
-          {workflowState === "NEW_GROUP_SESSION" && (
-            <>
-              <h4>{t("newGroupSession", "New Group Session")}</h4>
-              <hr style={{ width: "100%" }} />
-              <NewGroupWorkflowButtons />
-            </>
-          )}
+          <h4>{t("formsFilled", "Forms filled")}</h4>
+          <div className={styles.patientCardsSection}>
+            {patientUuids?.map((patientUuid) => (
+              <PatientCard patientUuid={patientUuid} key={patientUuid} />
+            ))}
+          </div>
           <WorkflowNavigationButtons />
         </div>
       </div>
@@ -259,26 +332,25 @@ const GroupFormWorkspace = () => {
 };
 
 const GroupFormEntryWorkflow = () => {
-  const { workflowState, activeGroupUuid } = useContext(
-    GroupFormWorkflowContext
-  );
+  const { workflowState } = useContext(GroupFormWorkflowContext);
 
   return (
     <>
       <div className={styles.breadcrumbsContainer}>
         <ExtensionSlot extensionSlotName="breadcrumbs-slot" />
       </div>
-      {workflowState !== "REVIEW" && (
-        <>
-          <GroupSearchHeader />
-          <GroupBanner />
-          <div className={styles.workspaceWrapper}>
-            <GroupFormWorkspace />
-          </div>
-        </>
+      <GroupSearchHeader />
+      <GroupBanner />
+      {workflowState === "NEW_GROUP_SESSION" && (
+        <div className={styles.workspaceWrapper}>
+          <SessionMetaWorkspace />
+        </div>
       )}
-      WorkflowState: {workflowState}
-      Group: {activeGroupUuid}
+      {workflowState in ["EDIT_FORM"] && (
+        <div className={styles.workspaceWrapper}>
+          <GroupSessionWorkspace />
+        </div>
+      )}
     </>
   );
 };

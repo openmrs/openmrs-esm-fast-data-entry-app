@@ -1,5 +1,6 @@
 @use '@carbon/styles/scss/spacing';
 @use '@carbon/styles/scss/type';
+@use '@carbon/styles/scss/colors';
 @import '~@openmrs/esm-styleguide/src/vars';
 
 .patientSearchResult {
@@ -13,6 +14,10 @@
   &:focus {
     background-color: $ui-01;
   }
+}
+
+.patientSearchResultSelected {
+  background-color: colors.$gray-20;
 }
 
 .patientBanner {

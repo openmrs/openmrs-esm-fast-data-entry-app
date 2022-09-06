@@ -11,9 +11,16 @@ export interface GroupType {
   name: string;
   members: Array<Type.Object>;
 }
+export interface MetaType {
+  sessionName: string;
+  sessionDate: string;
+  practitionerName: string;
+  description: string;
+}
 
 const initialActions = {
   setGroup: (group: GroupType) => undefined,
+  setSessionMeta: (meta: MetaType) => undefined,
   openPatientSearch: () => undefined,
   saveEncounter: (encounterUuid: string | number) => undefined,
   editEncounter: (patientUuid: string | number) => undefined,
@@ -39,6 +46,12 @@ export const initialWorkflowState = {
   encounters: {}, // pseudo field from state[activeFormUuid].encounters
   activeGroupUuid: null,
   activeGroupName: null,
+  activeSessionMeta: {
+    sessionName: null,
+    practitionerName: null,
+    sessionDate: null,
+    description: null,
+  },
 };
 
 const GroupFormWorkflowContext = React.createContext({
@@ -62,6 +75,7 @@ const GroupFormWorkflowProvider = ({ children }) => {
           activeFormUuid,
         }),
       setGroup: (group) => dispatch({ type: "SET_GROUP", group }),
+      setSessionMeta: (meta) => dispatch({ type: "SET_SESSION_META", meta }),
       openPatientSearch: () => dispatch({ type: "OPEN_PATIENT_SEARCH" }),
       saveEncounter: (encounterUuid) =>
         dispatch({
@@ -114,6 +128,9 @@ const GroupFormWorkflowProvider = ({ children }) => {
         activeGroupName:
           state.forms?.[state.activeFormUuid]?.groupName ??
           initialWorkflowState.activeGroupName,
+        activeSessionMeta:
+          state.forms?.[state.activeFormUuid]?.sessionMeta ??
+          initialWorkflowState.activeSessionMeta,
       }}
     >
       {children}

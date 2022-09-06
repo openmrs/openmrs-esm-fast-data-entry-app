@@ -72,9 +72,30 @@ const reducer = (state, action) => {
             ...state.forms[state.activeFormUuid],
             groupUuid: action.group.id,
             groupName: action.group.name,
-            patientUuids: action.group.members,
+            patientUuids: action.group.members.map((member) => member.uuid),
             activePatientUuid: null,
             activeEncounterUuid: null,
+          },
+        },
+      };
+      persistData(newState);
+      return newState;
+    }
+    case "SET_SESSION_META": {
+      const newState = {
+        ...state,
+        forms: {
+          ...state.forms,
+          [state.activeFormUuid]: {
+            ...state.forms[state.activeFormUuid],
+            sessionMeta: action.meta,
+            activePatientUuid:
+              state.forms[state.activeFormUuid].patientUuids?.[0].uuid,
+            activeEncounterUuid:
+              state.forms[state.activeFormUuid].encounters[
+                state.forms[state.activeFormUuid].patientUuids?.[0].uuid
+              ] || null,
+            workflowState: "EDIT_FORM",
           },
         },
       };
