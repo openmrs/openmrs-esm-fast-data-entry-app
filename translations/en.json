@@ -39,6 +39,7 @@
   "sessionDate": "Session Date",
   "sessionDetails": "Session details",
   "sessionName": "Session Name",
+  "sessionNotes": "Session Notes",
   "startGroupSession": "Start Group Session",
   "trySearchWithPatientUniqueID": "Try searching with the cohort's description"
 }

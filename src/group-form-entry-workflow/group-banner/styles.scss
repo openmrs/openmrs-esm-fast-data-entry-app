@@ -17,24 +17,24 @@
   width: spacing.$spacing-09;
 }
 
-.patientAvatar {
+.groupAvatar {
   width: spacing.$spacing-09;
   height: spacing.$spacing-09;
   margin: spacing.$spacing-03 spacing.$spacing-05 spacing.$spacing-03 0;
   border-radius: 1px;
 }
 
-.patientName {
+.groupName {
   @include type.type-style('heading-03');
   font-weight: 600;
 }
 
-.patientInfoContent {
-  width: 100%;
+.groupInfoContent {
   margin-left: spacing.$spacing-05;
+  margin-right: spacing.$spacing-10;
 }
 
-.patientInfoRow {
+.groupInfoRow {
   display: flex;
   align-items: center;
   & > button {
@@ -43,9 +43,18 @@
   @include type.type-style('body-compact-02');
   color: $text-02;
   column-gap: 0.8rem;
+
+}
+.sessionNotesLabel {
+  @include type.type-style('label-01');
+  margin-bottom: spacing.$spacing-01
 }
 
-.patientEditBtn {
+.groupEditBtn {
   color: $ui-05;
   margin: spacing.$spacing-03;
+}
+
+.groupMetaContent {
+  flex-grow: 1;
 }

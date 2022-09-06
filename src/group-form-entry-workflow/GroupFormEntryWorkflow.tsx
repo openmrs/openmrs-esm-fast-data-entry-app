@@ -182,8 +182,6 @@ const SessionDetails = () => {
     control,
   } = useFormContext();
 
-  console.log("errors", errors);
-
   return (
     <div className={styles.formSection}>
       <h4>{t("sessionDetails", "Session details")}</h4>
@@ -246,9 +244,9 @@ const SessionDetails = () => {
               <TextArea
                 id="text"
                 type="text"
-                labelText={t("description", "Description")}
-                {...register("description", { required: true })}
-                invalid={errors.description}
+                labelText={t("sessionNotes", "Session Notes")}
+                {...register("sessionNotes", { required: true })}
+                invalid={errors.sessionNotes}
                 invalidText={"This field is required"}
               />
             </div>

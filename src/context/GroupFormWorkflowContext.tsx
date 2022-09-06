@@ -15,7 +15,7 @@ export interface MetaType {
   sessionName: string;
   sessionDate: string;
   practitionerName: string;
-  description: string;
+  sessionNotes: string;
 }
 
 const initialActions = {
@@ -50,7 +50,7 @@ export const initialWorkflowState = {
     sessionName: null,
     practitionerName: null,
     sessionDate: null,
-    description: null,
+    sessionNotes: null,
   },
 };
 
