@@ -16,7 +16,7 @@ import {
   DatePicker,
   DatePickerInput,
 } from "@carbon/react";
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import PatientCard from "../patient-card/PatientCard";
 import GroupBanner from "./group-banner";
@@ -32,6 +32,7 @@ import {
   useForm,
   useFormContext,
 } from "react-hook-form";
+import FormBootstrap from "../FormBootstrap";
 
 const formStore = getGlobalStore("ampath-form-state");
 
@@ -133,8 +134,9 @@ const NewGroupWorkflowButtons = () => {
 };
 
 const WorkflowNavigationButtons = () => {
-  const { activeFormUuid, submitForNext, workflowState, destroySession } =
-    useContext(GroupFormWorkflowContext);
+  const { activeFormUuid, submitForNext } = useContext(
+    GroupFormWorkflowContext
+  );
   const store = useStore(formStore);
   const formState = store[activeFormUuid];
   const navigationDisabled = formState !== "ready";
@@ -142,26 +144,17 @@ const WorkflowNavigationButtons = () => {
   const [completeModalOpen, setCompleteModalOpen] = useState(false);
   const { t } = useTranslation();
 
-  if (workflowState === "NEW_GROUP_SESSION") return null;
-
   return (
     <>
       <div className={styles.rightPanelActionButtons}>
         <Button
           kind="primary"
           onClick={() => submitForNext()}
-          disabled={navigationDisabled || workflowState === "NEW_PATIENT"}
+          disabled={navigationDisabled}
         >
           {t("nextPatient", "Next Patient")}
         </Button>
-        <Button
-          kind="secondary"
-          onClick={
-            workflowState === "NEW_PATIENT"
-              ? () => destroySession()
-              : () => setCompleteModalOpen(true)
-          }
-        >
+        <Button kind="secondary" onClick={() => setCompleteModalOpen(true)}>
           {t("saveAndComplete", "Save & Complete")}
         </Button>
         <Button kind="tertiary" onClick={() => setCancelModalOpen(true)}>
@@ -257,11 +250,40 @@ const SessionDetails = () => {
   );
 };
 
+const GroupIdField = () => {
+  const { t } = useTranslation();
+  const {
+    register,
+    formState: { errors },
+    setValue,
+  } = useFormContext();
+  const { activeGroupUuid } = useContext(GroupFormWorkflowContext);
+
+  useEffect(() => {
+    if (activeGroupUuid) setValue("groupUuid", activeGroupUuid);
+  }, [activeGroupUuid, setValue]);
+
+  return (
+    <>
+      <input
+        hidden
+        {...register("groupUuid", {
+          value: activeGroupUuid,
+          required: t("chooseGroupError", "Please choose a group."),
+        })}
+      />
+      {errors.groupUuid && !activeGroupUuid && (
+        <div className={styles.formError}>
+          {errors.groupUuid.message as string}
+        </div>
+      )}
+    </>
+  );
+};
+
 const SessionMetaWorkspace = () => {
   const { t } = useTranslation();
-  const { patientUuids, workflowState, setSessionMeta } = useContext(
-    GroupFormWorkflowContext
-  );
+  const { setSessionMeta } = useContext(GroupFormWorkflowContext);
   const methods = useForm();
 
   const onSubmit = (data) => {
@@ -278,27 +300,10 @@ const SessionMetaWorkspace = () => {
               <SessionDetails />
             </div>
             <div className={styles.rightPanel}>
-              {workflowState !== "NEW_GROUP_SESSION" && (
-                <>
-                  <h4>Forms filled</h4>
-                  <div className={styles.patientCardsSection}>
-                    {patientUuids?.map((patientUuid) => (
-                      <PatientCard
-                        patientUuid={patientUuid}
-                        key={patientUuid}
-                      />
-                    ))}
-                  </div>
-                </>
-              )}
-              {workflowState === "NEW_GROUP_SESSION" && (
-                <>
-                  <h4>{t("newGroupSession", "New Group Session")}</h4>
-                  <hr style={{ width: "100%" }} />
-                  <NewGroupWorkflowButtons />
-                </>
-              )}
-              <WorkflowNavigationButtons />
+              <h4>{t("newGroupSession", "New Group Session")}</h4>
+              <GroupIdField />
+              <hr style={{ width: "100%" }} />
+              <NewGroupWorkflowButtons />
             </div>
           </div>
         </div>
@@ -309,17 +314,48 @@ const SessionMetaWorkspace = () => {
 
 const GroupSessionWorkspace = () => {
   const { t } = useTranslation();
-  const { patientUuids } = useContext(GroupFormWorkflowContext);
+  const {
+    patientUuids,
+    activePatientUuid,
+    editEncounter,
+    encounters,
+    activeEncounterUuid,
+    activeFormUuid,
+    saveEncounter,
+  } = useContext(GroupFormWorkflowContext);
+
+  const handlePostResponse = (encounter) => {
+    if (encounter && encounter.uuid) {
+      saveEncounter(encounter.uuid);
+    }
+  };
 
   return (
     <div className={styles.workspace}>
       <div className={styles.formMainContent}>
-        <div className={styles.formContainer}>forms go here</div>
+        <div className={styles.formContainer}>
+          <FormBootstrap
+            patientUuid={activePatientUuid}
+            encounterUuid={activeEncounterUuid}
+            {...{
+              formUuid: activeFormUuid,
+              handlePostResponse,
+            }}
+          />
+        </div>
         <div className={styles.rightPanel}>
           <h4>{t("formsFilled", "Forms filled")}</h4>
           <div className={styles.patientCardsSection}>
             {patientUuids?.map((patientUuid) => (
-              <PatientCard patientUuid={patientUuid} key={patientUuid} />
+              <PatientCard
+                key={patientUuid}
+                {...{
+                  patientUuid,
+                  activePatientUuid,
+                  editEncounter,
+                  encounters,
+                }}
+              />
             ))}
           </div>
           <WorkflowNavigationButtons />
@@ -344,7 +380,7 @@ const GroupFormEntryWorkflow = () => {
           <SessionMetaWorkspace />
         </div>
       )}
-      {workflowState in ["EDIT_FORM"] && (
+      {["EDIT_FORM"].includes(workflowState) && (
         <div className={styles.workspaceWrapper}>
           <GroupSessionWorkspace />
         </div>

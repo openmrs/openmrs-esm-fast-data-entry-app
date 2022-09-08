@@ -145,6 +145,8 @@ const FormWorkspace = () => {
     activeEncounterUuid,
     saveEncounter,
     activeFormUuid,
+    editEncounter,
+    encounters,
   } = useContext(FormWorkflowContext);
   const { t } = useTranslation();
 
@@ -177,7 +179,15 @@ const FormWorkspace = () => {
             <h4>Forms filled</h4>
             <div className={styles.patientCardsSection}>
               {patientUuids.map((patientUuid) => (
-                <PatientCard patientUuid={patientUuid} key={patientUuid} />
+                <PatientCard
+                  key={patientUuid}
+                  {...{
+                    patientUuid,
+                    activePatientUuid,
+                    editEncounter,
+                    encounters,
+                  }}
+                />
               ))}
             </div>
             <WorkflowNavigationButtons />

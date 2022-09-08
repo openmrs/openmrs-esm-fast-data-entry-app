@@ -44,8 +44,8 @@ export const initialWorkflowState = {
   activeEncounterUuid: null, // pseudo field from state[activeFormUuid].encounterUuid
   patientUuids: [], // pseudo field from state[activeFormUuid].patientUuids
   encounters: {}, // pseudo field from state[activeFormUuid].encounters
-  activeGroupUuid: null,
-  activeGroupName: null,
+  activeGroupUuid: null, // pseudo field from state[activeFormUuid].groupUuid
+  activeGroupName: null, // pseudo field from state[activeFormUuid].groupname
   activeSessionMeta: {
     sessionName: null,
     practitionerName: null,
@@ -83,7 +83,6 @@ const GroupFormWorkflowProvider = ({ children }) => {
           encounterUuid,
         }),
       submitForNext: () => dispatch({ type: "SUBMIT_FOR_NEXT" }),
-      submitForReview: () => dispatch({ type: "SUBMIT_FOR_REVIEW" }),
       submitForComplete: () => dispatch({ type: "SUBMIT_FOR_COMPLETE" }),
       editEncounter: (patientUuid) =>
         dispatch({ type: "EDIT_ENCOUNTER", patientUuid }),

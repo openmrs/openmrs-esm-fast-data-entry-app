@@ -78,3 +78,9 @@
 .formSectionTile {
   width: 500px;
 }
+
+
+.formError {
+  @include type.type-style("helper-text-02");
+  color: colors.$red-60;
+}

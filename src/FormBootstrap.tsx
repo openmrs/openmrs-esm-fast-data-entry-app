@@ -121,6 +121,7 @@ const FormBootstrap = ({
   useEffect(() => {
     return () => detach("form-widget-slot", "form-widget-slot");
   });
+
   return (
     <div>
       {formUuid && patientUuid && patient && (

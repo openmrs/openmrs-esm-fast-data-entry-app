@@ -4,6 +4,7 @@
   "areYouSure": "Are you sure?",
   "cancel": "Cancel",
   "cancelExplanation": "You will lose any unsaved changes on the current form. Do you want to discard the current session?",
+  "chooseGroupError": "Please choose a group.",
   "createNewPatient": "Create new patient",
   "createGroup": "Create Group",
   "createNewGroup": "Create New Group",
