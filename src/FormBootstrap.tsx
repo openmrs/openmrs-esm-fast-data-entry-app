@@ -106,6 +106,7 @@ interface FormParams {
   encounterUuid?: string;
   showDiscardSubmitButtons?: boolean;
   handlePostResponse?: (Encounter) => void;
+  handleEncounterCreate?: (Object) => void;
 }
 
 const FormBootstrap = ({
@@ -115,6 +116,7 @@ const FormBootstrap = ({
   visitTypeUuid,
   encounterUuid,
   handlePostResponse,
+  handleEncounterCreate,
 }: FormParams) => {
   const patient = useGetPatient(patientUuid);
 
@@ -137,6 +139,7 @@ const FormBootstrap = ({
             encounterUuid: encounterUuid ?? "",
             closeWorkspace: () => undefined,
             handlePostResponse,
+            handleEncounterCreate,
             showDiscardSubmitButtons: false,
           }}
         />

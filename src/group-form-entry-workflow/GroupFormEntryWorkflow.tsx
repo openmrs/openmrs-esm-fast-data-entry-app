@@ -134,15 +134,17 @@ const NewGroupWorkflowButtons = () => {
 };
 
 const WorkflowNavigationButtons = () => {
-  const { activeFormUuid, submitForNext } = useContext(
-    GroupFormWorkflowContext
-  );
+  const { activeFormUuid, submitForNext, patientUuids, activePatientUuid } =
+    useContext(GroupFormWorkflowContext);
   const store = useStore(formStore);
   const formState = store[activeFormUuid];
   const navigationDisabled = formState !== "ready";
   const [cancelModalOpen, setCancelModalOpen] = useState(false);
   const [completeModalOpen, setCompleteModalOpen] = useState(false);
   const { t } = useTranslation();
+
+  const isLastPatient =
+    activePatientUuid === patientUuids[patientUuids.length - 1];
 
   return (
     <>
@@ -152,7 +154,9 @@ const WorkflowNavigationButtons = () => {
           onClick={() => submitForNext()}
           disabled={navigationDisabled}
         >
-          {t("nextPatient", "Next Patient")}
+          {isLastPatient
+            ? t("saveForm", "Save Form")
+            : t("nextPatient", "Next Patient")}
         </Button>
         <Button kind="secondary" onClick={() => setCompleteModalOpen(true)}>
           {t("saveAndComplete", "Save & Complete")}
@@ -322,7 +326,15 @@ const GroupSessionWorkspace = () => {
     activeEncounterUuid,
     activeFormUuid,
     saveEncounter,
+    // activeSessionMeta,
   } = useContext(GroupFormWorkflowContext);
+
+  // const handleEncounterCreate = (payload: Record<string, unknown>) => {
+  //   console.log("payload", payload);
+  //   Object.entries(activeSessionMeta).forEach((key, value) => {
+  //     payload[key as unknown as string] = value;
+  //   });
+  // };
 
   const handlePostResponse = (encounter) => {
     if (encounter && encounter.uuid) {
@@ -340,6 +352,7 @@ const GroupSessionWorkspace = () => {
             {...{
               formUuid: activeFormUuid,
               handlePostResponse,
+              // handleEncounterCreate,
             }}
           />
         </div>
