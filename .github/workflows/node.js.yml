@@ -22,11 +22,9 @@ jobs:
       - name: Use Node.js
         uses: actions/setup-node@v1
         with:
-          node-version: "16.x"
-      - run: yarn
-      - run: yarn lint
-      - run: yarn coverage
-      - run: yarn typescript
+          node-version: "18.x"
+      - run: yarn install --immutable
+      - run: yarn verify
       - run: yarn build
       - name: Upload Artifacts
         uses: actions/upload-artifact@v2
@@ -49,13 +47,19 @@ jobs:
       - name: Use Node.js
         uses: actions/setup-node@v1
         with:
-          node-version: "16.x"
+          node-version: "18.x"
           registry-url: "https://registry.npmjs.org"
-      - run: npm install
-      - run: sed -i -e "s/\(\"version\":\\s\+\"\([0-9]\+\.\?\)\+\)/\1-pre.${{ github.run_number }}/" 'package.json'
-      - run: npm publish --tag next
+      - run: yarn version "$(node -e "console.log(require('semver').inc(require('./package.json').version, 'patch'))")-pre.${{ github.run_number }}"
+      - run: yarn build
+      - run: yarn npm publish --tag next
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: dist
+          path: |
+            dist
 
   release:
     runs-on: ubuntu-latest
@@ -71,10 +75,9 @@ jobs:
       - name: Use Node.js
         uses: actions/setup-node@v1
         with:
-          node-version: "16.x"
+          node-version: "18.x"
           registry-url: 'https://registry.npmjs.org'
-      - run: yarn
-      - run: yarn publish
+      - run: yarn npm publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
 
@@ -86,7 +89,7 @@ jobs:
       ESM_NAME: "@openmrs/esm-fast-data-entry-app"
       JS_NAME: "openmrs-esm-fast-data-entry-app.js"
 
-    needs: build
+    needs: pre_release
 
     if: ${{ github.event_name == 'push' }}
 
