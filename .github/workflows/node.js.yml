@@ -49,6 +49,7 @@ jobs:
         with:
           node-version: "18.x"
           registry-url: "https://registry.npmjs.org"
+      - run: yarn install --immutable
       - run: yarn version "$(node -e "console.log(require('semver').inc(require('./package.json').version, 'patch'))")-pre.${{ github.run_number }}"
       - run: yarn build
       - run: yarn npm publish --tag next
@@ -77,6 +78,8 @@ jobs:
         with:
           node-version: "18.x"
           registry-url: 'https://registry.npmjs.org'
+      - run: yarn install --immutable
+      - run: yarn build
       - run: yarn npm publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
