@@ -1,4 +1,4 @@
-
+@use '@carbon/styles/scss/spacing';
 @use '@carbon/colors';
 
 .modal {
@@ -24,7 +24,12 @@
 .patientRow {
    display: flex;
    width: "100%";
-  & :hover {
+}
+
+.patientName {
+  flex-grow: 1;
+  padding: spacing.$spacing-02;
+  &:hover {
     background-color: colors.$gray-20;
   }
 }

@@ -8,7 +8,7 @@ import {
   TextInput,
   FormLabel,
 } from "@carbon/react";
-import { Add } from "@carbon/react/icons";
+import { Add, Close } from "@carbon/react/icons";
 import { useTranslation } from "react-i18next";
 import { ExtensionSlot } from "@openmrs/esm-framework";
 import styles from "./styles.scss";
@@ -18,11 +18,20 @@ import { usePostCohort } from "../hooks";
 const MemExtension = React.memo(ExtensionSlot);
 
 const PatientRow = ({ patient, removePatient }) => {
+  const { t } = useTranslation();
   return (
     <li key={patient.uuid} className={styles.patientRow}>
-      <span style={{ flexGrow: 1 }}>{patient?.display}</span>
+      <span className={styles.patientName}>{patient?.display}</span>
       <span>
-        <button onClick={() => removePatient(patient.uuid)}>x</button>
+        <Button
+          kind="tertiary"
+          size="sm"
+          onClick={() => removePatient(patient.uuid)}
+          renderIcon={Close}
+          tooltipPosition="right"
+        >
+          {t("remove", "Remove")}
+        </Button>
       </span>
     </li>
   );
@@ -55,11 +64,15 @@ const NewGroupForm = (props) => {
         onBlur={() => validate("name")}
       />
       {errors?.name && (
-        <p className={styles.formError}>Please enter a group name.</p>
+        <p className={styles.formError}>
+          {t("groupNameError", "Please enter a group name.")}
+        </p>
       )}
       <FormLabel>Patients in group</FormLabel>
       {errors?.patientList && (
-        <p className={styles.formError}>Please enter a at least one patient.</p>
+        <p className={styles.formError}>
+          {t("noPatientError", "Please enter at least one patient.")}
+        </p>
       )}
       {!errors?.patientList && (
         <ul>
@@ -102,13 +115,16 @@ const AddGroupModal = () => {
     setOpen(false);
   };
 
-  const removePatient = (patientUuid) =>
-    setPatientList((patientList) =>
-      patientList.filter((patient) => patient.uuid !== patientUuid)
-    );
+  const removePatient = useCallback(
+    (patientUuid: string) =>
+      setPatientList((patientList) =>
+        patientList.filter((patient) => patient.uuid !== patientUuid)
+      ),
+    [setPatientList]
+  );
 
   const validate = useCallback(
-    (field?) => {
+    (field?: string | undefined) => {
       let valid = true;
       if (field) {
         valid = field === "name" ? !!name : !!patientList.length;
