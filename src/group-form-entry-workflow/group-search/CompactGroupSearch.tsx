@@ -1,40 +1,56 @@
 import React, { useState } from "react";
+import { GroupType } from "../../context/GroupFormWorkflowContext";
 import styles from "./compact-group-search.scss";
 import GroupSearch from "./GroupSearch";
-import GroupSearchBar from "./GroupSearchBar";
+import { Button, Search } from "@carbon/react";
+import { useTranslation } from "react-i18next";
 
 interface CompactGroupSearchProps {
-  selectGroupAction?: (patientUuids: [string]) => undefined;
+  selectGroupAction?: (group: GroupType) => void;
 }
 
 const CompactGroupSearch: React.FC<CompactGroupSearchProps> = ({
   selectGroupAction,
 }) => {
+  const { t } = useTranslation();
   const [query, setQuery] = useState("");
   const [dropdownShown, setDropdownShown] = useState(false);
 
-  const onGroupSelect = (uuids: [string]) => {
-    selectGroupAction(uuids);
+  const onGroupSelect = (group) => {
+    selectGroupAction(group);
     setDropdownShown(false);
     setQuery("");
   };
 
+  const handleSearchChange = (e) => {
+    setQuery(e);
+    if (e.length) {
+      setDropdownShown(true);
+    } else {
+      setDropdownShown(false);
+    }
+  };
+
   return (
     <div className={styles.patientSearchBar}>
-      <GroupSearchBar
-        small
-        onChange={(e) => {
-          setQuery(e);
-          if (e.length) {
-            setDropdownShown(true);
-          } else {
-            setDropdownShown(false);
-          }
-        }}
-        value={query}
-        onSubmit={() => undefined}
-        onClear={() => undefined}
-      />
+      <div className={styles.searchArea}>
+        <Search
+          autoFocus
+          className={styles.patientSearchInput}
+          closeButtonLabelText={t("clearSearch", "Clear")}
+          labelText=""
+          onChange={(event) => {
+            handleSearchChange(event.target.value);
+          }}
+          onClear={() => undefined}
+          placeholder={t("searchForGroup", "Search for a group by name")}
+          size="sm"
+          value={query}
+        />
+        <Button kind="secondary" size="sm">
+          {t("search", "Search")}
+        </Button>
+      </div>
       {dropdownShown && (
         <div className={styles.floatingSearchResultsContainer}>
           <GroupSearch query={query} selectGroupAction={onGroupSelect} />

@@ -1,7 +1,6 @@
 import { CheckmarkOutline, WarningAlt } from "@carbon/react/icons";
 import { SkeletonText } from "@carbon/react";
-import React, { useContext } from "react";
-import FormWorkflowContext from "../context/FormWorkflowContext";
+import React from "react";
 import useGetPatient from "../hooks/useGetPatient";
 import styles from "./styles.scss";
 
@@ -18,9 +17,12 @@ const CardContainer = ({ onClick = () => undefined, active, children }) => {
   );
 };
 
-const PatientCard = ({ patientUuid }) => {
-  const { activePatientUuid, editEncounter, encounters } =
-    useContext(FormWorkflowContext);
+const PatientCard = ({
+  patientUuid,
+  activePatientUuid,
+  editEncounter,
+  encounters,
+}) => {
   const patient = useGetPatient(patientUuid);
   const givenName = patient?.name?.[0]?.given?.[0];
   const familyName = patient?.name?.[0]?.family;

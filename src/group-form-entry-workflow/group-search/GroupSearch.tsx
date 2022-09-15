@@ -7,10 +7,11 @@ import { useGroupSearch } from "./useGroupSearch";
 import CompactGroupResults, {
   SearchResultSkeleton,
 } from "./CompactGroupResults";
+import { GroupType } from "../../context/GroupFormWorkflowContext";
 
 interface GroupSearchProps {
   query: string;
-  selectGroupAction?: (patientUuids: [string]) => void;
+  selectGroupAction?: (group: GroupType) => void;
 }
 
 const GroupSearch: React.FC<GroupSearchProps> = ({

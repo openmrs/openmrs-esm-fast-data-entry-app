@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useContext, useState } from "react";
 import {
   ComposedModal,
   Button,
@@ -8,37 +8,45 @@ import {
   TextInput,
   FormLabel,
 } from "@carbon/react";
-import { Add } from "@carbon/react/icons";
+import { Add, Close } from "@carbon/react/icons";
 import { useTranslation } from "react-i18next";
 import { ExtensionSlot } from "@openmrs/esm-framework";
 import styles from "./styles.scss";
+import GroupFormWorkflowContext from "../context/GroupFormWorkflowContext";
 
-const NameField = () => {
+const MemExtension = React.memo(ExtensionSlot);
+
+const PatientRow = ({ patient, removePatient }) => {
   const { t } = useTranslation();
-  const [name, setName] = useState("");
-
-  const updateName = useCallback((e) => {
-    e.preventDefault();
-    setName(e.target.value);
-  }, []);
-
   return (
-    <TextInput
-      labelText={t("newGroupName", "New Group Name")}
-      value={name}
-      onChange={updateName}
-    />
+    <li key={patient.uuid} className={styles.patientRow}>
+      <span className={styles.patientName}>{patient?.display}</span>
+      <span>
+        <Button
+          kind="tertiary"
+          size="sm"
+          onClick={() => removePatient(patient.uuid)}
+          renderIcon={Close}
+          tooltipPosition="right"
+        >
+          {t("remove", "Remove")}
+        </Button>
+      </span>
+    </li>
   );
 };
 
-const NewGroupForm = () => {
-  const [patientList, setPatientList] = useState([]);
-  const handleSelectPatient = useCallback(
-    (patient) => {
-      setPatientList([...patientList, patient]);
-    },
-    [patientList, setPatientList]
-  );
+const NewGroupForm = (props) => {
+  const {
+    name,
+    setName,
+    patientList,
+    updatePatientList,
+    errors,
+    validate,
+    removePatient,
+  } = props;
+  const { t } = useTranslation();
 
   return (
     <div
@@ -48,30 +56,118 @@ const NewGroupForm = () => {
         rowGap: "1rem",
       }}
     >
-      <NameField />
-      <FormLabel>Patients in group</FormLabel>
-      <ul>
-        {patientList?.map((patient, index) => (
-          <li key={index}>{patient?.display}</li>
-        ))}
-      </ul>
-      <FormLabel>Search for patients to add to group</FormLabel>
-      <ExtensionSlot
-        extensionSlotName="patient-search-bar-slot"
-        state={{
-          selectPatientAction: handleSelectPatient,
-          buttonProps: {
-            kind: "primary",
-          },
-        }}
+      <TextInput
+        labelText={t("newGroupName", "New Group Name")}
+        value={name}
+        onChange={(e) => setName(e.target.value)}
+        onBlur={() => validate("name")}
       />
+      {errors?.name && (
+        <p className={styles.formError}>
+          {t("groupNameError", "Please enter a group name.")}
+        </p>
+      )}
+      <FormLabel>Patients in group</FormLabel>
+      {errors?.patientList && (
+        <p className={styles.formError}>
+          {t("noPatientError", "Please enter at least one patient.")}
+        </p>
+      )}
+      {!errors?.patientList && (
+        <ul>
+          {patientList?.map((patient, index) => (
+            <PatientRow
+              patient={patient}
+              removePatient={removePatient}
+              key={index}
+            />
+          ))}
+        </ul>
+      )}
+
+      <FormLabel>Search for patients to add to group</FormLabel>
+      <div className={styles.searchBar}>
+        <MemExtension
+          extensionSlotName="patient-search-bar-slot"
+          state={{
+            selectPatientAction: updatePatientList,
+            buttonProps: {
+              kind: "primary",
+            },
+          }}
+        />
+      </div>
     </div>
   );
 };
 
 const AddGroupModal = () => {
+  const { setGroup } = useContext(GroupFormWorkflowContext);
   const { t } = useTranslation();
   const [open, setOpen] = useState(false);
+  const [errors, setErrors] = useState({});
+  const [name, setName] = useState("");
+  const [patientList, setPatientList] = useState([]);
+
+  const handleCancel = () => {
+    setOpen(false);
+  };
+
+  const removePatient = useCallback(
+    (patientUuid: string) =>
+      setPatientList((patientList) =>
+        patientList.filter((patient) => patient.uuid !== patientUuid)
+      ),
+    [setPatientList]
+  );
+
+  const validate = useCallback(
+    (field?: string | undefined) => {
+      let valid = true;
+      if (field) {
+        valid = field === "name" ? !!name : !!patientList.length;
+        setErrors((errors) => ({
+          ...errors,
+          [field]: valid ? null : "required",
+        }));
+      } else {
+        if (!name) {
+          setErrors((errors) => ({ ...errors, name: "required" }));
+          valid = false;
+        } else {
+          setErrors((errors) => ({ ...errors, name: null }));
+        }
+        if (!patientList.length) {
+          setErrors((errors) => ({ ...errors, patientList: "required" }));
+          valid = false;
+        } else {
+          setErrors((errors) => ({ ...errors, patientList: null }));
+        }
+      }
+      return valid;
+    },
+    [name, patientList.length]
+  );
+
+  const updatePatientList = useCallback(
+    (patient) => {
+      setPatientList((patientList) => {
+        if (!patientList.find((p) => p.uuid === patient.uuid)) {
+          return [...patientList, patient];
+        } else {
+          return patientList;
+        }
+      });
+      setErrors((errors) => ({ ...errors, patientList: null }));
+    },
+    [setPatientList]
+  );
+
+  const handleSubmit = () => {
+    if (validate()) {
+      setGroup({ id: "1234", name: name, members: patientList });
+    }
+  };
 
   return (
     <div className={styles.modal}>
@@ -85,13 +181,23 @@ const AddGroupModal = () => {
       <ComposedModal open={open} onClose={() => setOpen(false)}>
         <ModalHeader>{t("createNewGroup", "Create New Group")}</ModalHeader>
         <ModalBody>
-          <NewGroupForm />
+          <NewGroupForm
+            {...{
+              name,
+              setName,
+              patientList,
+              updatePatientList,
+              errors,
+              validate,
+              removePatient,
+            }}
+          />
         </ModalBody>
         <ModalFooter>
-          <Button kind="secondary" onClick={() => setOpen(false)}>
+          <Button kind="secondary" onClick={handleCancel}>
             {t("cancel", "Cancel")}
           </Button>
-          <Button kind="primary" onClick={() => setOpen(false)}>
+          <Button kind="primary" onClick={handleSubmit}>
             {t("createGroup", "Create Group")}
           </Button>
         </ModalFooter>
@@ -101,5 +207,3 @@ const AddGroupModal = () => {
 };
 
 export default AddGroupModal;
-
-export { NameField };

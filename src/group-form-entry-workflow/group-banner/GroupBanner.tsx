@@ -1,86 +1,43 @@
-import { age, ExtensionSlot } from "@openmrs/esm-framework";
-import { SkeletonPlaceholder, SkeletonText } from "@carbon/react";
 import React, { useContext } from "react";
+import { Events } from "@carbon/react/icons";
 import styles from "./styles.scss";
 import { useTranslation } from "react-i18next";
-import useGetPatient from "../../hooks/useGetPatient";
 import GroupFormWorkflowContext from "../../context/GroupFormWorkflowContext";
 
-const SkeletonGroupInfo = () => {
-  return (
-    <div className={styles.container}>
-      <SkeletonPlaceholder className={styles.photoPlaceholder} />
-      <div className={styles.patientInfoContent}>
-        <div className={styles.patientInfoRow}>
-          <SkeletonText width="7rem" lineCount={1} />
-        </div>
-        <div className={styles.patientInfoRow}>
-          <span>
-            <SkeletonText width="1rem" lineCount={1} />
-          </span>
-          <span>&middot;</span>
-          <span>
-            <SkeletonText width="1rem" lineCount={1} />
-          </span>
-          <span>&middot;</span>
-          <span>
-            <SkeletonText width="1rem" lineCount={1} />
-          </span>
-        </div>
-      </div>
-    </div>
-  );
-};
-
 const GroupBanner = () => {
-  const { activePatientUuid, workflowState } = useContext(
-    GroupFormWorkflowContext
-  );
-  const patient = useGetPatient(activePatientUuid);
+  const { activeGroupName, activeGroupUuid, patientUuids, activeSessionMeta } =
+    useContext(GroupFormWorkflowContext);
   const { t } = useTranslation();
-  const patientName = `${patient?.name?.[0].given?.join(" ")} ${
-    patient?.name?.[0]?.family
-  }`;
 
-  const patientPhotoSlotState = React.useMemo(
-    () => ({ patientUuid: patient?.id, patientName, size: "small" }),
-    [patient?.id, patientName]
-  );
-
-  if (workflowState === "NEW_PATIENT") return null;
-
-  if (!patient) {
-    return <SkeletonGroupInfo />;
+  if (!activeGroupUuid) {
+    return null;
   }
 
   return (
     <div className={styles.container}>
-      <ExtensionSlot
-        extensionSlotName="patient-photo-slot"
-        state={patientPhotoSlotState}
-      />
-      <div className={styles.patientInfoContent}>
-        <div className={styles.patientInfoRow}>
-          <span className={styles.patientName}>{patientName}</span>
+      <div className={styles.groupAvatar} role="img">
+        <Events size={48} />
+      </div>
+      <div className={styles.groupInfoContent}>
+        <div className={styles.groupInfoRow}>
+          <span className={styles.groupName}>{activeGroupName}</span>
         </div>
-        <div className={styles.patientInfoRow}>
+        <div className={styles.groupInfoRow}>
           <span>
-            {(patient.gender ?? t("unknown", "Unknown")).replace(/^\w/, (c) =>
-              c.toUpperCase()
-            )}
-          </span>
-          <span>&middot;</span>
-          <span>{age(patient.birthDate)}</span>
-          <span>&middot;</span>
-          <span>
-            {patient.identifier.length
-              ? patient.identifier
-                  .map((identifier) => identifier.value)
-                  .join(", ")
-              : "--"}
+            {patientUuids.length} {t("members", "members")}
           </span>
         </div>
       </div>
+      {activeSessionMeta?.sessionNotes && (
+        <div className={styles.groupMeataContent}>
+          <div className={`${styles.groupInfoRow} ${styles.sessionNotesLabel}`}>
+            {t("sessionNotes", "Session Notes")}
+          </div>
+          <div className={styles.groupInfoRow}>
+            {activeSessionMeta.sessionNotes}
+          </div>
+        </div>
+      )}
     </div>
   );
 };

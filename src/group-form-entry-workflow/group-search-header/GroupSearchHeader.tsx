@@ -10,12 +10,12 @@ import AddGroupModal from "../../add-group-modal/AddGroupModal";
 
 const GroupSearchHeader = () => {
   const { t } = useTranslation();
-  const { workflowState } = useContext(GroupFormWorkflowContext);
-  const handleSelectGroup = (uuids) => {
-    return undefined;
+  const { activeGroupUuid, setGroup } = useContext(GroupFormWorkflowContext);
+  const handleSelectGroup = (group) => {
+    setGroup(group);
   };
 
-  if (workflowState !== "NEW_PATIENT") return null;
+  if (activeGroupUuid) return null;
 
   return (
     <div className={styles.searchHeaderContainer}>

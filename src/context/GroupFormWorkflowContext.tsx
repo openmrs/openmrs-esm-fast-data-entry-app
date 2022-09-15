@@ -1,12 +1,26 @@
 import React, { useEffect, useMemo, useReducer } from "react";
-import reducer from "./FormWorkflowReducer";
+import reducer from "./GroupFormWorkflowReducer";
 import { useParams } from "react-router-dom";
+import { Type } from "@openmrs/esm-framework";
 interface ParamTypes {
   formUuid?: string;
 }
 
+export interface GroupType {
+  id: string;
+  name: string;
+  members: Array<Type.Object>;
+}
+export interface MetaType {
+  sessionName: string;
+  sessionDate: string;
+  practitionerName: string;
+  sessionNotes: string;
+}
+
 const initialActions = {
-  addPatient: (uuid: string | number) => undefined,
+  setGroup: (group: GroupType) => undefined,
+  setSessionMeta: (meta: MetaType) => undefined,
   openPatientSearch: () => undefined,
   saveEncounter: (encounterUuid: string | number) => undefined,
   editEncounter: (patientUuid: string | number) => undefined,
@@ -30,6 +44,14 @@ export const initialWorkflowState = {
   activeEncounterUuid: null, // pseudo field from state[activeFormUuid].encounterUuid
   patientUuids: [], // pseudo field from state[activeFormUuid].patientUuids
   encounters: {}, // pseudo field from state[activeFormUuid].encounters
+  activeGroupUuid: null, // pseudo field from state[activeFormUuid].groupUuid
+  activeGroupName: null, // pseudo field from state[activeFormUuid].groupname
+  activeSessionMeta: {
+    sessionName: null,
+    practitionerName: null,
+    sessionDate: null,
+    sessionNotes: null,
+  },
 };
 
 const GroupFormWorkflowContext = React.createContext({
@@ -52,8 +74,8 @@ const GroupFormWorkflowProvider = ({ children }) => {
           type: "INITIALIZE_WORKFLOW_STATE",
           activeFormUuid,
         }),
-      addPatient: (patientUuid) =>
-        dispatch({ type: "ADD_PATIENT", patientUuid }),
+      setGroup: (group) => dispatch({ type: "SET_GROUP", group }),
+      setSessionMeta: (meta) => dispatch({ type: "SET_SESSION_META", meta }),
       openPatientSearch: () => dispatch({ type: "OPEN_PATIENT_SEARCH" }),
       saveEncounter: (encounterUuid) =>
         dispatch({
@@ -61,7 +83,6 @@ const GroupFormWorkflowProvider = ({ children }) => {
           encounterUuid,
         }),
       submitForNext: () => dispatch({ type: "SUBMIT_FOR_NEXT" }),
-      submitForReview: () => dispatch({ type: "SUBMIT_FOR_REVIEW" }),
       submitForComplete: () => dispatch({ type: "SUBMIT_FOR_COMPLETE" }),
       editEncounter: (patientUuid) =>
         dispatch({ type: "EDIT_ENCOUNTER", patientUuid }),
@@ -100,6 +121,15 @@ const GroupFormWorkflowProvider = ({ children }) => {
         encounters:
           state.forms?.[state.activeFormUuid]?.encounters ??
           initialWorkflowState.encounters,
+        activeGroupUuid:
+          state.forms?.[state.activeFormUuid]?.groupUuid ??
+          initialWorkflowState.activeGroupUuid,
+        activeGroupName:
+          state.forms?.[state.activeFormUuid]?.groupName ??
+          initialWorkflowState.activeGroupName,
+        activeSessionMeta:
+          state.forms?.[state.activeFormUuid]?.sessionMeta ??
+          initialWorkflowState.activeSessionMeta,
       }}
     >
       {children}

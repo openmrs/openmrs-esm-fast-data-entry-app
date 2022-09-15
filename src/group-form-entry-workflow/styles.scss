@@ -46,6 +46,9 @@
   width: 13rem;
   text-align: left;
   overflow-y: scroll;
+  display: flex;
+  flex-direction: column;
+  row-gap: spacing.$spacing-05;
 }
 
 .patientCardsSection {
@@ -74,4 +77,10 @@
 
 .formSectionTile {
   width: 500px;
+}
+
+
+.formError {
+  @include type.type-style("helper-text-02");
+  color: colors.$red-60;
 }

@@ -1,7 +1,7 @@
 import { navigate } from "@openmrs/esm-framework";
 import { initialWorkflowState } from "./FormWorkflowContext";
 
-export const fdeGroupWorkflowStorageVersion = "1.0.14";
+export const fdeGroupWorkflowStorageVersion = "1.0.5";
 export const fdeGroupWorkflowStorageName =
   "openmrs:fastDataEntryGroupWorkflowState";
 const persistData = (data) => {
@@ -9,7 +9,9 @@ const persistData = (data) => {
 };
 
 const initialFormState = {
-  workflowState: "NEW_PATIENT",
+  workflowState: "NEW_GROUP_SESSION",
+  groupUuid: null,
+  groupName: null,
   activePatientUuid: null,
   activeEncounterUuid: null,
   patientUuids: [],
@@ -22,43 +24,35 @@ const reducer = (state, action) => {
       const savedData = localStorage.getItem(fdeGroupWorkflowStorageName);
       const savedDataObject = savedData ? JSON.parse(savedData) : {};
       let newState: { [key: string]: unknown } = {};
-      const newForm = {
-        workflowState: "EDIT_FORM",
-      };
-      // this logic isn't complete yet
-
       if (
         savedData &&
         savedDataObject["_storageVersion"] === fdeGroupWorkflowStorageVersion
       ) {
         // there is localStorage data and it is still valid
+        const thisSavedForm = savedDataObject.forms?.[action.activeFormUuid];
+        // set active patient to the last one we were on
+        const activePatientUuid =
+          thisSavedForm?.activePatientUuid ||
+          // or set it to the first member in the list
+          thisSavedForm?.patientUuids?.[0] ||
+          // something probably went wrong...
+          null;
         newState = {
           ...savedDataObject,
+          // set current form to this one
           activeFormUuid: action.activeFormUuid,
           forms: {
             ...savedDataObject.forms,
             // initialize this particular form if it hasn't been created already
             [action.activeFormUuid]: {
               ...initialFormState,
-              ...savedDataObject.forms[action.activeFormUuid],
-              // if we receive activePatientUuid from a query parameter use that one
-              ...newForm,
-              patientUuids:
-                savedDataObject.forms[action.activeFormUuid]?.patientUuids ||
-                initialFormState.patientUuids,
+              ...thisSavedForm,
+              activePatientUuid: activePatientUuid,
+              activeEncounterUuid:
+                thisSavedForm?.encounters?.[activePatientUuid] || null,
             },
           },
         };
-        if (
-          action.newPatientUuid &&
-          !newState.forms[action.activeFormUuid].patientUuids.includes(
-            action.newPatientUuid
-          )
-        ) {
-          newState.forms[action.activeFormUuid].patientUuids.push(
-            action.newPatientUuid
-          );
-        }
       } else {
         // no localStorage data, or we should void it
         newState = {
@@ -71,21 +65,42 @@ const reducer = (state, action) => {
         };
       }
       persistData(newState);
-      return { ...newState };
+      return newState;
     }
-    case "ADD_PATIENT": {
+
+    case "SET_GROUP": {
       const newState = {
         ...state,
         forms: {
           ...state.forms,
           [state.activeFormUuid]: {
             ...state.forms[state.activeFormUuid],
-            patientUuids: [
-              ...state.forms[state.activeFormUuid].patientUuids,
-              action.patientUuid,
-            ],
-            activePatientUuid: action.patientUuid,
+            groupUuid: action.group.id,
+            groupName: action.group.name,
+            patientUuids: action.group.members.map((member) => member.uuid),
+            activePatientUuid: null,
             activeEncounterUuid: null,
+          },
+        },
+      };
+      persistData(newState);
+      return newState;
+    }
+    case "SET_SESSION_META": {
+      // requires that group is already entered and contains patientUuids
+      const newState = {
+        ...state,
+        forms: {
+          ...state.forms,
+          [state.activeFormUuid]: {
+            ...state.forms[state.activeFormUuid],
+            sessionMeta: action.meta,
+            activePatientUuid:
+              state.forms[state.activeFormUuid].patientUuids?.[0],
+            activeEncounterUuid:
+              state.forms[state.activeFormUuid].encounters[
+                state.forms[state.activeFormUuid].patientUuids?.[0]
+              ] || null,
             workflowState: "EDIT_FORM",
           },
         },
@@ -93,28 +108,10 @@ const reducer = (state, action) => {
       persistData(newState);
       return newState;
     }
-    case "OPEN_PATIENT_SEARCH": {
-      const newState = {
-        ...state,
-        forms: {
-          ...state.forms,
-          [state.activeFormUuid]: {
-            ...state.forms[state.activeFormUuid],
-            activePatientUuid: null,
-            activeEncounterUuid: null,
-            workflowState: "NEW_PATIENT",
-          },
-        },
-      };
-      // the persist here is optional...
-      persistData(newState);
-      return newState;
-    }
+
     case "SAVE_ENCOUNTER": {
-      if (
-        state.forms[state.activeFormUuid].workflowState ===
-        "SUBMIT_FOR_COMPLETE"
-      ) {
+      const thisForm = state.forms[state.activeFormUuid];
+      if (thisForm.workflowState === "SUBMIT_FOR_COMPLETE") {
         const { [state.activeFormUuid]: activeForm, ...formRest } = state.forms;
         const newState = {
           ...state,
@@ -125,34 +122,33 @@ const reducer = (state, action) => {
         // eslint-disable-next-line
         navigate({ to: "${openmrsSpaBase}/forms" });
         return newState;
-      } else {
+      } else if (thisForm.workflowState === "SUBMIT_FOR_NEXT") {
+        const nextPatientUuid =
+          thisForm.patientUuids[
+            Math.min(
+              thisForm.patientUuids.indexOf(thisForm.activePatientUuid) + 1,
+              thisForm.patientUuids.length - 1
+            )
+          ];
         const newState = {
           ...state,
           forms: {
             ...state.forms,
             [state.activeFormUuid]: {
-              ...state.forms[state.activeFormUuid],
+              ...thisForm,
               encounters: {
-                ...state.forms[state.activeFormUuid].encounters,
-                [state.forms[state.activeFormUuid].activePatientUuid]:
-                  action.encounterUuid,
+                ...thisForm.encounters,
+                [thisForm.activePatientUuid]: action.encounterUuid,
               },
-              activePatientUuid: null,
-              activeEncounterUuid: null,
-              workflowState:
-                state.forms[state.activeFormUuid].workflowState ===
-                "SUBMIT_FOR_NEXT"
-                  ? "NEW_PATIENT"
-                  : state.forms[state.activeFormUuid].workflowState ===
-                    "SUBMIT_FOR_REVIEW"
-                  ? "REVIEW"
-                  : state.forms[state.activeFormUuid].workflowState,
+              activePatientUuid: nextPatientUuid,
+              activeEncounterUuid: thisForm.encounters[nextPatientUuid] || null,
+              workflowState: "EDIT_FORM",
             },
           },
         };
         persistData(newState);
         return newState;
-      }
+      } else return state;
     }
     case "EDIT_ENCOUNTER": {
       const newState = {
