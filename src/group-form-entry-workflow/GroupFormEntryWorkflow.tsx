@@ -9,12 +9,6 @@ import {
   ModalBody,
   ModalFooter,
   ModalHeader,
-  Layer,
-  Tile,
-  TextInput,
-  TextArea,
-  DatePicker,
-  DatePickerInput,
 } from "@carbon/react";
 import React, { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -26,13 +20,9 @@ import GroupFormWorkflowContext, {
   GroupFormWorkflowProvider,
 } from "../context/GroupFormWorkflowContext";
 import GroupSearchHeader from "./group-search-header";
-import {
-  Controller,
-  FormProvider,
-  useForm,
-  useFormContext,
-} from "react-hook-form";
 import FormBootstrap from "../FormBootstrap";
+import SessionMetaWorkspace from "./session-meta-workspace/SessionMetaWorkspace";
+import { usePostVisit } from "../hooks";
 
 const formStore = getGlobalStore("ampath-form-state");
 
@@ -107,34 +97,8 @@ const CompleteModal = ({ open, setOpen }) => {
   );
 };
 
-const NewGroupWorkflowButtons = () => {
-  const { t } = useTranslation();
-  const { workflowState } = useContext(GroupFormWorkflowContext);
-  const [cancelModalOpen, setCancelModalOpen] = useState(false);
-  if (workflowState !== "NEW_GROUP_SESSION") return null;
-
-  return (
-    <>
-      <div className={styles.rightPanelActionButtons}>
-        <Button kind="secondary" type="submit">
-          {t("createNewSession", "Create New Session")}
-        </Button>
-        <Button
-          kind="tertiary"
-          onClick={() => {
-            setCancelModalOpen(true);
-          }}
-        >
-          {t("cancel", "Cancel")}
-        </Button>
-      </div>
-      <CancelModal open={cancelModalOpen} setOpen={setCancelModalOpen} />
-    </>
-  );
-};
-
 const WorkflowNavigationButtons = () => {
-  const { activeFormUuid, submitForNext, patientUuids, activePatientUuid } =
+  const { activeFormUuid, validateForNext, patientUuids, activePatientUuid } =
     useContext(GroupFormWorkflowContext);
   const store = useStore(formStore);
   const formState = store[activeFormUuid];
@@ -151,7 +115,7 @@ const WorkflowNavigationButtons = () => {
       <div className={styles.rightPanelActionButtons}>
         <Button
           kind="primary"
-          onClick={() => submitForNext()}
+          onClick={() => validateForNext()}
           disabled={navigationDisabled}
         >
           {isLastPatient
@@ -171,151 +135,6 @@ const WorkflowNavigationButtons = () => {
   );
 };
 
-const SessionDetails = () => {
-  const { t } = useTranslation();
-  const {
-    register,
-    formState: { errors },
-    control,
-  } = useFormContext();
-
-  return (
-    <div className={styles.formSection}>
-      <h4>{t("sessionDetails", "Session details")}</h4>
-      <div>
-        <p>
-          {t(
-            "allFieldsRequired",
-            "All fields are required unless marked optional"
-          )}
-        </p>
-      </div>
-      <Layer>
-        <Tile className={styles.formSectionTile}>
-          <Layer>
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                rowGap: "1.5rem",
-              }}
-            >
-              <TextInput
-                id="text"
-                type="text"
-                labelText={t("sessionName", "Session Name")}
-                {...register("sessionName", { required: true })}
-                invalid={errors.sessionName}
-                invalidText={"This field is required"}
-              />
-              <TextInput
-                id="text"
-                type="text"
-                labelText={t("practitionerName", "Practitioner Name")}
-                {...register("practitionerName", { required: true })}
-                invalid={errors.practitionerName}
-                invalidText={"This field is required"}
-              />
-              <Controller
-                name="sessionDate"
-                control={control}
-                rules={{ required: true }}
-                render={({ field }) => (
-                  <DatePicker
-                    datePickerType="single"
-                    size="md"
-                    maxDate={new Date()}
-                    {...field}
-                  >
-                    <DatePickerInput
-                      id="session-date"
-                      labelText={t("sessionDate", "Session Date")}
-                      placeholder="mm/dd/yyyy"
-                      size="md"
-                      invalid={errors.sessionDate}
-                      invalidText={"This field is required"}
-                    />
-                  </DatePicker>
-                )}
-              />
-              <TextArea
-                id="text"
-                type="text"
-                labelText={t("sessionNotes", "Session Notes")}
-                {...register("sessionNotes", { required: true })}
-                invalid={errors.sessionNotes}
-                invalidText={"This field is required"}
-              />
-            </div>
-          </Layer>
-        </Tile>
-      </Layer>
-    </div>
-  );
-};
-
-const GroupIdField = () => {
-  const { t } = useTranslation();
-  const {
-    register,
-    formState: { errors },
-    setValue,
-  } = useFormContext();
-  const { activeGroupUuid } = useContext(GroupFormWorkflowContext);
-
-  useEffect(() => {
-    if (activeGroupUuid) setValue("groupUuid", activeGroupUuid);
-  }, [activeGroupUuid, setValue]);
-
-  return (
-    <>
-      <input
-        hidden
-        {...register("groupUuid", {
-          value: activeGroupUuid,
-          required: t("chooseGroupError", "Please choose a group."),
-        })}
-      />
-      {errors.groupUuid && !activeGroupUuid && (
-        <div className={styles.formError}>
-          {errors.groupUuid.message as string}
-        </div>
-      )}
-    </>
-  );
-};
-
-const SessionMetaWorkspace = () => {
-  const { t } = useTranslation();
-  const { setSessionMeta } = useContext(GroupFormWorkflowContext);
-  const methods = useForm();
-
-  const onSubmit = (data) => {
-    const { sessionDate, ...rest } = data;
-    setSessionMeta({ ...rest, sessionDate: sessionDate[0] });
-  };
-
-  return (
-    <FormProvider {...methods}>
-      <form onSubmit={methods.handleSubmit(onSubmit)}>
-        <div className={styles.workspace}>
-          <div className={styles.formMainContent}>
-            <div className={styles.formContainer}>
-              <SessionDetails />
-            </div>
-            <div className={styles.rightPanel}>
-              <h4>{t("newGroupSession", "New Group Session")}</h4>
-              <GroupIdField />
-              <hr style={{ width: "100%" }} />
-              <NewGroupWorkflowButtons />
-            </div>
-          </div>
-        </div>
-      </form>
-    </FormProvider>
-  );
-};
-
 const GroupSessionWorkspace = () => {
   const { t } = useTranslation();
   const {
@@ -326,8 +145,11 @@ const GroupSessionWorkspace = () => {
     activeEncounterUuid,
     activeFormUuid,
     saveEncounter,
+    updateActiveVisitUuid,
+    visitTypeUuid,
     // activeSessionMeta,
   } = useContext(GroupFormWorkflowContext);
+  const { post, result, error } = usePostVisit();
 
   // const handleEncounterCreate = (payload: Record<string, unknown>) => {
   //   console.log("payload", payload);
@@ -342,6 +164,31 @@ const GroupSessionWorkspace = () => {
     }
   };
 
+  const handleOnValidate = (valid) => {
+    if (!visitTypeUuid) {
+      console.error(
+        "Missing visit type. This will not be able to save the form with a visit"
+      );
+    } else if (valid) {
+      // I'm worried about this being synchronous
+      if (valid) {
+        post({
+          patient: activePatientUuid,
+          visitType: visitTypeUuid,
+        });
+      }
+    }
+  };
+
+  useEffect(() => {
+    if (result) {
+      updateActiveVisitUuid(result.uuid);
+    }
+    if (error) {
+      console.log("error");
+    }
+  }, [result, error]);
+
   return (
     <div className={styles.workspace}>
       <div className={styles.formMainContent}>
@@ -352,6 +199,7 @@ const GroupSessionWorkspace = () => {
             {...{
               formUuid: activeFormUuid,
               handlePostResponse,
+              handleOnValidate,
               // handleEncounterCreate,
             }}
           />
@@ -393,7 +241,7 @@ const GroupFormEntryWorkflow = () => {
           <SessionMetaWorkspace />
         </div>
       )}
-      {["EDIT_FORM"].includes(workflowState) && (
+      {workflowState !== "NEW_GROUP_SESSION" && (
         <div className={styles.workspaceWrapper}>
           <GroupSessionWorkspace />
         </div>
@@ -411,3 +259,4 @@ const GroupFormEntryWorkflowWrapper = () => {
 };
 
 export default GroupFormEntryWorkflowWrapper;
+export { CancelModal };

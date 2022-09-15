@@ -13,6 +13,7 @@ const initialFormState = {
   groupUuid: null,
   groupName: null,
   activePatientUuid: null,
+  activeVisitUuid: null,
   activeEncounterUuid: null,
   patientUuids: [],
   encounters: {},
@@ -167,6 +168,26 @@ const reducer = (state, action) => {
       persistData(newState);
       return newState;
     }
+    case "VALIDATE_FOR_NEXT":
+      window.dispatchEvent(
+        new CustomEvent("ampath-form-action", {
+          detail: {
+            formUuid: state.activeFormUuid,
+            patientUuid: state.forms[state.activeFormUuid].activePatientUuid,
+            action: "validateForm",
+          },
+        })
+      );
+      return {
+        ...state,
+        forms: {
+          ...state.forms,
+          [state.activeFormUuid]: {
+            ...state.forms[state.activeFormUuid],
+            workflowState: "VALIDATE_FOR_NEXT",
+          },
+        },
+      };
     case "SUBMIT_FOR_NEXT":
       // this state should not be persisted
       window.dispatchEvent(
@@ -245,6 +266,18 @@ const reducer = (state, action) => {
       };
       persistData(newState);
       return newState;
+    }
+    case "UPDATE_VISIT_UUID": {
+      return {
+        ...state,
+        forms: {
+          ...state.forms,
+          [state.activeFormUuid]: {
+            ...state.forms[state.activeFormUuid],
+            activeVisitUuid: action.activeVisitUuid,
+          },
+        },
+      };
     }
     case "DESTROY_SESSION": {
       const { [state.activeFormUuid]: activeForm, ...formRest } = state.forms;

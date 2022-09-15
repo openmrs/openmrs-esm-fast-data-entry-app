@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useReducer } from "react";
 import reducer from "./GroupFormWorkflowReducer";
 import { useParams } from "react-router-dom";
 import { Type } from "@openmrs/esm-framework";
+import useGetSystemSettings from "../hooks/useGetSystemSettings";
 interface ParamTypes {
   formUuid?: string;
 }
@@ -25,9 +26,11 @@ const initialActions = {
   saveEncounter: (encounterUuid: string | number) => undefined,
   editEncounter: (patientUuid: string | number) => undefined,
   submitForNext: () => undefined,
+  validateForNext: () => undefined,
   submitForReview: () => undefined,
   submitForComplete: () => undefined,
   goToReview: () => undefined,
+  updateActiveVisitUuid: (activeVisitUuid: string) => undefined,
   destroySession: () => undefined,
   closeSession: () => undefined,
 };
@@ -42,6 +45,7 @@ export const initialWorkflowState = {
   workflowState: null, // pseudo field from state[activeFormUuid].workflowState
   activePatientUuid: null, // pseudo field from state[activeFormUuid].activePatientUuid
   activeEncounterUuid: null, // pseudo field from state[activeFormUuid].encounterUuid
+  activeVisitUuid: null, // pseudo field from state[activeFormUuid].activeVisitUuid
   patientUuids: [], // pseudo field from state[activeFormUuid].patientUuids
   encounters: {}, // pseudo field from state[activeFormUuid].encounters
   activeGroupUuid: null, // pseudo field from state[activeFormUuid].groupUuid
@@ -57,6 +61,7 @@ export const initialWorkflowState = {
 const GroupFormWorkflowContext = React.createContext({
   ...initialWorkflowState,
   ...initialActions,
+  visitTypeUuid: null, // this is a system setting which needs to be fetched
 });
 
 const GroupFormWorkflowProvider = ({ children }) => {
@@ -66,6 +71,10 @@ const GroupFormWorkflowProvider = ({ children }) => {
     ...initialWorkflowState,
     ...initialActions,
   });
+  const { results, error: fetchVisitTypeUuidError } = useGetSystemSettings(
+    "@openmrs/esm-fast-data-entry-app.groupSessionVisitTypeUuid"
+  );
+  const visitTypeUuid = results?.[0]?.value;
 
   const actions = useMemo(
     () => ({
@@ -75,18 +84,22 @@ const GroupFormWorkflowProvider = ({ children }) => {
           activeFormUuid,
         }),
       setGroup: (group) => dispatch({ type: "SET_GROUP", group }),
-      setSessionMeta: (meta) => dispatch({ type: "SET_SESSION_META", meta }),
+      setSessionMeta: (meta: MetaType) =>
+        dispatch({ type: "SET_SESSION_META", meta }),
       openPatientSearch: () => dispatch({ type: "OPEN_PATIENT_SEARCH" }),
-      saveEncounter: (encounterUuid) =>
+      saveEncounter: (encounterUuid: string) =>
         dispatch({
           type: "SAVE_ENCOUNTER",
           encounterUuid,
         }),
       submitForNext: () => dispatch({ type: "SUBMIT_FOR_NEXT" }),
+      validateForNext: () => dispatch({ type: "VALIDATE_FOR_NEXT" }),
       submitForComplete: () => dispatch({ type: "SUBMIT_FOR_COMPLETE" }),
-      editEncounter: (patientUuid) =>
+      editEncounter: (patientUuid: string) =>
         dispatch({ type: "EDIT_ENCOUNTER", patientUuid }),
       goToReview: () => dispatch({ type: "GO_TO_REVIEW" }),
+      updateVisitUuid: (visitUuid: string) =>
+        dispatch({ type: "UPDATE_VISIT_UUID", visitUuid }),
       destroySession: () => dispatch({ type: "DESTROY_SESSION" }),
       closeSession: () => dispatch({ type: "CLOSE_SESSION" }),
     }),
@@ -101,11 +114,20 @@ const GroupFormWorkflowProvider = ({ children }) => {
     }
   }, [activeFormUuid, state?.workflowState, actions]);
 
+  useEffect(() => {
+    if (fetchVisitTypeUuidError) {
+      console.error(
+        "Error fetching systemsetting @openmrs/esm-fast-data-entry-app.groupVisitTypeUuid. This will prevent being able to save a group visit"
+      );
+    }
+  }, [fetchVisitTypeUuidError]);
+
   return (
     <GroupFormWorkflowContext.Provider
       value={{
         ...state,
         ...actions,
+        visitTypeUuid,
         workflowState:
           state.forms?.[state.activeFormUuid]?.workflowState ??
           initialWorkflowState.workflowState,
@@ -130,6 +152,9 @@ const GroupFormWorkflowProvider = ({ children }) => {
         activeSessionMeta:
           state.forms?.[state.activeFormUuid]?.sessionMeta ??
           initialWorkflowState.activeSessionMeta,
+        activeVisitUuid:
+          state.forms?.[state.activeFormUuid]?.activeVisitUuid ??
+          initialWorkflowState.activeVisitUuid,
       }}
     >
       {children}
