@@ -41,14 +41,20 @@ jobs:
     if: ${{ github.event_name == 'push' }}
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
+
       - name: Download Artifacts
         uses: actions/download-artifact@v2
-      - name: Use Node.js
+
+      - name: Setup Node.js
         uses: actions/setup-node@v1
         with:
           node-version: "18.x"
           registry-url: "https://registry.npmjs.org"
+
+      - name: Install dependencies
+        run: yarn install --immutable
+
       - run: yarn version "$(node -e "console.log(require('semver').inc(require('./package.json').version, 'patch'))")-pre.${{ github.run_number }}"
       - run: yarn build
       - run: yarn npm publish --tag next
