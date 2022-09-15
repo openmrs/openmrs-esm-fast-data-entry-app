@@ -87,7 +87,7 @@ jobs:
           registry-url: 'https://registry.npmjs.org'
       - run: yarn npm publish
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
+          NPM_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
 
   deploy_fast_data_entry_app:
     runs-on: ubuntu-latest
