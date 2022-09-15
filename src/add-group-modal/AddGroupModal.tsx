@@ -13,6 +13,7 @@ import { useTranslation } from "react-i18next";
 import { ExtensionSlot } from "@openmrs/esm-framework";
 import styles from "./styles.scss";
 import GroupFormWorkflowContext from "../context/GroupFormWorkflowContext";
+import { usePostCohort } from "../hooks";
 
 const MemExtension = React.memo(ExtensionSlot);
 
@@ -95,6 +96,7 @@ const AddGroupModal = () => {
   const [errors, setErrors] = useState({});
   const [name, setName] = useState("");
   const [patientList, setPatientList] = useState([]);
+  const { post } = usePostCohort();
 
   const handleCancel = () => {
     setOpen(false);
@@ -148,7 +150,12 @@ const AddGroupModal = () => {
   );
 
   const handleSubmit = () => {
+    const postObject = {
+      name,
+      cohortMembers: patientList.map((p) => ({ patient: p.uuid })),
+    };
     if (validate()) {
+      post(postObject);
       setGroup({ id: "1234", name: name, members: patientList });
     }
   };
