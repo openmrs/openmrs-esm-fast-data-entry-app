@@ -51,7 +51,6 @@ jobs:
         with:
           node-version: "18.x"
           registry-url: "https://registry.npmjs.org"
-          always-auth: true
 
       - name: Install dependencies
         run: yarn install --immutable
@@ -60,7 +59,7 @@ jobs:
       - run: yarn build
       - run: git config user.email "info@openmrs.org" && git config user.name "OpenMRS CI"
       - run: git add . && git commit -m "Prerelease version" --no-verify
-      - run: yarn npm publish --tag next
+      - run: yarn config set npmAuthToken "${NODE_AUTH_TOKEN}" && yarn npm publish --tag next
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
       - name: Upload Artifacts
@@ -86,8 +85,7 @@ jobs:
         with:
           node-version: "18.x"
           registry-url: 'https://registry.npmjs.org'
-          always-auth: true
-      - run: yarn npm publish
+      - run: yarn config set npmAuthToken "${NODE_AUTH_TOKEN}" &&  yarn npm publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
 
