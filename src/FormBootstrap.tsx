@@ -107,7 +107,7 @@ interface FormParams {
   showDiscardSubmitButtons?: boolean;
   handlePostResponse?: (arg0: Encounter) => void;
   handleEncounterCreate?: (arg0: Record<string, unknown>) => void;
-  handleOnValidate?: (valid: string) => void;
+  handleOnValidate?: (valid: boolean) => void;
 }
 
 const FormBootstrap = ({

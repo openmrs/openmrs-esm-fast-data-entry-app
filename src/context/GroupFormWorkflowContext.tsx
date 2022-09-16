@@ -30,7 +30,8 @@ const initialActions = {
   submitForReview: () => undefined,
   submitForComplete: () => undefined,
   goToReview: () => undefined,
-  updateActiveVisitUuid: (activeVisitUuid: string) => undefined,
+  updateVisitAndSubmitForNext: (activeVisitUuid: string) => undefined,
+  createVisitForNext: () => undefined,
   destroySession: () => undefined,
   closeSession: () => undefined,
 };
@@ -94,12 +95,16 @@ const GroupFormWorkflowProvider = ({ children }) => {
         }),
       submitForNext: () => dispatch({ type: "SUBMIT_FOR_NEXT" }),
       validateForNext: () => dispatch({ type: "VALIDATE_FOR_NEXT" }),
+      createVisitForNext: () => dispatch({ type: "CREATE_VISIT_FOR_NEXT" }),
       submitForComplete: () => dispatch({ type: "SUBMIT_FOR_COMPLETE" }),
       editEncounter: (patientUuid: string) =>
         dispatch({ type: "EDIT_ENCOUNTER", patientUuid }),
       goToReview: () => dispatch({ type: "GO_TO_REVIEW" }),
-      updateVisitUuid: (visitUuid: string) =>
-        dispatch({ type: "UPDATE_VISIT_UUID", visitUuid }),
+      updateVisitAndSubmitForNext: (activeVisitUuid: string) =>
+        dispatch({
+          type: "UPDATE_ACTIVE_VISIT_SUBMIT_FOR_NEXT",
+          activeVisitUuid,
+        }),
       destroySession: () => dispatch({ type: "DESTROY_SESSION" }),
       closeSession: () => dispatch({ type: "CLOSE_SESSION" }),
     }),

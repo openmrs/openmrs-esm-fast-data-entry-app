@@ -188,7 +188,18 @@ const reducer = (state, action) => {
           },
         },
       };
-    case "SUBMIT_FOR_NEXT":
+    case "CREATE_VISIT_FOR_NEXT":
+      return {
+        ...state,
+        forms: {
+          ...state.forms,
+          [state.activeFormUuid]: {
+            ...state.forms[state.activeFormUuid],
+            workflowState: "CREATING_VISIT_FOR_NEXT",
+          },
+        },
+      };
+    case "UPDATE_ACTIVE_VISIT_SUBMIT_FOR_NEXT":
       // this state should not be persisted
       window.dispatchEvent(
         new CustomEvent("ampath-form-action", {
@@ -205,6 +216,7 @@ const reducer = (state, action) => {
           ...state.forms,
           [state.activeFormUuid]: {
             ...state.forms[state.activeFormUuid],
+            activeVisitUuid: action.activeVisitUuid,
             workflowState: "SUBMIT_FOR_NEXT",
           },
         },
@@ -267,18 +279,7 @@ const reducer = (state, action) => {
       persistData(newState);
       return newState;
     }
-    case "UPDATE_VISIT_UUID": {
-      return {
-        ...state,
-        forms: {
-          ...state.forms,
-          [state.activeFormUuid]: {
-            ...state.forms[state.activeFormUuid],
-            activeVisitUuid: action.activeVisitUuid,
-          },
-        },
-      };
-    }
+
     case "DESTROY_SESSION": {
       const { [state.activeFormUuid]: activeForm, ...formRest } = state.forms;
       const newState = {

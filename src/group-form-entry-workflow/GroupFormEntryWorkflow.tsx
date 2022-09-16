@@ -145,11 +145,15 @@ const GroupSessionWorkspace = () => {
     activeEncounterUuid,
     activeFormUuid,
     saveEncounter,
-    updateActiveVisitUuid,
     visitTypeUuid,
+    submitForNext,
+    activeVisitUuid,
+    workflowState,
+    createVisitForNext,
+    updateVisitAndSubmitForNext,
     // activeSessionMeta,
   } = useContext(GroupFormWorkflowContext);
-  const { post, result, error } = usePostVisit();
+  const { post: createVisit, result, error } = usePostVisit();
 
   // const handleEncounterCreate = (payload: Record<string, unknown>) => {
   //   console.log("payload", payload);
@@ -164,7 +168,7 @@ const GroupSessionWorkspace = () => {
     }
   };
 
-  const handleOnValidate = (valid) => {
+  const handleOnValidate = (valid: boolean) => {
     if (!visitTypeUuid) {
       console.error(
         "Missing visit type. This will not be able to save the form with a visit"
@@ -172,22 +176,34 @@ const GroupSessionWorkspace = () => {
     } else if (valid) {
       // I'm worried about this being synchronous
       if (valid) {
-        post({
+        createVisit({
           patient: activePatientUuid,
           visitType: visitTypeUuid,
         });
+        createVisitForNext();
       }
     }
   };
 
   useEffect(() => {
-    if (result) {
-      updateActiveVisitUuid(result.uuid);
+    if (result && workflowState === "CREATING_VISIT_FOR_NEXT") {
+      // trigger form post
+      updateVisitAndSubmitForNext(result.uuid);
     }
     if (error) {
       console.log("error");
     }
-  }, [result, error]);
+  }, [
+    result,
+    error,
+    submitForNext,
+    updateVisitAndSubmitForNext,
+    workflowState,
+  ]);
+
+  const handleEncounterCreate = (encounter) => {
+    encounter.visitUuid = activeVisitUuid;
+  };
 
   return (
     <div className={styles.workspace}>
@@ -200,7 +216,7 @@ const GroupSessionWorkspace = () => {
               formUuid: activeFormUuid,
               handlePostResponse,
               handleOnValidate,
-              // handleEncounterCreate,
+              handleEncounterCreate,
             }}
           />
         </div>
@@ -246,6 +262,7 @@ const GroupFormEntryWorkflow = () => {
           <GroupSessionWorkspace />
         </div>
       )}
+      workflowState: {workflowState}
     </>
   );
 };
