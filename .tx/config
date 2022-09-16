@@ -1,0 +1,9 @@
+[main]
+host = https://www.transifex.com
+
+[openmrs-esm-fast-data-entry-app.esm-fast-data-entry-app]
+file_filter = translations/<lang>.json
+minimum_perc = 0
+source_file = translations/en.json
+source_lang = en
+type = KEYVALUEJSON
