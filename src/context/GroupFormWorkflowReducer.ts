@@ -92,6 +92,24 @@ const reducer = (state, action) => {
       persistData(newState);
       return newState;
     }
+    case "UNSET_GROUP": {
+      const newState = {
+        ...state,
+        forms: {
+          ...state.forms,
+          [state.activeFormUuid]: {
+            ...state.forms[state.activeFormUuid],
+            groupUuid: null,
+            groupName: null,
+            patientUuids: [],
+            activePatientUuid: null,
+            activeEncounterUuid: null,
+          },
+        },
+      };
+      persistData(newState);
+      return newState;
+    }
     case "SET_SESSION_META": {
       // requires that group is already entered and contains patientUuids
       const newState = {
