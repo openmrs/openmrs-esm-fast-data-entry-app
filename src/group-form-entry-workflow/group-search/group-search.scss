@@ -29,12 +29,7 @@
   width: 100%;
 }
 
-.loadingIcon {
-  padding: spacing.$spacing-05 0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
+
 
 .searchTerm {
   @include type.type-style('heading-03');
@@ -91,4 +86,11 @@
   margin-bottom: spacing.$spacing-03;
   @include type.type-style('body-01');
   color: $text-02;
+}
+
+.lastItem {
+  padding: spacing.$spacing-05;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }

@@ -7,6 +7,7 @@ import {
   ModalBody,
   TextInput,
   FormLabel,
+  Loading,
 } from "@carbon/react";
 import { Add, TrashCan } from "@carbon/react/icons";
 import { useTranslation } from "react-i18next";
@@ -227,7 +228,10 @@ const AddGroupModal = () => {
           {result ? (
             <p>Group saved succesfully</p>
           ) : isPosting ? (
-            <p>Saving new group...</p>
+            <div className={styles.loading}>
+              <Loading withOverlay={false} />
+              <span>Saving new group...</span>
+            </div>
           ) : (
             <NewGroupForm
               {...{
@@ -243,10 +247,10 @@ const AddGroupModal = () => {
           )}
         </ModalBody>
         <ModalFooter>
-          <Button kind="secondary" onClick={handleCancel}>
+          <Button kind="secondary" onClick={handleCancel} disabled={isPosting}>
             {t("cancel", "Cancel")}
           </Button>
-          <Button kind="primary" onClick={handleSubmit}>
+          <Button kind="primary" onClick={handleSubmit} disabled={isPosting}>
             {t("createGroup", "Create Group")}
           </Button>
         </ModalFooter>

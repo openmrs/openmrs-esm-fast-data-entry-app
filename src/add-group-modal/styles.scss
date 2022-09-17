@@ -34,3 +34,12 @@
   flex-grow: 1;
   padding-left: spacing.$spacing-05;
 }
+
+.loading {
+  display: flex;
+  height: 100%;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  row-gap: spacing.$spacing-05;
+}

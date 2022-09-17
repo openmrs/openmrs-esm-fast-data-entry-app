@@ -28,6 +28,7 @@
   "nextPatient": "Next Patient",
   "noFormsFound": "No Forms To Show",
   "noFormsFoundMessage": "No forms could be found for this category. Please double check the form concept uuids and access permissions.",
+  "noMoreResults": "End of search results",
   "noGroupsFoundMessage": "Sorry, no groups have been found",
   "noPatientError": "Please enter at least one patient.",
   "or": "or",
