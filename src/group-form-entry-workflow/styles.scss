@@ -19,6 +19,16 @@
   width: 1100px;
 }
 
+:global(.omrs-breakpoint-lt-large-desktop) .workspace {
+  width: 1000px;
+}
+
+:global(.omrs-breakpoint-lt-small-desktop) .workspace {
+  // there's only so much we can do here. Currenlty the design does not support tablet
+  width: 100vw;
+  padding: 0 spacing.$spacing-04;
+}
+
 .selectPatientMessage {
   @include type.type-style('productive-heading-03');
   margin: spacing.$spacing-07;

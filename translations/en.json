@@ -31,6 +31,8 @@
   "noPatientError": "Please enter at least one patient.",
   "or": "or",
   "orLabelName": "OR label name",
+  "patientsInGroup": "Patients in group",
+  "postError": "POST Error",
   "practitionerName": "Practitioner Name",
   "remove": "Remove",
   "resumeSession": "Resume Session",
@@ -45,5 +47,6 @@
   "sessionName": "Session Name",
   "sessionNotes": "Session Notes",
   "startGroupSession": "Start Group Session",
-  "trySearchWithPatientUniqueID": "Try searching with the cohort's description"
+  "trySearchWithPatientUniqueID": "Try searching with the cohort's description",
+  "unknownPostError": "An unknown error occured while saving data"
 }

@@ -53,7 +53,7 @@ const CompactGroupResults = ({ groups, selectGroupAction }) => {
             dispatch({ type: "select", payload: index });
             selectGroupAction(group);
           }}
-          key={group.id}
+          key={group.uuid}
           className={`${styles.patientSearchResult} ${
             index === state.selectedIndex && styles.patientSearchResultSelected
           }`}
@@ -67,7 +67,7 @@ const CompactGroupResults = ({ groups, selectGroupAction }) => {
           <div>
             <h2 className={styles.patientName}>{group.name}</h2>
             <p className={styles.demographics}>
-              {group.members.length} {t("members", "members")}
+              {group.cohortMembers?.length ?? 0} {t("members", "members")}
               <span className={styles.middot}>&middot;</span>{" "}
               {group.description}
             </p>

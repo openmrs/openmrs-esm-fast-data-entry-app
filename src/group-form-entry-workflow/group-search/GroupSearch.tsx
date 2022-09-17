@@ -3,11 +3,11 @@ import { useTranslation } from "react-i18next";
 import { Layer, Tile } from "@carbon/react";
 import styles from "./group-search.scss";
 import { EmptyDataIllustration } from "../../empty-state/EmptyDataIllustration";
-import { useGroupSearch } from "./useGroupSearch";
 import CompactGroupResults, {
   SearchResultSkeleton,
 } from "./CompactGroupResults";
 import { GroupType } from "../../context/GroupFormWorkflowContext";
+import { useSearchCohortInfinite } from "../../hooks/useSearchEndpoint";
 
 interface GroupSearchProps {
   query: string;
@@ -19,8 +19,21 @@ const GroupSearch: React.FC<GroupSearchProps> = ({
   selectGroupAction,
 }) => {
   const { t } = useTranslation();
-  const results = useGroupSearch(query);
-  const error = false;
+  const {
+    isLoading,
+    data: results,
+    error,
+    // loadingNewData,
+    // setPage,
+    // hasMore,
+    // totalResults,
+  } = useSearchCohortInfinite({
+    searchTerm: query,
+    searching: !!query,
+    parameters: {
+      v: "full",
+    },
+  });
 
   if (error) {
     return (
@@ -43,9 +56,9 @@ const GroupSearch: React.FC<GroupSearchProps> = ({
     );
   }
 
-  if (query.length <= 2) return <SearchResultSkeleton />;
+  if (isLoading) return <SearchResultSkeleton />;
 
-  if (results.length === 0) {
+  if (results?.length === 0) {
     return (
       <div className={styles.searchResults}>
         <Layer>
@@ -79,7 +92,7 @@ const GroupSearch: React.FC<GroupSearchProps> = ({
         }}
       >
         <p className={styles.resultsText}>
-          {results.length} {t("searchResultsText", "search result(s)")}
+          {results?.length} {t("searchResultsText", "search result(s)")}
         </p>
         <CompactGroupResults
           groups={results}

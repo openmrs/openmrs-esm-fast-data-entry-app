@@ -75,9 +75,15 @@ const reducer = (state, action) => {
           ...state.forms,
           [state.activeFormUuid]: {
             ...state.forms[state.activeFormUuid],
-            groupUuid: action.group.id,
+            groupUuid: action.group.uuid,
             groupName: action.group.name,
-            patientUuids: action.group.members.map((member) => member.uuid),
+            patientUuids:
+              // this translation is not preferred
+              // the only reason we tollerate it here is beause it should be the only time
+              // we add cohort information to state
+              action.group.cohortMembers?.map(
+                (member) => member?.patient?.uuid
+              ) ?? [],
             activePatientUuid: null,
             activeEncounterUuid: null,
           },
