@@ -45,12 +45,12 @@
   "peerDependencies": {
     "@carbon/react": "^1.9.0",
     "@openmrs/esm-framework": "*",
-    "lodash-es": "*",
+    "lodash-es": "4.x",
     "react": "18.x",
     "react-dom": "18.x",
     "react-i18next": "11.x",
     "react-router-dom": "6.x",
-    "swr": "*"
+    "swr": "1.x"
   },
   "devDependencies": {
     "@carbon/react": "^1.9.0",
