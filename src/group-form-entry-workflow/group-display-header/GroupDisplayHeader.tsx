@@ -6,7 +6,7 @@ import { useTranslation } from "react-i18next";
 import GroupFormWorkflowContext from "../../context/GroupFormWorkflowContext";
 import { navigate } from "@openmrs/esm-framework";
 
-const GroupBanner = () => {
+const GroupDisplayHeader = () => {
   const {
     activeGroupName,
     activeGroupUuid,
@@ -49,7 +49,7 @@ const GroupBanner = () => {
       <span style={{ flexGrow: 1 }} />
       <span>
         <Button kind="ghost" onClick={() => unsetGroup()}>
-          {t("changeGroup", "Chose a different group")} <Close size={20} />
+          {t("changeGroup", "Choose a different group")} <Close size={20} />
         </Button>
       </span>
       <span>
@@ -68,4 +68,4 @@ const GroupBanner = () => {
   );
 };
 
-export default GroupBanner;
+export default GroupDisplayHeader;

@@ -19,7 +19,7 @@ import {
 import React, { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import PatientCard from "../patient-card/PatientCard";
-import GroupBanner from "./group-display-header";
+import GroupDisplayHeader from "./group-display-header";
 import styles from "./styles.scss";
 import { useTranslation } from "react-i18next";
 import GroupFormWorkflowContext, {
@@ -387,7 +387,7 @@ const GroupFormEntryWorkflow = () => {
         <ExtensionSlot extensionSlotName="breadcrumbs-slot" />
       </div>
       <GroupSearchHeader />
-      <GroupBanner />
+      <GroupDisplayHeader />
       {workflowState === "NEW_GROUP_SESSION" && (
         <div className={styles.workspaceWrapper}>
           <SessionMetaWorkspace />

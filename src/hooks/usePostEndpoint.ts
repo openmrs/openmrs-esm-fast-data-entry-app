@@ -1,39 +1,48 @@
 import { openmrsFetch } from "@openmrs/esm-framework";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 
 const usePostEndpoint = ({ endpointUrl }) => {
   const [submissionInProgress, setSubmissionInProgress] = useState(null);
   const [result, setResult] = useState(null);
   const [error, setError] = useState(null);
 
-  const onFormPosted = (result) => {
-    setSubmissionInProgress(false);
-    if (error) {
-      setError(null);
-    }
-    setResult(result.data);
-  };
+  const onFormPosted = useCallback(
+    (result) => {
+      setSubmissionInProgress(false);
+      if (error) {
+        setError(null);
+      }
+      setResult(result.data);
+    },
+    [error]
+  );
 
-  const onError = (error) => {
-    setSubmissionInProgress(false);
-    if (result) {
-      setResult(null);
-    }
-    setError(error?.responseBody?.error ?? error?.responseBody ?? error);
-  };
+  const onError = useCallback(
+    (error) => {
+      setSubmissionInProgress(false);
+      if (result) {
+        setResult(null);
+      }
+      setError(error?.responseBody?.error ?? error?.responseBody ?? error);
+    },
+    [result]
+  );
 
-  const post = async (data) => {
-    setSubmissionInProgress(true);
-    return openmrsFetch(endpointUrl, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: data,
-    })
-      .then(onFormPosted)
-      .catch(onError);
-  };
+  const post = useCallback(
+    async (data) => {
+      setSubmissionInProgress(true);
+      return openmrsFetch(endpointUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: data,
+      })
+        .then(onFormPosted)
+        .catch(onError);
+    },
+    [endpointUrl, onError, onFormPosted]
+  );
 
   const reset = () => {
     setSubmissionInProgress(null);
