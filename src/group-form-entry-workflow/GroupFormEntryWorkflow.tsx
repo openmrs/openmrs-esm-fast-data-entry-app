@@ -191,7 +191,7 @@ const GroupSessionWorkspace = () => {
       updateVisitAndSubmitForNext(result.uuid);
     }
     if (error) {
-      console.log("error");
+      console.error("error", error);
     }
   }, [
     result,
