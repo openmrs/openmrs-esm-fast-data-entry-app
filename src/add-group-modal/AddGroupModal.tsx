@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useState } from "react";
+import React, { useCallback, useContext, useEffect, useState } from "react";
 import {
   ComposedModal,
   Button,
@@ -7,12 +7,14 @@ import {
   ModalBody,
   TextInput,
   FormLabel,
+  Loading,
 } from "@carbon/react";
-import { Add, Close } from "@carbon/react/icons";
+import { Add, TrashCan } from "@carbon/react/icons";
 import { useTranslation } from "react-i18next";
-import { ExtensionSlot } from "@openmrs/esm-framework";
+import { ExtensionSlot, showToast } from "@openmrs/esm-framework";
 import styles from "./styles.scss";
 import GroupFormWorkflowContext from "../context/GroupFormWorkflowContext";
+import { usePostCohort } from "../hooks";
 
 const MemExtension = React.memo(ExtensionSlot);
 
@@ -20,18 +22,19 @@ const PatientRow = ({ patient, removePatient }) => {
   const { t } = useTranslation();
   return (
     <li key={patient.uuid} className={styles.patientRow}>
-      <span className={styles.patientName}>{patient?.display}</span>
       <span>
         <Button
           kind="tertiary"
           size="sm"
+          hasIconOnly
           onClick={() => removePatient(patient.uuid)}
-          renderIcon={Close}
-          tooltipPosition="right"
-        >
-          {t("remove", "Remove")}
-        </Button>
+          renderIcon={TrashCan}
+          tooltipAlignment="start"
+          tooltipPosition="top"
+          iconDescription={t("remove", "Remove")}
+        />
       </span>
+      <span className={styles.patientName}>{patient?.display}</span>
     </li>
   );
 };
@@ -64,17 +67,21 @@ const NewGroupForm = (props) => {
       />
       {errors?.name && (
         <p className={styles.formError}>
-          {t("groupNameError", "Please enter a group name.")}
+          {errors.name === "required"
+            ? t("groupNameError", "Please enter a group name.")
+            : errors.name}
         </p>
       )}
-      <FormLabel>Patients in group</FormLabel>
+      <FormLabel>
+        {patientList.length} {t("patientsInGroup", "Patients in group")}
+      </FormLabel>
       {errors?.patientList && (
         <p className={styles.formError}>
           {t("noPatientError", "Please enter at least one patient.")}
         </p>
       )}
       {!errors?.patientList && (
-        <ul>
+        <ul className={styles.patientList}>
           {patientList?.map((patient, index) => (
             <PatientRow
               patient={patient}
@@ -92,7 +99,7 @@ const NewGroupForm = (props) => {
           state={{
             selectPatientAction: updatePatientList,
             buttonProps: {
-              kind: "primary",
+              kind: "secondary",
             },
           }}
         />
@@ -108,6 +115,7 @@ const AddGroupModal = () => {
   const [errors, setErrors] = useState({});
   const [name, setName] = useState("");
   const [patientList, setPatientList] = useState([]);
+  const { post, result, isPosting, error } = usePostCohort();
 
   const handleCancel = () => {
     setOpen(false);
@@ -165,9 +173,45 @@ const AddGroupModal = () => {
 
   const handleSubmit = () => {
     if (validate()) {
-      setGroup({ id: "1234", name: name, members: patientList });
+      post({
+        name: name,
+        cohortMembers: patientList.map((p) => ({ patient: p.uuid })),
+      });
     }
   };
+
+  useEffect(() => {
+    if (result) {
+      setGroup({
+        ...result,
+        // the result doesn't come with cohortMembers.
+        // need to add it in based on our local state
+        cohortMembers: patientList.map((p) => ({ patient: { uuid: p.uuid } })),
+      });
+    }
+  }, [result, setGroup, patientList]);
+
+  useEffect(() => {
+    if (error) {
+      showToast({
+        kind: "error",
+        title: t("postError", "POST Error"),
+        description:
+          error.message ??
+          t("unknownPostError", "An unknown error occured while saving data"),
+      });
+      if (error.fieldErrors) {
+        setErrors(
+          Object.fromEntries(
+            Object.entries(error.fieldErrors).map(([key, value]) => [
+              key,
+              value?.[0]?.message,
+            ])
+          )
+        );
+      }
+    }
+  }, [error, t]);
 
   return (
     <div className={styles.modal}>
@@ -181,23 +225,32 @@ const AddGroupModal = () => {
       <ComposedModal open={open} onClose={() => setOpen(false)}>
         <ModalHeader>{t("createNewGroup", "Create New Group")}</ModalHeader>
         <ModalBody>
-          <NewGroupForm
-            {...{
-              name,
-              setName,
-              patientList,
-              updatePatientList,
-              errors,
-              validate,
-              removePatient,
-            }}
-          />
+          {result ? (
+            <p>Group saved succesfully</p>
+          ) : isPosting ? (
+            <div className={styles.loading}>
+              <Loading withOverlay={false} />
+              <span>Saving new group...</span>
+            </div>
+          ) : (
+            <NewGroupForm
+              {...{
+                name,
+                setName,
+                patientList,
+                updatePatientList,
+                errors,
+                validate,
+                removePatient,
+              }}
+            />
+          )}
         </ModalBody>
         <ModalFooter>
-          <Button kind="secondary" onClick={handleCancel}>
+          <Button kind="secondary" onClick={handleCancel} disabled={isPosting}>
             {t("cancel", "Cancel")}
           </Button>
-          <Button kind="primary" onClick={handleSubmit}>
+          <Button kind="primary" onClick={handleSubmit} disabled={isPosting}>
             {t("createGroup", "Create Group")}
           </Button>
         </ModalFooter>

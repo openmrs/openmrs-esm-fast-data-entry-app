@@ -4,6 +4,7 @@
   "areYouSure": "Are you sure?",
   "cancel": "Cancel",
   "cancelExplanation": "You will lose any unsaved changes on the current form. Do you want to discard the current session?",
+  "changeGroup": "Choose a different group",
   "chooseGroupError": "Please choose a group.",
   "createNewPatient": "Create new patient",
   "createGroup": "Create Group",
@@ -27,10 +28,13 @@
   "nextPatient": "Next Patient",
   "noFormsFound": "No Forms To Show",
   "noFormsFoundMessage": "No forms could be found for this category. Please double check the form concept uuids and access permissions.",
+  "noMoreResults": "End of search results",
   "noGroupsFoundMessage": "Sorry, no groups have been found",
   "noPatientError": "Please enter at least one patient.",
   "or": "or",
   "orLabelName": "OR label name",
+  "patientsInGroup": "Patients in group",
+  "postError": "POST Error",
   "practitionerName": "Practitioner Name",
   "remove": "Remove",
   "resumeSession": "Resume Session",
@@ -45,5 +49,6 @@
   "sessionName": "Session Name",
   "sessionNotes": "Session Notes",
   "startGroupSession": "Start Group Session",
-  "trySearchWithPatientUniqueID": "Try searching with the cohort's description"
+  "trySearchWithPatientUniqueID": "Try searching with the cohort's description",
+  "unknownPostError": "An unknown error occured while saving data"
 }

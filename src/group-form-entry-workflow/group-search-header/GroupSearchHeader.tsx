@@ -1,16 +1,18 @@
 import { Close } from "@carbon/react/icons";
 import { Button } from "@carbon/react";
 import React, { useContext } from "react";
-import { Link } from "react-router-dom";
 import GroupFormWorkflowContext from "../../context/GroupFormWorkflowContext";
 import styles from "./styles.scss";
 import { useTranslation } from "react-i18next";
 import CompactGroupSearch from "../group-search/CompactGroupSearch";
 import AddGroupModal from "../../add-group-modal/AddGroupModal";
+import { navigate } from "@openmrs/esm-framework";
 
 const GroupSearchHeader = () => {
   const { t } = useTranslation();
-  const { activeGroupUuid, setGroup } = useContext(GroupFormWorkflowContext);
+  const { activeGroupUuid, setGroup, destroySession } = useContext(
+    GroupFormWorkflowContext
+  );
   const handleSelectGroup = (group) => {
     setGroup(group);
   };
@@ -29,11 +31,16 @@ const GroupSearchHeader = () => {
       </span>
       <span style={{ flexGrow: 1 }} />
       <span>
-        <Link to="..">
-          <Button kind="ghost">
-            {t("cancel", "Cancel")} <Close size={20} />
-          </Button>
-        </Link>
+        <Button
+          kind="ghost"
+          onClick={() => {
+            destroySession();
+            // eslint-disable-next-line
+            navigate({ to: "${openmrsSpaBase}/forms" });
+          }}
+        >
+          {t("cancel", "Cancel")} <Close size={20} />
+        </Button>
       </span>
     </div>
   );

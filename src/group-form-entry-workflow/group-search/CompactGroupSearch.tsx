@@ -4,6 +4,7 @@ import styles from "./compact-group-search.scss";
 import GroupSearch from "./GroupSearch";
 import { Button, Search } from "@carbon/react";
 import { useTranslation } from "react-i18next";
+import debounce from "lodash-es/debounce";
 
 interface CompactGroupSearchProps {
   selectGroupAction?: (group: GroupType) => void;
@@ -23,6 +24,10 @@ const CompactGroupSearch: React.FC<CompactGroupSearchProps> = ({
   };
 
   const handleSearchChange = (e) => {
+    debounce((q) => {
+      setDropdownShown(!!e.length);
+      setQuery(q);
+    }, 300);
     setQuery(e);
     if (e.length) {
       setDropdownShown(true);

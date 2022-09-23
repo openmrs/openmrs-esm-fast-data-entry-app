@@ -20,6 +20,7 @@ export interface MetaType {
 
 const initialActions = {
   setGroup: (group: GroupType) => undefined,
+  unsetGroup: () => undefined,
   setSessionMeta: (meta: MetaType) => undefined,
   openPatientSearch: () => undefined,
   saveEncounter: (encounterUuid: string | number) => undefined,
@@ -75,6 +76,7 @@ const GroupFormWorkflowProvider = ({ children }) => {
           activeFormUuid,
         }),
       setGroup: (group) => dispatch({ type: "SET_GROUP", group }),
+      unsetGroup: () => dispatch({ type: "UNSET_GROUP" }),
       setSessionMeta: (meta) => dispatch({ type: "SET_SESSION_META", meta }),
       openPatientSearch: () => dispatch({ type: "OPEN_PATIENT_SEARCH" }),
       saveEncounter: (encounterUuid) =>

@@ -1,13 +1,13 @@
-import React from "react";
+import React, { useCallback, useRef } from "react";
 import { useTranslation } from "react-i18next";
-import { Layer, Tile } from "@carbon/react";
+import { Layer, Tile, Loading } from "@carbon/react";
 import styles from "./group-search.scss";
 import { EmptyDataIllustration } from "../../empty-state/EmptyDataIllustration";
-import { useGroupSearch } from "./useGroupSearch";
 import CompactGroupResults, {
   SearchResultSkeleton,
 } from "./CompactGroupResults";
 import { GroupType } from "../../context/GroupFormWorkflowContext";
+import { useSearchCohortInfinite } from "../../hooks/useSearchEndpoint";
 
 interface GroupSearchProps {
   query: string;
@@ -19,8 +19,48 @@ const GroupSearch: React.FC<GroupSearchProps> = ({
   selectGroupAction,
 }) => {
   const { t } = useTranslation();
-  const results = useGroupSearch(query);
-  const error = false;
+  const {
+    isLoading,
+    data: results,
+    error,
+    loadingNewData,
+    setPage,
+    hasMore,
+    totalResults,
+  } = useSearchCohortInfinite({
+    searchTerm: query,
+    searching: !!query,
+    parameters: {
+      v: "full",
+    },
+  });
+
+  const lastItem = useRef(null);
+  const observer = useRef(null);
+  const loadingRef = useCallback(
+    (node) => {
+      if (loadingNewData) {
+        return;
+      }
+      if (observer.current) {
+        observer.current.disconnect();
+      }
+      observer.current = new IntersectionObserver(
+        (entries) => {
+          if (entries[0].isIntersecting && hasMore) {
+            setPage((page) => page + 1);
+          }
+        },
+        {
+          threshold: 0.75,
+        }
+      );
+      if (node) {
+        observer.current.observe(node);
+      }
+    },
+    [loadingNewData, hasMore, setPage]
+  );
 
   if (error) {
     return (
@@ -43,9 +83,19 @@ const GroupSearch: React.FC<GroupSearchProps> = ({
     );
   }
 
-  if (query.length <= 2) return <SearchResultSkeleton />;
+  if (isLoading) {
+    return (
+      <div className={styles.searchResultsContainer}>
+        <SearchResultSkeleton />
+        <SearchResultSkeleton />
+        <SearchResultSkeleton />
+        <SearchResultSkeleton />
+        <SearchResultSkeleton />
+      </div>
+    );
+  }
 
-  if (results.length === 0) {
+  if (results?.length === 0) {
     return (
       <div className={styles.searchResults}>
         <Layer>
@@ -79,12 +129,19 @@ const GroupSearch: React.FC<GroupSearchProps> = ({
         }}
       >
         <p className={styles.resultsText}>
-          {results.length} {t("searchResultsText", "search result(s)")}
+          {totalResults} {t("searchResultsText", "search result(s)")}
         </p>
         <CompactGroupResults
           groups={results}
           selectGroupAction={selectGroupAction}
+          lastRef={lastItem}
         />
+        <div ref={lastItem}>
+          <div className={styles.lastItem} ref={loadingRef}>
+            {hasMore && <Loading withOverlay={false} small />}
+            {!hasMore && <p>{t("noMoreResults", "End of search results")}</p>}
+          </div>
+        </div>
       </div>
     </div>
   );

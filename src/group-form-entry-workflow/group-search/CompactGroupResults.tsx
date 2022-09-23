@@ -1,4 +1,4 @@
-import React, { useEffect, useReducer } from "react";
+import React, { useEffect, useReducer, useRef } from "react";
 import { SkeletonIcon, SkeletonText } from "@carbon/react";
 import { Events } from "@carbon/react/icons";
 import styles from "./compact-group-result.scss";
@@ -20,11 +20,64 @@ const reducer = (state, action) => {
   }
 };
 
-const CompactGroupResults = ({ groups, selectGroupAction }) => {
+const scrollingOptions = {
+  behavior: "smooth",
+  block: "nearest",
+};
+
+const ResultItem = ({
+  index,
+  selectGroupAction,
+  group,
+  dispatch,
+  state,
+  totalGroups,
+  lastRef,
+}) => {
+  const ref = useRef(null);
+  const { t } = useTranslation();
+
+  useEffect(() => {
+    if (state.selectedIndex === totalGroups - 1) {
+      lastRef.current.scrollIntoView(scrollingOptions);
+    } else if (state.selectedIndex === index) {
+      ref.current.scrollIntoView(scrollingOptions);
+    }
+  }, [state, index, totalGroups, lastRef]);
+
+  return (
+    <div
+      onClick={() => {
+        dispatch({ type: "select", payload: index });
+        selectGroupAction(group);
+      }}
+      className={`${styles.patientSearchResult} ${
+        index === state.selectedIndex && styles.patientSearchResultSelected
+      }`}
+      role="button"
+      aria-pressed={index === state.selectedIndex}
+      tabIndex={0}
+      ref={ref}
+    >
+      <div className={styles.patientAvatar} role="img">
+        <Events size={24} />
+      </div>
+      <div>
+        <h2 className={styles.patientName}>{group.name}</h2>
+        <p className={styles.demographics}>
+          {group.cohortMembers?.length ?? 0} {t("members", "members")}
+          <span className={styles.middot}>&middot;</span> {group.description}
+        </p>
+      </div>
+    </div>
+  );
+};
+
+const CompactGroupResults = ({ groups, selectGroupAction, lastRef }) => {
   const arrowUpPressed = useKeyPress("ArrowUp");
   const arrowDownPressed = useKeyPress("ArrowDown");
   const enterPressed = useKeyPress("Enter");
-  const { t } = useTranslation();
+
   const [state, dispatch] = useReducer(reducer, { selectedIndex: 0 });
 
   useEffect(() => {
@@ -48,31 +101,11 @@ const CompactGroupResults = ({ groups, selectGroupAction }) => {
   return (
     <>
       {groups.map((group, index) => (
-        <div
-          onClick={() => {
-            dispatch({ type: "select", payload: index });
-            selectGroupAction(group);
-          }}
-          key={group.id}
-          className={`${styles.patientSearchResult} ${
-            index === state.selectedIndex && styles.patientSearchResultSelected
-          }`}
-          role="button"
-          aria-pressed={index === state.selectedIndex}
-          tabIndex={0}
-        >
-          <div className={styles.patientAvatar} role="img">
-            <Events size={24} />
-          </div>
-          <div>
-            <h2 className={styles.patientName}>{group.name}</h2>
-            <p className={styles.demographics}>
-              {group.members.length} {t("members", "members")}
-              <span className={styles.middot}>&middot;</span>{" "}
-              {group.description}
-            </p>
-          </div>
-        </div>
+        <ResultItem
+          key={index}
+          totalGroups={groups.length}
+          {...{ lastRef, index, selectGroupAction, group, dispatch, state }}
+        />
       ))}
     </>
   );
