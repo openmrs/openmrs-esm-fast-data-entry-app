@@ -134,7 +134,7 @@ const NewGroupWorkflowButtons = () => {
 };
 
 const WorkflowNavigationButtons = () => {
-  const { activeFormUuid, submitForNext, patientUuids, activePatientUuid } =
+  const { activeFormUuid, validateForNext, patientUuids, activePatientUuid } =
     useContext(GroupFormWorkflowContext);
   const store = useStore(formStore);
   const formState = store[activeFormUuid];
@@ -151,7 +151,7 @@ const WorkflowNavigationButtons = () => {
       <div className={styles.rightPanelActionButtons}>
         <Button
           kind="primary"
-          onClick={() => submitForNext()}
+          onClick={() => validateForNext()}
           disabled={navigationDisabled}
         >
           {isLastPatient
@@ -342,6 +342,13 @@ const GroupSessionWorkspace = () => {
     }
   };
 
+  const handleOnValidate = (valid) => {
+    if (valid) {
+      // make a visit
+      console.log("yay form is valid");
+    }
+  };
+
   return (
     <div className={styles.workspace}>
       <div className={styles.formMainContent}>
@@ -352,6 +359,7 @@ const GroupSessionWorkspace = () => {
             {...{
               formUuid: activeFormUuid,
               handlePostResponse,
+              handleOnValidate,
               // handleEncounterCreate,
             }}
           />
@@ -380,6 +388,7 @@ const GroupSessionWorkspace = () => {
 
 const GroupFormEntryWorkflow = () => {
   const { workflowState } = useContext(GroupFormWorkflowContext);
+  console.log("yo", workflowState);
 
   return (
     <>
@@ -393,7 +402,7 @@ const GroupFormEntryWorkflow = () => {
           <SessionMetaWorkspace />
         </div>
       )}
-      {["EDIT_FORM"].includes(workflowState) && (
+      {workflowState !== "NEW_GROUP_SESSION" && (
         <div className={styles.workspaceWrapper}>
           <GroupSessionWorkspace />
         </div>

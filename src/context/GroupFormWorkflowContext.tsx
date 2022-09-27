@@ -25,6 +25,7 @@ const initialActions = {
   openPatientSearch: () => undefined,
   saveEncounter: (encounterUuid: string | number) => undefined,
   editEncounter: (patientUuid: string | number) => undefined,
+  validateForNext: () => undefined,
   submitForNext: () => undefined,
   submitForReview: () => undefined,
   submitForComplete: () => undefined,
@@ -84,6 +85,7 @@ const GroupFormWorkflowProvider = ({ children }) => {
           type: "SAVE_ENCOUNTER",
           encounterUuid,
         }),
+      validateForNext: () => dispatch({ type: "VALIDATE_FOR_NEXT" }),
       submitForNext: () => dispatch({ type: "SUBMIT_FOR_NEXT" }),
       submitForComplete: () => dispatch({ type: "SUBMIT_FOR_COMPLETE" }),
       editEncounter: (patientUuid) =>
