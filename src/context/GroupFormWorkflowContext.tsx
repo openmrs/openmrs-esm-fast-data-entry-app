@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useReducer } from "react";
 import reducer from "./GroupFormWorkflowReducer";
 import { useParams } from "react-router-dom";
 import { Type } from "@openmrs/esm-framework";
+import useGetSystemSetting from "../hooks/useGetSystemSetting";
 interface ParamTypes {
   formUuid?: string;
 }
@@ -64,6 +65,10 @@ const GroupFormWorkflowContext = React.createContext({
 const GroupFormWorkflowProvider = ({ children }) => {
   const { formUuid } = useParams() as ParamTypes;
   const activeFormUuid = formUuid.split("&")[0];
+  const systemSetting = useGetSystemSetting(
+    "@openmrs/esm-fast-data-entry-app.groupSessionVisitTypeUuid"
+  );
+  const groupVisitTypeUuid = systemSetting?.result?.results?.[0]?.uuid;
   const [state, dispatch] = useReducer(reducer, {
     ...initialWorkflowState,
     ...initialActions,
@@ -108,6 +113,7 @@ const GroupFormWorkflowProvider = ({ children }) => {
   return (
     <GroupFormWorkflowContext.Provider
       value={{
+        groupVisitTypeUuid,
         ...state,
         ...actions,
         workflowState:
