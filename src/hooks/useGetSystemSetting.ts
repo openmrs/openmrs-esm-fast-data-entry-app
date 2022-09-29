@@ -9,7 +9,7 @@ const useGetSystemSetting = (settingId) => {
   const onResult = useCallback((result) => {
     setIsSubmitting(false);
     setError(false);
-    setResult(true);
+    setResult(result);
   }, []);
 
   const onError = useCallback((error) => {
@@ -19,7 +19,7 @@ const useGetSystemSetting = (settingId) => {
   }, []);
 
   const getSetting = useCallback(() => {
-    openmrsFetch(`/ws/rest/v1/systemsetting?q=${settingId}`)
+    openmrsFetch(`/ws/rest/v1/systemsetting?q=${settingId}&v=default`)
       .then(onResult)
       .catch(onError);
   }, [onError, onResult, settingId]);
