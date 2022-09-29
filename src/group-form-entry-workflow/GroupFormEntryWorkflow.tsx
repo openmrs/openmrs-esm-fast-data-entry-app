@@ -16,7 +16,7 @@ import {
   DatePicker,
   DatePickerInput,
 } from "@carbon/react";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useCallback, useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import PatientCard from "../patient-card/PatientCard";
 import GroupDisplayHeader from "./group-display-header";
@@ -33,6 +33,8 @@ import {
   useFormContext,
 } from "react-hook-form";
 import FormBootstrap from "../FormBootstrap";
+import useStartVisit from "../hooks/useStartVisit";
+import { AttendanceTable } from "./attendance-table";
 
 const formStore = getGlobalStore("ampath-form-state");
 
@@ -109,14 +111,14 @@ const CompleteModal = ({ open, setOpen }) => {
 
 const NewGroupWorkflowButtons = () => {
   const { t } = useTranslation();
-  const { workflowState } = useContext(GroupFormWorkflowContext);
+  const { workflowState, patientUuids } = useContext(GroupFormWorkflowContext);
   const [cancelModalOpen, setCancelModalOpen] = useState(false);
   if (workflowState !== "NEW_GROUP_SESSION") return null;
 
   return (
     <>
       <div className={styles.rightPanelActionButtons}>
-        <Button kind="secondary" type="submit">
+        <Button kind="secondary" type="submit" disabled={!patientUuids.length}>
           {t("createNewSession", "Create New Session")}
         </Button>
         <Button
@@ -134,11 +136,17 @@ const NewGroupWorkflowButtons = () => {
 };
 
 const WorkflowNavigationButtons = () => {
-  const { activeFormUuid, validateForNext, patientUuids, activePatientUuid } =
-    useContext(GroupFormWorkflowContext);
+  const {
+    activeFormUuid,
+    validateForNext,
+    patientUuids,
+    activePatientUuid,
+    workflowState,
+  } = useContext(GroupFormWorkflowContext);
   const store = useStore(formStore);
   const formState = store[activeFormUuid];
-  const navigationDisabled = formState !== "ready";
+  const navigationDisabled =
+    formState !== "ready" || workflowState !== "EDIT_FORM";
   const [cancelModalOpen, setCancelModalOpen] = useState(false);
   const [completeModalOpen, setCompleteModalOpen] = useState(false);
   const { t } = useTranslation();
@@ -146,12 +154,18 @@ const WorkflowNavigationButtons = () => {
   const isLastPatient =
     activePatientUuid === patientUuids[patientUuids.length - 1];
 
+  const handleClickNext = () => {
+    if (workflowState === "EDIT_FORM") {
+      validateForNext();
+    }
+  };
+
   return (
     <>
       <div className={styles.rightPanelActionButtons}>
         <Button
           kind="primary"
-          onClick={() => validateForNext()}
+          onClick={handleClickNext}
           disabled={navigationDisabled}
         >
           {isLastPatient
@@ -181,7 +195,7 @@ const SessionDetails = () => {
 
   return (
     <div className={styles.formSection}>
-      <h4>{t("sessionDetails", "Session details")}</h4>
+      <h4>{t("sessionDetails", "1. Session details")}</h4>
       <div>
         <p>
           {t(
@@ -246,6 +260,30 @@ const SessionDetails = () => {
                 invalid={errors.sessionNotes}
                 invalidText={"This field is required"}
               />
+            </div>
+          </Layer>
+        </Tile>
+      </Layer>
+      <h4>{t("sessionParticipants", "2. Session participants")}</h4>
+      <div>
+        <p>
+          {t(
+            "markAbsentPatients",
+            "The patients in this group. Patients that are not present in the session should be marked as absent."
+          )}
+        </p>
+      </div>
+      <Layer>
+        <Tile className={styles.formSectionTile}>
+          <Layer>
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                rowGap: "1.5rem",
+              }}
+            >
+              <AttendanceTable />
             </div>
           </Layer>
         </Tile>
@@ -324,30 +362,108 @@ const GroupSessionWorkspace = () => {
     editEncounter,
     encounters,
     activeEncounterUuid,
+    activeVisitUuid,
     activeFormUuid,
     saveEncounter,
-    // activeSessionMeta,
+    activeSessionMeta,
+    groupVisitTypeUuid,
+    updateVisitUuid,
+    submitForNext,
+    workflowState,
   } = useContext(GroupFormWorkflowContext);
 
-  // const handleEncounterCreate = (payload: Record<string, unknown>) => {
-  //   console.log("payload", payload);
-  //   Object.entries(activeSessionMeta).forEach((key, value) => {
-  //     payload[key as unknown as string] = value;
-  //   });
-  // };
+  const { saveVisit, success: visitSaveSuccess } = useStartVisit({
+    showSuccessNotification: false,
+    showErrorNotification: true,
+  });
 
-  const handlePostResponse = (encounter) => {
-    if (encounter && encounter.uuid) {
-      saveEncounter(encounter.uuid);
-    }
-  };
+  // 0. user clicks "next patient" in WorkflowNavigationButtons
+  // which triggers validateForNext() if workflowState === "EDIT_FORM"
 
-  const handleOnValidate = (valid) => {
-    if (valid) {
-      // make a visit
-      console.log("yay form is valid");
+  // 1. validate the form
+  // if the form is valid, save a visit for the user
+  // handleOnValidate is a callback passed to the form engine.
+  const handleOnValidate = useCallback(
+    (valid) => {
+      if (valid && !activeVisitUuid) {
+        // make a visit
+        // we will not persist this state or update the reducer
+        const date = new Date(activeSessionMeta.sessionDate);
+        date.setHours(date.getHours() + 1);
+        saveVisit({
+          patientUuid: activePatientUuid,
+          startDatetime: activeSessionMeta.sessionDate,
+          stopDatetime: date.toISOString(),
+          visitType: groupVisitTypeUuid,
+        });
+      } else if (valid && activeVisitUuid) {
+        // there is already a visit for this form
+        submitForNext();
+      }
+    },
+    [
+      activePatientUuid,
+      activeSessionMeta,
+      groupVisitTypeUuid,
+      saveVisit,
+      activeVisitUuid,
+      submitForNext,
+    ]
+  );
+
+  // 2. save the new visit uuid and start form submission
+  useEffect(() => {
+    if (visitSaveSuccess) {
+      const visitUuid = visitSaveSuccess?.data?.uuid;
+      if (!activeVisitUuid) {
+        updateVisitUuid(visitUuid);
+      }
+      if (workflowState === "VALIDATE_FOR_NEXT") {
+        submitForNext();
+      }
     }
-  };
+  }, [
+    visitSaveSuccess,
+    updateVisitUuid,
+    submitForNext,
+    workflowState,
+    activeVisitUuid,
+  ]);
+
+  // 3. on form payload creation inject the activeVisitUuid
+  const handleEncounterCreate = useCallback(
+    (payload) => {
+      const obsTime = new Date(activeSessionMeta.sessionDate);
+      obsTime.setMinutes(obsTime.getMinutes() + 1);
+      // handleEncounterCreate mutates the payload object and should return nothing
+      // Object.entries(activeSessionMeta).forEach((key, value) => {
+      //   payload[key as unknown as string] = value;
+      // });
+      payload.obs.forEach((item, index) => {
+        payload.obs[index] = {
+          ...item,
+          groupMembers: item.groupMembers?.map((mem) => ({
+            ...mem,
+            obsDatetime: obsTime.toISOString(),
+          })),
+          obsDatetime: obsTime.toISOString(),
+        };
+      });
+      payload.visit = activeVisitUuid;
+      payload.encounterDatetime = obsTime.toISOString();
+    },
+    [activeVisitUuid, activeSessionMeta]
+  );
+
+  // 4. Once form has been posted, save the new encounter uuid so we can edit it later
+  const handlePostResponse = useCallback(
+    (encounter) => {
+      if (encounter && encounter.uuid) {
+        saveEncounter(encounter.uuid);
+      }
+    },
+    [saveEncounter]
+  );
 
   return (
     <div className={styles.workspace}>
@@ -360,7 +476,7 @@ const GroupSessionWorkspace = () => {
               formUuid: activeFormUuid,
               handlePostResponse,
               handleOnValidate,
-              // handleEncounterCreate,
+              handleEncounterCreate,
             }}
           />
         </div>
@@ -388,7 +504,6 @@ const GroupSessionWorkspace = () => {
 
 const GroupFormEntryWorkflow = () => {
   const { workflowState } = useContext(GroupFormWorkflowContext);
-  console.log("yo", workflowState);
 
   return (
     <>
