@@ -121,12 +121,3 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.DIGITAL_OCEAN_SPACES_ACCESS_KEY }}
           AWS_S3_ENDPOINT: ${{ secrets.DIGITAL_OCEAN_SPACES_ENDPOINT }}
           SOURCE_DIR: "publish"
-      - name: Update Importmap
-        uses: fjogeleit/http-request-action@master
-        with:
-          url: http://${{ secrets.DEPLOYER_HOST }}/services?env=prod
-          method: "PATCH"
-          username: ${{ secrets.DEPLOYER_USERNAME }}
-          password: ${{ secrets.DEPLOYER_PASSWORD }}
-          data: '{ "service":"${{ env.ESM_NAME }}","url":"https://spa-modules.nyc3.cdn.digitaloceanspaces.com/${{ env.ESM_NAME }}/${{ env.TIMESTAMP }}_${{ github.sha }}/${{ env.JS_NAME }}" }'
-          customHeaders: '{ "Accept": "application/json", "Content-Type": "application/json" }'
