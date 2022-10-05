@@ -388,6 +388,8 @@ const reducer = (state, action) => {
         activeFormUuid: null,
       };
       persistData(newState);
+      //eslint-disable-next-line
+      navigate({ to: "${openmrsSpaBase}/forms" });
       return newState;
     }
     default:

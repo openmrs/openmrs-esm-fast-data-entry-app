@@ -5,10 +5,6 @@ import {
 } from "@openmrs/esm-framework";
 import {
   Button,
-  ComposedModal,
-  ModalBody,
-  ModalFooter,
-  ModalHeader,
   Layer,
   Tile,
   TextInput,
@@ -17,7 +13,6 @@ import {
   DatePickerInput,
 } from "@carbon/react";
 import React, { useCallback, useContext, useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import PatientCard from "../patient-card/PatientCard";
 import GroupDisplayHeader from "./group-display-header";
 import styles from "./styles.scss";
@@ -35,83 +30,15 @@ import {
 import FormBootstrap from "../FormBootstrap";
 import useStartVisit from "../hooks/useStartVisit";
 import { AttendanceTable } from "./attendance-table";
+import CompleteModal from "../CompleteModal";
+import CancelModal from "../CancelModal";
 
 const formStore = getGlobalStore("ampath-form-state");
 
-const CancelModal = ({ open, setOpen }) => {
-  const { destroySession, closeSession } = useContext(GroupFormWorkflowContext);
-  const { t } = useTranslation();
-  const navigate = useNavigate();
-
-  const discard = async () => {
-    await destroySession();
-    setOpen(false);
-    navigate("../");
-  };
-
-  const saveAndClose = async () => {
-    await closeSession();
-    setOpen(false);
-    navigate("../");
-  };
-
-  return (
-    <ComposedModal open={open}>
-      <ModalHeader>{t("areYouSure", "Are you sure?")}</ModalHeader>
-      <ModalBody>
-        {t(
-          "cancelExplanation",
-          "You will lose any unsaved changes on the current form. Do you want to discard the current session?"
-        )}
-      </ModalBody>
-      <ModalFooter>
-        <Button kind="secondary" onClick={() => setOpen(false)}>
-          {t("cancel", "Cancel")}
-        </Button>
-        <Button kind="danger" onClick={discard}>
-          {t("discard", "Discard")}
-        </Button>
-        <Button kind="primary" onClick={saveAndClose}>
-          {t("saveSession", "Save Session")}
-        </Button>
-      </ModalFooter>
-    </ComposedModal>
-  );
-};
-
-const CompleteModal = ({ open, setOpen }) => {
-  const { submitForComplete } = useContext(GroupFormWorkflowContext);
-  const { t } = useTranslation();
-
-  const completeSession = () => {
-    submitForComplete();
-    setOpen(false);
-  };
-
-  return (
-    <ComposedModal open={open}>
-      <ModalHeader>{t("areYouSure", "Are you sure?")}</ModalHeader>
-      <ModalBody>
-        {t(
-          "saveExplanation",
-          "Do you want to save the current form and exit the workflow?"
-        )}
-      </ModalBody>
-      <ModalFooter>
-        <Button kind="secondary" onClick={() => setOpen(false)}>
-          {t("cancel", "Cancel")}
-        </Button>
-        <Button kind="primary" onClick={completeSession}>
-          {t("complete", "Complete")}
-        </Button>
-      </ModalFooter>
-    </ComposedModal>
-  );
-};
-
 const NewGroupWorkflowButtons = () => {
   const { t } = useTranslation();
-  const { workflowState, patientUuids } = useContext(GroupFormWorkflowContext);
+  const context = useContext(GroupFormWorkflowContext);
+  const { workflowState, patientUuids } = context;
   const [cancelModalOpen, setCancelModalOpen] = useState(false);
   if (workflowState !== "NEW_GROUP_SESSION") return null;
 
@@ -130,19 +57,24 @@ const NewGroupWorkflowButtons = () => {
           {t("cancel", "Cancel")}
         </Button>
       </div>
-      <CancelModal open={cancelModalOpen} setOpen={setCancelModalOpen} />
+      <CancelModal
+        open={cancelModalOpen}
+        setOpen={setCancelModalOpen}
+        context={context}
+      />
     </>
   );
 };
 
 const WorkflowNavigationButtons = () => {
+  const context = useContext(GroupFormWorkflowContext);
   const {
     activeFormUuid,
     validateForNext,
     patientUuids,
     activePatientUuid,
     workflowState,
-  } = useContext(GroupFormWorkflowContext);
+  } = context;
   const store = useStore(formStore);
   const formState = store[activeFormUuid];
   const navigationDisabled =
@@ -179,8 +111,16 @@ const WorkflowNavigationButtons = () => {
           {t("cancel", "Cancel")}
         </Button>
       </div>
-      <CancelModal open={cancelModalOpen} setOpen={setCancelModalOpen} />
-      <CompleteModal open={completeModalOpen} setOpen={setCompleteModalOpen} />
+      <CancelModal
+        open={cancelModalOpen}
+        setOpen={setCancelModalOpen}
+        context={context}
+      />
+      <CompleteModal
+        open={completeModalOpen}
+        setOpen={setCompleteModalOpen}
+        context={context}
+      />
     </>
   );
 };
