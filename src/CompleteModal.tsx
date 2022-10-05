@@ -8,13 +8,17 @@ import {
 import React from "react";
 import { useTranslation } from "react-i18next";
 
-const CompleteModal = ({ open, setOpen, context }) => {
+const CompleteModal = ({ open, setOpen, context, validateFirst = false }) => {
   const { t } = useTranslation();
 
   const onCancel = () => setOpen(false);
 
   const onComplete = () => {
-    context.submitForComplete();
+    if (validateFirst) {
+      context.validateForComplete();
+    } else {
+      context.submitForComplete();
+    }
     setOpen(false);
   };
 

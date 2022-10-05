@@ -66,6 +66,7 @@ const WorkflowNavigationButtons = () => {
         open={completeModalOpen}
         setOpen={setCompleteModalOpen}
         context={context}
+        validateFirst={true}
       />
     </>
   );
@@ -87,6 +88,7 @@ const GroupSessionWorkspace = () => {
     updateVisitUuid,
     submitForNext,
     workflowState,
+    submitForComplete,
   } = useContext(GroupFormWorkflowContext);
 
   const { saveVisit, success: visitSaveSuccess } = useStartVisit({
@@ -138,6 +140,9 @@ const GroupSessionWorkspace = () => {
       if (workflowState === "VALIDATE_FOR_NEXT") {
         submitForNext();
       }
+      if (workflowState === "VALIDATE_FOR_COMPLETE") {
+        submitForComplete();
+      }
     }
   }, [
     visitSaveSuccess,
@@ -145,6 +150,7 @@ const GroupSessionWorkspace = () => {
     submitForNext,
     workflowState,
     activeVisitUuid,
+    submitForComplete,
   ]);
 
   // 3. on form payload creation inject the activeVisitUuid

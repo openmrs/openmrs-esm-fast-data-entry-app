@@ -332,6 +332,28 @@ const reducer = (state, action) => {
           },
         },
       };
+
+    case "VALIDATE_FOR_COMPLETE":
+      // this state should not be persisted
+      window.dispatchEvent(
+        new CustomEvent("ampath-form-action", {
+          detail: {
+            formUuid: state.activeFormUuid,
+            patientUuid: state.forms[state.activeFormUuid].activePatientUuid,
+            action: "validateForm",
+          },
+        })
+      );
+      return {
+        ...state,
+        forms: {
+          ...state.forms,
+          [state.activeFormUuid]: {
+            ...state.forms[state.activeFormUuid],
+            workflowState: "VALIDATE_FOR_COMPLETE",
+          },
+        },
+      };
     case "SUBMIT_FOR_COMPLETE":
       // this state should not be persisted
       window.dispatchEvent(
