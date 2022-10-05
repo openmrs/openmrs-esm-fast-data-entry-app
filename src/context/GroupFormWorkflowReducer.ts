@@ -190,7 +190,6 @@ const reducer = (state, action) => {
       return newState;
     }
     case "SAVE_ENCOUNTER": {
-      console.log("saving encounter");
       const thisForm = state.forms[state.activeFormUuid];
       if (thisForm.workflowState === "SUBMIT_FOR_COMPLETE") {
         const { [state.activeFormUuid]: activeForm, ...formRest } = state.forms;
@@ -293,7 +292,6 @@ const reducer = (state, action) => {
 
     case "SUBMIT_FOR_NEXT":
       // this state should not be persisted
-      console.log("submit for next");
       window.dispatchEvent(
         new CustomEvent("ampath-form-action", {
           detail: {
@@ -373,15 +371,14 @@ const reducer = (state, action) => {
       return newState;
     }
     case "DESTROY_SESSION": {
-      console.log("destroying");
       const { [state.activeFormUuid]: activeForm, ...formRest } = state.forms;
-      console.log("activeForm", activeForm);
       const newState = {
         ...state,
         forms: formRest,
         activeFormUuid: null,
       };
       persistData(newState);
+      //eslint-disable-next-line
       navigate({ to: "${openmrsSpaBase}/forms" });
       return { ...newState, formDestroyed: true };
     }
