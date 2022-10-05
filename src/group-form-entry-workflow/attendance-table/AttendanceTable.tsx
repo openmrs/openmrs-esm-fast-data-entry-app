@@ -14,8 +14,6 @@ import { useTranslation } from "react-i18next";
 import GroupFormWorkflowContext from "../../context/GroupFormWorkflowContext";
 import { useGetPatient } from "../../hooks";
 
-const fields = ["name", "identifier", "checked"];
-
 const PatientRow = ({ patientUuid }) => {
   const patient = useGetPatient(patientUuid);
   const { patientUuids, addPatientUuid, removePatientUuid } = useContext(
