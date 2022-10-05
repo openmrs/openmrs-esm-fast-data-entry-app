@@ -4,7 +4,6 @@ import { Events, Close } from "@carbon/react/icons";
 import styles from "./styles.scss";
 import { useTranslation } from "react-i18next";
 import GroupFormWorkflowContext from "../../context/GroupFormWorkflowContext";
-import { navigate } from "@openmrs/esm-framework";
 
 const GroupDisplayHeader = () => {
   const {
@@ -53,14 +52,7 @@ const GroupDisplayHeader = () => {
         </Button>
       </span>
       <span>
-        <Button
-          kind="ghost"
-          onClick={() => {
-            destroySession();
-            // eslint-disable-next-line
-            navigate({ to: "${openmrsSpaBase}/forms" });
-          }}
-        >
+        <Button kind="ghost" onClick={() => destroySession()}>
           {t("cancel", "Cancel")} <Close size={20} />
         </Button>
       </span>

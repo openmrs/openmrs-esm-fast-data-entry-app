@@ -12,10 +12,13 @@ const initialFormState = {
   workflowState: "NEW_GROUP_SESSION",
   groupUuid: null,
   groupName: null,
+  groupMembers: [],
   activePatientUuid: null,
   activeEncounterUuid: null,
+  activeVisitUuid: null,
   patientUuids: [],
   encounters: {},
+  visits: {},
 };
 
 const reducer = (state, action) => {
@@ -50,6 +53,8 @@ const reducer = (state, action) => {
               activePatientUuid: activePatientUuid,
               activeEncounterUuid:
                 thisSavedForm?.encounters?.[activePatientUuid] || null,
+              activeVisitUuid:
+                thisSavedForm?.visits?.[activePatientUuid] || null,
             },
           },
         };
@@ -84,8 +89,13 @@ const reducer = (state, action) => {
               action.group.cohortMembers?.map(
                 (member) => member?.patient?.uuid
               ) ?? [],
+            groupMembers:
+              action.group.cohortMembers?.map(
+                (member) => member?.patient?.uuid
+              ) ?? [],
             activePatientUuid: null,
             activeEncounterUuid: null,
+            activeVisitUuid: null,
           },
         },
       };
@@ -102,8 +112,10 @@ const reducer = (state, action) => {
             groupUuid: null,
             groupName: null,
             patientUuids: [],
+            groupMembers: [],
             activePatientUuid: null,
             activeEncounterUuid: null,
+            activeVisitUuid: null,
           },
         },
       };
@@ -125,6 +137,10 @@ const reducer = (state, action) => {
               state.forms[state.activeFormUuid].encounters[
                 state.forms[state.activeFormUuid].patientUuids?.[0]
               ] || null,
+            activeVisitUuid:
+              state.forms[state.activeFormUuid].visits[
+                state.forms[state.activeFormUuid].patientUuids?.[0]
+              ] || null,
             workflowState: "EDIT_FORM",
           },
         },
@@ -132,7 +148,47 @@ const reducer = (state, action) => {
       persistData(newState);
       return newState;
     }
+    case "ADD_PATIENT_UUID": {
+      if (
+        state.forms[state.activeFormUuid].patientUuids.includes(
+          action.patientUuid
+        )
+      ) {
+        return state;
+      }
 
+      const newState = {
+        ...state,
+        forms: {
+          ...state.forms,
+          [state.activeFormUuid]: {
+            ...state.forms[state.activeFormUuid],
+            patientUuids: [
+              ...state.forms[state.activeFormUuid].patientUuids,
+              action.patientUuid,
+            ],
+          },
+        },
+      };
+      persistData(newState);
+      return newState;
+    }
+    case "REMOVE_PATIENT_UUID": {
+      const newState = {
+        ...state,
+        forms: {
+          ...state.forms,
+          [state.activeFormUuid]: {
+            ...state.forms[state.activeFormUuid],
+            patientUuids: state.forms[
+              state.activeFormUuid
+            ].patientUuids?.filter((uuid) => action.patientUuid !== uuid),
+          },
+        },
+      };
+      persistData(newState);
+      return newState;
+    }
     case "SAVE_ENCOUNTER": {
       const thisForm = state.forms[state.activeFormUuid];
       if (thisForm.workflowState === "SUBMIT_FOR_COMPLETE") {
@@ -166,6 +222,7 @@ const reducer = (state, action) => {
               },
               activePatientUuid: nextPatientUuid,
               activeEncounterUuid: thisForm.encounters[nextPatientUuid] || null,
+              activeVisitUuid: thisForm.visits[nextPatientUuid] || null,
               workflowState: "EDIT_FORM",
             },
           },
@@ -183,6 +240,8 @@ const reducer = (state, action) => {
             ...state.forms[state.activeFormUuid],
             activeEncounterUuid:
               state.forms[state.activeFormUuid].encounters[action.patientUuid],
+            activeVisitUuid:
+              state.forms[state.activeFormUuid].visits[action.patientUuid],
             activePatientUuid: action.patientUuid,
             workflowState: "EDIT_FORM",
           },
@@ -191,6 +250,46 @@ const reducer = (state, action) => {
       persistData(newState);
       return newState;
     }
+    case "VALIDATE_FOR_NEXT":
+      // this state should not be persisted
+      window.dispatchEvent(
+        new CustomEvent("ampath-form-action", {
+          detail: {
+            formUuid: state.activeFormUuid,
+            patientUuid: state.forms[state.activeFormUuid].activePatientUuid,
+            action: "validateForm",
+          },
+        })
+      );
+      return {
+        ...state,
+        forms: {
+          ...state.forms,
+          [state.activeFormUuid]: {
+            ...state.forms[state.activeFormUuid],
+            workflowState: "VALIDATE_FOR_NEXT",
+          },
+        },
+      };
+    case "UPDATE_VISIT_UUID":
+      // this state should not be persisted
+      // we don't pers
+      return {
+        ...state,
+        forms: {
+          ...state.forms,
+          [state.activeFormUuid]: {
+            ...state.forms[state.activeFormUuid],
+            visits: {
+              ...state.forms[state.activeFormUuid].visits,
+              [state.forms[state.activeFormUuid].activePatientUuid]:
+                action.visitUuid,
+            },
+            activeVisitUuid: action.visitUuid,
+          },
+        },
+      };
+
     case "SUBMIT_FOR_NEXT":
       // this state should not be persisted
       window.dispatchEvent(
@@ -233,6 +332,28 @@ const reducer = (state, action) => {
           },
         },
       };
+
+    case "VALIDATE_FOR_COMPLETE":
+      // this state should not be persisted
+      window.dispatchEvent(
+        new CustomEvent("ampath-form-action", {
+          detail: {
+            formUuid: state.activeFormUuid,
+            patientUuid: state.forms[state.activeFormUuid].activePatientUuid,
+            action: "validateForm",
+          },
+        })
+      );
+      return {
+        ...state,
+        forms: {
+          ...state.forms,
+          [state.activeFormUuid]: {
+            ...state.forms[state.activeFormUuid],
+            workflowState: "VALIDATE_FOR_COMPLETE",
+          },
+        },
+      };
     case "SUBMIT_FOR_COMPLETE":
       // this state should not be persisted
       window.dispatchEvent(
@@ -262,6 +383,7 @@ const reducer = (state, action) => {
           [state.activeFormUuid]: {
             ...state.forms[state.activeFormUuid],
             activeEncounterUuid: null,
+            activVisitUuid: null,
             activePatientUuid: null,
             workflowState: "REVIEW",
           },
@@ -278,7 +400,9 @@ const reducer = (state, action) => {
         activeFormUuid: null,
       };
       persistData(newState);
-      return newState;
+      //eslint-disable-next-line
+      navigate({ to: "${openmrsSpaBase}/forms" });
+      return { ...newState, formDestroyed: true };
     }
     case "CLOSE_SESSION": {
       const newState = {
@@ -286,6 +410,8 @@ const reducer = (state, action) => {
         activeFormUuid: null,
       };
       persistData(newState);
+      //eslint-disable-next-line
+      navigate({ to: "${openmrsSpaBase}/forms" });
       return newState;
     }
     default:

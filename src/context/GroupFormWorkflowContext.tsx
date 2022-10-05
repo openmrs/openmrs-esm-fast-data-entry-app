@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useReducer } from "react";
 import reducer from "./GroupFormWorkflowReducer";
 import { useParams } from "react-router-dom";
 import { Type } from "@openmrs/esm-framework";
+import useGetSystemSetting from "../hooks/useGetSystemSetting";
 interface ParamTypes {
   formUuid?: string;
 }
@@ -25,9 +26,14 @@ const initialActions = {
   openPatientSearch: () => undefined,
   saveEncounter: (encounterUuid: string | number) => undefined,
   editEncounter: (patientUuid: string | number) => undefined,
+  validateForNext: () => undefined,
+  validateForComplete: () => undefined,
+  updateVisitUuid: (visitUuid: string) => undefined,
   submitForNext: () => undefined,
   submitForReview: () => undefined,
   submitForComplete: () => undefined,
+  addPatientUuid: (patientUuid: string) => undefined,
+  removePatientUuid: (patientUuid: string) => undefined,
   goToReview: () => undefined,
   destroySession: () => undefined,
   closeSession: () => undefined,
@@ -42,17 +48,21 @@ export const initialWorkflowState = {
   //     aciveFormUuid
   workflowState: null, // pseudo field from state[activeFormUuid].workflowState
   activePatientUuid: null, // pseudo field from state[activeFormUuid].activePatientUuid
-  activeEncounterUuid: null, // pseudo field from state[activeFormUuid].encounterUuid
+  activeEncounterUuid: null, // pseudo field from state[activeFormUuid].activeEncounterUuid
+  activeVisitUuid: null, // pseudo field from state[activeFormUuid].activeVisitUuid
   patientUuids: [], // pseudo field from state[activeFormUuid].patientUuids
   encounters: {}, // pseudo field from state[activeFormUuid].encounters
+  visits: {}, // pseudo field from state[activeFormUuid].visits
   activeGroupUuid: null, // pseudo field from state[activeFormUuid].groupUuid
-  activeGroupName: null, // pseudo field from state[activeFormUuid].groupname
+  activeGroupName: null, // pseudo field from state[activeFormUuid].groupName
+  activeGroupMembers: [], // pseudo field from state[activeFormUuid].groupMembers
   activeSessionMeta: {
     sessionName: null,
     practitionerName: null,
     sessionDate: null,
     sessionNotes: null,
   },
+  groupVisitTypeUuid: null,
 };
 
 const GroupFormWorkflowContext = React.createContext({
@@ -63,6 +73,10 @@ const GroupFormWorkflowContext = React.createContext({
 const GroupFormWorkflowProvider = ({ children }) => {
   const { formUuid } = useParams() as ParamTypes;
   const activeFormUuid = formUuid.split("&")[0];
+  const systemSetting = useGetSystemSetting(
+    "@openmrs/esm-fast-data-entry-app.groupSessionVisitTypeUuid"
+  );
+  const groupVisitTypeUuid = systemSetting?.result?.data?.results?.[0]?.value;
   const [state, dispatch] = useReducer(reducer, {
     ...initialWorkflowState,
     ...initialActions,
@@ -78,12 +92,20 @@ const GroupFormWorkflowProvider = ({ children }) => {
       setGroup: (group) => dispatch({ type: "SET_GROUP", group }),
       unsetGroup: () => dispatch({ type: "UNSET_GROUP" }),
       setSessionMeta: (meta) => dispatch({ type: "SET_SESSION_META", meta }),
+      addPatientUuid: (patientUuid) =>
+        dispatch({ type: "ADD_PATIENT_UUID", patientUuid }),
+      removePatientUuid: (patientUuid) =>
+        dispatch({ type: "REMOVE_PATIENT_UUID", patientUuid }),
       openPatientSearch: () => dispatch({ type: "OPEN_PATIENT_SEARCH" }),
       saveEncounter: (encounterUuid) =>
         dispatch({
           type: "SAVE_ENCOUNTER",
           encounterUuid,
         }),
+      validateForNext: () => dispatch({ type: "VALIDATE_FOR_NEXT" }),
+      validateForComplete: () => dispatch({ type: "VALIDATE_FOR_COMPLETE" }),
+      updateVisitUuid: (visitUuid) =>
+        dispatch({ type: "UPDATE_VISIT_UUID", visitUuid }),
       submitForNext: () => dispatch({ type: "SUBMIT_FOR_NEXT" }),
       submitForComplete: () => dispatch({ type: "SUBMIT_FOR_COMPLETE" }),
       editEncounter: (patientUuid) =>
@@ -106,6 +128,7 @@ const GroupFormWorkflowProvider = ({ children }) => {
   return (
     <GroupFormWorkflowContext.Provider
       value={{
+        groupVisitTypeUuid,
         ...state,
         ...actions,
         workflowState:
@@ -117,6 +140,9 @@ const GroupFormWorkflowProvider = ({ children }) => {
         activeEncounterUuid:
           state.forms?.[state.activeFormUuid]?.activeEncounterUuid ??
           initialWorkflowState.activeEncounterUuid,
+        activeVisitUuid:
+          state.forms?.[state.activeFormUuid]?.activeVisitUuid ??
+          initialWorkflowState.activeVisitUuid,
         patientUuids:
           state.forms?.[state.activeFormUuid]?.patientUuids ??
           initialWorkflowState.patientUuids,
@@ -129,6 +155,9 @@ const GroupFormWorkflowProvider = ({ children }) => {
         activeGroupName:
           state.forms?.[state.activeFormUuid]?.groupName ??
           initialWorkflowState.activeGroupName,
+        activeGroupMembers:
+          state.forms?.[state.activeFormUuid]?.groupMembers ??
+          initialWorkflowState.activeGroupMembers,
         activeSessionMeta:
           state.forms?.[state.activeFormUuid]?.sessionMeta ??
           initialWorkflowState.activeSessionMeta,

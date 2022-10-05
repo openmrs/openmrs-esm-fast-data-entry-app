@@ -107,6 +107,7 @@ interface FormParams {
   showDiscardSubmitButtons?: boolean;
   handlePostResponse?: (Encounter) => void;
   handleEncounterCreate?: (Object) => void;
+  handleOnValidate?: (boolean) => void;
 }
 
 const FormBootstrap = ({
@@ -117,6 +118,7 @@ const FormBootstrap = ({
   encounterUuid,
   handlePostResponse,
   handleEncounterCreate,
+  handleOnValidate,
 }: FormParams) => {
   const patient = useGetPatient(patientUuid);
 
@@ -140,6 +142,7 @@ const FormBootstrap = ({
             closeWorkspace: () => undefined,
             handlePostResponse,
             handleEncounterCreate,
+            handleOnValidate,
             showDiscardSubmitButtons: false,
           }}
         />
