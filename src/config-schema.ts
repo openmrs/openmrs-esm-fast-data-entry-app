@@ -61,29 +61,25 @@ export const configSchema = {
     _default: ["ICRC Forms", "Distress Scales"],
   },
   groupSessionConcepts: {
-    _type: Type.Object,
-    _description: "Concept UUIDs for group session meta data fields",
     sessionName: {
       _type: Type.UUID,
       _description: "UUID of concept for Session Name",
+      _default: "e2559620-900b-4f66-ae41-0b9c4adfb654",
     },
     sessionDate: {
       _type: Type.UUID,
       _description: "UUID of concept for Session Date",
+      _default: "ceaca505-6dff-4940-8a43-8c060a0924d7",
     },
     practitionerName: {
       _type: Type.UUID,
       _description: "UUID of concept for Practitioner Name",
+      _default: "f1a2d58c-1a0e-4148-931a-aac224649fdc",
     },
     sessionNotes: {
       _type: Type.UUID,
       _description: "UUID of concept for Session Notes",
-    },
-    _default: {
-      sessionName: "e2559620-900b-4f66-ae41-0b9c4adfb654",
-      sessionDate: "ceaca505-6dff-4940-8a43-8c060a0924d7",
-      practitionerName: "f1a2d58c-1a0e-4148-931a-aac224649fdc",
-      sessionNotes: "fa8fedc0-c066-4da3-8dc1-2ad8621fc480",
+      _default: "fa8fedc0-c066-4da3-8dc1-2ad8621fc480",
     },
   },
 };
