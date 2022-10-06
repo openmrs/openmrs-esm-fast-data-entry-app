@@ -60,6 +60,34 @@ export const configSchema = {
     },
     _default: ["ICRC Forms", "Distress Scales"],
   },
+  groupSessionConcepts: {
+    _type: Type.Array,
+    _description: "Concept UUIDs for group session meta data fields",
+    _elements: {
+      sessionName: {
+        _type: Type.UUID,
+        _description: "UUID of concept for Session Name",
+      },
+      sessionDate: {
+        _type: Type.UUID,
+        _description: "UUID of concept for Session Date",
+      },
+      practitionerName: {
+        _type: Type.UUID,
+        _description: "UUID of concept for Practitioner Name",
+      },
+      sessionNotes: {
+        _type: Type.UUID,
+        _description: "UUID of concept for Session Notes",
+      },
+    },
+    _default: {
+      sessionName: "e2559620-900b-4f66-ae41-0b9c4adfb654",
+      sessionDate: "ceaca505-6dff-4940-8a43-8c060a0924d7",
+      practitionerName: "f1a2d58c-1a0e-4148-931a-aac224649fdc",
+      sessionNotes: "fa8fedc0-c066-4da3-8dc1-2ad8621fc480",
+    },
+  },
 };
 
 export type Form = {

@@ -1,4 +1,4 @@
-import { getGlobalStore, useStore } from "@openmrs/esm-framework";
+import { getGlobalStore, useConfig, useStore } from "@openmrs/esm-framework";
 import { Button } from "@carbon/react";
 import React, { useCallback, useContext, useEffect, useState } from "react";
 import PatientCard from "../patient-card/PatientCard";
@@ -73,6 +73,7 @@ const WorkflowNavigationButtons = () => {
 };
 
 const GroupSessionWorkspace = () => {
+  const { groupSessionConcepts } = useConfig();
   const { t } = useTranslation();
   const {
     patientUuids,
@@ -169,10 +170,13 @@ const GroupSessionWorkspace = () => {
           obsDatetime: obsTime.toISOString(),
         };
       });
+      Object.entries(groupSessionConcepts).forEach(([field, uuid]) => {
+        payload.obs.push({ concept: uuid, value: activeSessionMeta?.[field] });
+      });
       payload.visit = activeVisitUuid;
       payload.encounterDatetime = obsTime.toISOString();
     },
-    [activeVisitUuid, activeSessionMeta]
+    [activeVisitUuid, activeSessionMeta, groupSessionConcepts]
   );
 
   // 4. Once form has been posted, save the new encounter uuid so we can edit it later
