@@ -17,12 +17,8 @@
     "test": "jest --config jest.config.json --passWithNoTests",
     "verify": "concurrently 'yarn:lint' 'yarn:test' 'yarn:typescript'",
     "coverage": "yarn test -- --coverage ",
-    "prepare": "husky install"
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "pretty-quick --staged && yarn verify"
-    }
+    "postinstall": "husky install",
+    "extract-translations": "i18next 'src/**/*.tsx' --config ./tools/i18next-parser.config.js"
   },
   "browserslist": [
     "extends browserslist-config-openmrs"
@@ -92,6 +88,8 @@
   },
   "packageManager": "yarn@3.2.2",
   "dependencies": {
+    "i18next": "^21.10.0",
+    "i18next-parser": "^6.6.0",
     "react-hook-form": "^7.34.2",
     "swr": "1.1.2"
   }

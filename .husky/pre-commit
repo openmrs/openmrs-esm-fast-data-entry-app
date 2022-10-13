@@ -3,5 +3,5 @@
 
 set -e  # die on error
 
-yarn run verify
-
+npx pretty-quick --staged
+yarn run extract-translations
