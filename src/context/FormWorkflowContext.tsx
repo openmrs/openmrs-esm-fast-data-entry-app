@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useReducer } from "react";
 import reducer from "./FormWorkflowReducer";
 import { useParams, useLocation } from "react-router-dom";
+import useGetSystemSetting from "../hooks/useGetSystemSetting";
 interface ParamTypes {
   formUuid?: string;
 }
@@ -10,9 +11,11 @@ const initialActions = {
   openPatientSearch: () => undefined,
   saveEncounter: (encounterUuid: string | number) => undefined,
   editEncounter: (patientUuid: string | number) => undefined,
+  updateVisitUuid: (visitUuid: string) => undefined,
   submitForNext: () => undefined,
   submitForReview: () => undefined,
   submitForComplete: () => undefined,
+  validateForComplete: () => undefined,
   goToReview: () => undefined,
   destroySession: () => undefined,
   closeSession: () => undefined,
@@ -28,8 +31,10 @@ export const initialWorkflowState = {
   workflowState: null, // pseudo field from state[activeFormUuid].workflowState
   activePatientUuid: null, // pseudo field from state[activeFormUuid].activePatientUuid
   activeEncounterUuid: null, // pseudo field from state[activeFormUuid].encounterUuid
+  activeVisitUuid: null, // pseudo field from state[activeFormUuid].activeVisitUuid
   patientUuids: [], // pseudo field from state[activeFormUuid].patientUuids
   encounters: {}, // pseudo field from state[activeFormUuid].encounters
+  singleSessionVisitTypeUuid: null,
 };
 
 const FormWorkflowContext = React.createContext({
@@ -46,6 +51,11 @@ const FormWorkflowProvider = ({ children }) => {
     ...initialWorkflowState,
     ...initialActions,
   });
+  const systemSetting = useGetSystemSetting(
+    "@openmrs/esm-fast-data-entry-app.groupSessionVisitTypeUuid"
+  );
+  const singleSessionVisitTypeUuid =
+    systemSetting?.result?.data?.results?.[0]?.value;
 
   const actions = useMemo(
     () => ({
@@ -63,9 +73,12 @@ const FormWorkflowProvider = ({ children }) => {
           type: "SAVE_ENCOUNTER",
           encounterUuid,
         }),
+      updateVisitUuid: (visitUuid) =>
+        dispatch({ type: "UPDATE_VISIT_UUID", visitUuid }),
       submitForNext: () => dispatch({ type: "SUBMIT_FOR_NEXT" }),
       submitForReview: () => dispatch({ type: "SUBMIT_FOR_REVIEW" }),
       submitForComplete: () => dispatch({ type: "SUBMIT_FOR_COMPLETE" }),
+      validateForComplete: () => dispatch({ type: "VALIDATE_FOR_COMPLETE" }),
       editEncounter: (patientUuid) =>
         dispatch({ type: "EDIT_ENCOUNTER", patientUuid }),
       goToReview: () => dispatch({ type: "GO_TO_REVIEW" }),
@@ -86,6 +99,7 @@ const FormWorkflowProvider = ({ children }) => {
   return (
     <FormWorkflowContext.Provider
       value={{
+        singleSessionVisitTypeUuid,
         ...state,
         ...actions,
         workflowState:
@@ -97,6 +111,9 @@ const FormWorkflowProvider = ({ children }) => {
         activeEncounterUuid:
           state.forms?.[state.activeFormUuid]?.activeEncounterUuid ??
           initialWorkflowState.activeEncounterUuid,
+        activeVisitUuid:
+          state.forms?.[state.activeFormUuid]?.activeVisitUuid ??
+          initialWorkflowState.activeVisitUuid,
         patientUuids:
           state.forms?.[state.activeFormUuid]?.patientUuids ??
           initialWorkflowState.patientUuids,

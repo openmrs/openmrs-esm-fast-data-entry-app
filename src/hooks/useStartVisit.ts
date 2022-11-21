@@ -54,6 +54,7 @@ const useStartVisit = ({
 
   const saveVisit = useCallback(
     (data) => {
+      setIsSubmitting(true);
       const payload = {
         patient: data.patientUuid,
         startDatetime: data.startDatetime,
@@ -72,8 +73,28 @@ const useStartVisit = ({
     [onError, onSave]
   );
 
+  const updateVisit = useCallback(
+    (data) => {
+      const payload = {
+        startDatetime: data.startDatetime,
+        stopDatetime: data.stopDatetime,
+        visitType: data.visitType,
+        // location: selectedLocation,
+      };
+      openmrsFetch("/ws/rest/v1/visit/" + data.uuid, {
+        method: "POST",
+        body: payload,
+        headers: { "Content-Type": "application/json" },
+      })
+        .then(onSave)
+        .catch(onError);
+    },
+    [onError, onSave]
+  );
+
   return {
     saveVisit,
+    updateVisit,
     success,
     error,
     isSubmitting,
