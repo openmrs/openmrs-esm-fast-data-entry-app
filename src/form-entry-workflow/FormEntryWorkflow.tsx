@@ -52,7 +52,7 @@ const WorkflowNavigationButtons = () => {
               : () => setCompleteModalOpen(true)
           }
         >
-          {t("saveAndComplet", "Save & Complete 123")}
+          {t("saveAndComplete", "Save & Complete")}
         </Button>
         <Button kind="tertiary" onClick={() => setCancelModalOpen(true)}>
           {t("cancel", "Cancel")}
@@ -67,7 +67,6 @@ const WorkflowNavigationButtons = () => {
         open={completeModalOpen}
         setOpen={setCompleteModalOpen}
         context={context}
-        validateFirst={true}
       />
     </>
   );
@@ -78,25 +77,21 @@ const FormWorkspace = () => {
     patientUuids,
     activePatientUuid,
     activeEncounterUuid,
-    activeVisitUuid,
     saveEncounter,
-    updateVisitUuid,
     activeFormUuid,
     editEncounter,
     encounters,
-    submitForComplete,
-    workflowState,
     singleSessionVisitTypeUuid,
   } = useContext(FormWorkflowContext);
   const { t } = useTranslation();
 
-  const [isCreatingVisit, setIsCreatingVisit] = useState(false);
+  const [encounter, setEncounter] = useState(null);
+  const [visit, setVisit] = useState(null);
 
   const {
     saveVisit,
-    updateVisit,
+    updateEncounter,
     success: visitSaveSuccess,
-    isSubmitting,
   } = useStartVisit({
     showSuccessNotification: false,
     showErrorNotification: true,
@@ -105,61 +100,36 @@ const FormWorkspace = () => {
   const handlePostResponse = (encounter) => {
     if (encounter && encounter.uuid) {
       saveEncounter(encounter.uuid);
+      setEncounter(encounter);
     }
   };
 
-  const handleOnValidate = useCallback(
-    (valid) => {
-      if (valid && !activeVisitUuid && !isCreatingVisit) {
-        setIsCreatingVisit(true);
-        const visitStartDatetime = new Date();
-        const visitStopDatetime = new Date();
-        visitStartDatetime.setFullYear(visitStartDatetime.getFullYear() - 1);
-        visitStopDatetime.setMinutes(visitStartDatetime.getMinutes() + 1);
-        saveVisit({
-          patientUuid: activePatientUuid,
-          startDatetime: visitStartDatetime.toISOString(),
-          stopDatetime: visitStopDatetime.toISOString(),
-          visitType: "7b0f5697-27e3-40c4-8bae-f4049abfb4ed",
-        });
-      }
-    },
-    [
-      activePatientUuid,
-      activeVisitUuid,
-      isCreatingVisit,
-      singleSessionVisitTypeUuid,
-    ]
-  );
+  useEffect(() => {
+    if (encounter && visit) {
+      // Update encounter so that it belongs to the created visit
+      updateEncounter({ uuid: encounter.uuid, visit: visit.uuid });
+    }
+  }, [encounter, visit]);
 
-  // 2. save the new visit uuid and start form submission
   useEffect(() => {
     if (visitSaveSuccess) {
-      const visitUuid = visitSaveSuccess?.data?.uuid;
-      if (!activeVisitUuid) {
-        updateVisitUuid(visitUuid);
-        submitForComplete();
-      }
+      setVisit(visitSaveSuccess.data);
     }
   }, [visitSaveSuccess]);
 
   const handleEncounterCreate = useCallback(
     (payload) => {
-      payload.visit = activeVisitUuid;
-
-      const visitStartDate = new Date(payload.encounterDatetime);
-      const visitEndDate = new Date(payload.encounterDatetime);
-      visitStartDate.setFullYear(visitEndDate.getFullYear() - 1);
-      visitEndDate.setHours(visitEndDate.getHours() + 1);
-      updateVisit({
-        uuid: activeVisitUuid,
+      // Create a visit with the same date as the encounter being saved
+      const visitStartDatetime = new Date(payload.encounterDatetime);
+      const visitStopDatetime = new Date(payload.encounterDatetime);
+      saveVisit({
         patientUuid: activePatientUuid,
-        startDatetime: visitStartDate.toISOString(),
-        stopDatetime: visitEndDate.toISOString(),
-        visitType: "7b0f5697-27e3-40c4-8bae-f4049abfb4ed",
+        startDatetime: visitStartDatetime.toISOString(),
+        stopDatetime: visitStopDatetime.toISOString(),
+        visitType: singleSessionVisitTypeUuid,
       });
     },
-    [activeVisitUuid]
+    [activePatientUuid]
   );
 
   return (
@@ -178,7 +148,6 @@ const FormWorkspace = () => {
               {...{
                 formUuid: activeFormUuid,
                 handlePostResponse,
-                handleOnValidate,
                 handleEncounterCreate,
               }}
             />
