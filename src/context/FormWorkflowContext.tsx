@@ -11,11 +11,9 @@ const initialActions = {
   openPatientSearch: () => undefined,
   saveEncounter: (encounterUuid: string | number) => undefined,
   editEncounter: (patientUuid: string | number) => undefined,
-  updateVisitUuid: (visitUuid: string) => undefined,
   submitForNext: () => undefined,
   submitForReview: () => undefined,
   submitForComplete: () => undefined,
-  validateForComplete: () => undefined,
   goToReview: () => undefined,
   destroySession: () => undefined,
   closeSession: () => undefined,
@@ -31,7 +29,6 @@ export const initialWorkflowState = {
   workflowState: null, // pseudo field from state[activeFormUuid].workflowState
   activePatientUuid: null, // pseudo field from state[activeFormUuid].activePatientUuid
   activeEncounterUuid: null, // pseudo field from state[activeFormUuid].encounterUuid
-  activeVisitUuid: null, // pseudo field from state[activeFormUuid].activeVisitUuid
   patientUuids: [], // pseudo field from state[activeFormUuid].patientUuids
   encounters: {}, // pseudo field from state[activeFormUuid].encounters
   singleSessionVisitTypeUuid: null,
@@ -73,12 +70,9 @@ const FormWorkflowProvider = ({ children }) => {
           type: "SAVE_ENCOUNTER",
           encounterUuid,
         }),
-      updateVisitUuid: (visitUuid) =>
-        dispatch({ type: "UPDATE_VISIT_UUID", visitUuid }),
       submitForNext: () => dispatch({ type: "SUBMIT_FOR_NEXT" }),
       submitForReview: () => dispatch({ type: "SUBMIT_FOR_REVIEW" }),
       submitForComplete: () => dispatch({ type: "SUBMIT_FOR_COMPLETE" }),
-      validateForComplete: () => dispatch({ type: "VALIDATE_FOR_COMPLETE" }),
       editEncounter: (patientUuid) =>
         dispatch({ type: "EDIT_ENCOUNTER", patientUuid }),
       goToReview: () => dispatch({ type: "GO_TO_REVIEW" }),
@@ -99,7 +93,6 @@ const FormWorkflowProvider = ({ children }) => {
   return (
     <FormWorkflowContext.Provider
       value={{
-        singleSessionVisitTypeUuid,
         ...state,
         ...actions,
         workflowState:
@@ -111,9 +104,6 @@ const FormWorkflowProvider = ({ children }) => {
         activeEncounterUuid:
           state.forms?.[state.activeFormUuid]?.activeEncounterUuid ??
           initialWorkflowState.activeEncounterUuid,
-        activeVisitUuid:
-          state.forms?.[state.activeFormUuid]?.activeVisitUuid ??
-          initialWorkflowState.activeVisitUuid,
         patientUuids:
           state.forms?.[state.activeFormUuid]?.patientUuids ??
           initialWorkflowState.patientUuids,

@@ -11,7 +11,6 @@ const initialFormState = {
   workflowState: "NEW_PATIENT",
   activePatientUuid: null,
   activeEncounterUuid: null,
-  activeVisitUuid: null,
   patientUuids: [],
   encounters: {},
 };
@@ -128,14 +127,6 @@ const reducer = (state, action) => {
         navigate({ to: "${openmrsSpaBase}/forms" });
         return newState;
       } else {
-        const thisForm = state.forms[state.activeFormUuid];
-        const nextPatientUuid =
-          thisForm.patientUuids[
-            Math.min(
-              thisForm.patientUuids.indexOf(thisForm.activePatientUuid) + 1,
-              thisForm.patientUuids.length - 1
-            )
-          ];
         const newState = {
           ...state,
           forms: {
@@ -149,9 +140,6 @@ const reducer = (state, action) => {
               },
               activePatientUuid: null,
               activeEncounterUuid: null,
-              activeVisitUuid:
-                state.forms[state.activeFormUuid].visits[nextPatientUuid] ||
-                null,
               workflowState:
                 state.forms[state.activeFormUuid].workflowState ===
                 "SUBMIT_FOR_NEXT"
@@ -226,29 +214,7 @@ const reducer = (state, action) => {
           },
         },
       };
-    case "VALIDATE_FOR_COMPLETE":
-      // this state should not be persisted
-      window.dispatchEvent(
-        new CustomEvent("ampath-form-action", {
-          detail: {
-            formUuid: state.activeFormUuid,
-            patientUuid: state.forms[state.activeFormUuid].activePatientUuid,
-            action: "validateForm",
-          },
-        })
-      );
-      return {
-        ...state,
-        forms: {
-          ...state.forms,
-          [state.activeFormUuid]: {
-            ...state.forms[state.activeFormUuid],
-            workflowState: "VALIDATE_FOR_COMPLETE",
-          },
-        },
-      };
     case "SUBMIT_FOR_COMPLETE":
-      console.log("SUBMIT_FOR_COMPLETE");
       // this state should not be persisted
       window.dispatchEvent(
         new CustomEvent("ampath-form-action", {
@@ -307,24 +273,6 @@ const reducer = (state, action) => {
       navigate({ to: "${openmrsSpaBase}/forms" });
       return newState;
     }
-    case "UPDATE_VISIT_UUID":
-      // this state should not be persisted
-      // we don't pers
-      return {
-        ...state,
-        forms: {
-          ...state.forms,
-          [state.activeFormUuid]: {
-            ...state.forms[state.activeFormUuid],
-            visits: {
-              ...state.forms[state.activeFormUuid]?.visits,
-              [state.forms[state.activeFormUuid].activePatientUuid]:
-                action.visitUuid,
-            },
-            activeVisitUuid: JSON.parse(JSON.stringify(action.visitUuid)),
-          },
-        },
-      };
     default:
       return state;
   }

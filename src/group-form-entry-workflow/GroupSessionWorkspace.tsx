@@ -92,11 +92,7 @@ const GroupSessionWorkspace = () => {
     submitForComplete,
   } = useContext(GroupFormWorkflowContext);
 
-  const {
-    saveVisit,
-    success: visitSaveSuccess,
-    isSubmitting,
-  } = useStartVisit({
+  const { saveVisit, success: visitSaveSuccess } = useStartVisit({
     showSuccessNotification: false,
     showErrorNotification: true,
   });
@@ -132,7 +128,6 @@ const GroupSessionWorkspace = () => {
       saveVisit,
       activeVisitUuid,
       submitForNext,
-      isSubmitting,
     ]
   );
 
