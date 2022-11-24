@@ -1,6 +1,7 @@
 import {
   ExtensionSlot,
   getGlobalStore,
+  useSession,
   useStore,
 } from "@openmrs/esm-framework";
 import { Button } from "@carbon/react";
@@ -87,6 +88,7 @@ const FormWorkspace = () => {
 
   const [encounter, setEncounter] = useState(null);
   const [visit, setVisit] = useState(null);
+  const { user, sessionLocation } = useSession();
 
   const {
     saveVisit,
@@ -119,6 +121,7 @@ const FormWorkspace = () => {
 
   const handleEncounterCreate = useCallback(
     (payload) => {
+      payload.location = sessionLocation?.uuid;
       // Create a visit with the same date as the encounter being saved
       const visitStartDatetime = new Date(payload.encounterDatetime);
       const visitStopDatetime = new Date(payload.encounterDatetime);
