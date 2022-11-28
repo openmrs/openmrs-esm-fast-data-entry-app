@@ -3,8 +3,11 @@ import { initialWorkflowState } from "./FormWorkflowContext";
 
 export const fdeWorkflowStorageVersion = "1.0.13";
 export const fdeWorkflowStorageName = "openmrs:fastDataEntryWorkflowState";
-const persistData = (data) => {
-  localStorage.setItem(fdeWorkflowStorageName, JSON.stringify(data));
+const persistData = (data, userId) => {
+  localStorage.setItem(
+    fdeWorkflowStorageName + ":" + userId,
+    JSON.stringify(data)
+  );
 };
 
 const initialFormState = {
@@ -18,7 +21,9 @@ const initialFormState = {
 const reducer = (state, action) => {
   switch (action.type) {
     case "INITIALIZE_WORKFLOW_STATE": {
-      const savedData = localStorage.getItem(fdeWorkflowStorageName);
+      const savedData = localStorage.getItem(
+        fdeWorkflowStorageName + ":" + action.userId
+      );
       const savedDataObject = savedData ? JSON.parse(savedData) : {};
       let newState: { [key: string]: unknown } = {};
       const newPatient = action.newPatientUuid
@@ -69,9 +74,10 @@ const reducer = (state, action) => {
             [action.activeFormUuid]: initialFormState,
           },
           activeFormUuid: action.activeFormUuid,
+          userId: action.userId,
         };
       }
-      persistData(newState);
+      persistData(newState, action.userId);
       return { ...newState };
     }
     case "ADD_PATIENT": {
@@ -91,7 +97,7 @@ const reducer = (state, action) => {
           },
         },
       };
-      persistData(newState);
+      persistData(newState, state.userId);
       return newState;
     }
     case "OPEN_PATIENT_SEARCH": {
@@ -108,7 +114,7 @@ const reducer = (state, action) => {
         },
       };
       // the persist here is optional...
-      persistData(newState);
+      persistData(newState, state.userId);
       return newState;
     }
     case "SAVE_ENCOUNTER": {
@@ -122,7 +128,7 @@ const reducer = (state, action) => {
           forms: formRest,
           activeFormUuid: null,
         };
-        persistData(newState);
+        persistData(newState, state.userId);
         // eslint-disable-next-line
         navigate({ to: "${openmrsSpaBase}/forms" });
         return newState;
@@ -151,7 +157,7 @@ const reducer = (state, action) => {
             },
           },
         };
-        persistData(newState);
+        persistData(newState, state.userId);
         return newState;
       }
     }
@@ -169,7 +175,7 @@ const reducer = (state, action) => {
           },
         },
       };
-      persistData(newState);
+      persistData(newState, state.userId);
       return newState;
     }
     case "SUBMIT_FOR_NEXT":
@@ -248,7 +254,7 @@ const reducer = (state, action) => {
           },
         },
       };
-      persistData(newState);
+      persistData(newState, state.userId);
       return newState;
     }
     case "DESTROY_SESSION": {
@@ -258,7 +264,7 @@ const reducer = (state, action) => {
         forms: formRest,
         activeFormUuid: null,
       };
-      persistData(newState);
+      persistData(newState, state.userId);
       //eslint-disable-next-line
       navigate({ to: "${openmrsSpaBase}/forms" });
       return newState;
@@ -268,7 +274,7 @@ const reducer = (state, action) => {
         ...state,
         activeFormUuid: null,
       };
-      persistData(newState);
+      persistData(newState, state.userId);
       //eslint-disable-next-line
       navigate({ to: "${openmrsSpaBase}/forms" });
       return newState;

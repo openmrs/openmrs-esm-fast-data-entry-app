@@ -1,4 +1,4 @@
-import { useConfig } from "@openmrs/esm-framework";
+import { useConfig, useSession } from "@openmrs/esm-framework";
 import { Tab, Tabs, TabList, TabPanels, TabPanel } from "@carbon/react";
 import React from "react";
 import { Config } from "../config-schema";
@@ -49,8 +49,13 @@ const FormsPage = () => {
   const { formCategories, formCategoriesToShow } = config;
   const { forms, isLoading, error } = useGetAllForms();
   const cleanRows = prepareRowsForTable(forms);
-  const savedFormsData = localStorage.getItem(fdeWorkflowStorageName);
-  const savedGroupFormsData = localStorage.getItem(fdeGroupWorkflowStorageName);
+  const { user } = useSession();
+  const savedFormsData = localStorage.getItem(
+    fdeWorkflowStorageName + ":" + user?.username
+  );
+  const savedGroupFormsData = localStorage.getItem(
+    fdeGroupWorkflowStorageName + ":" + user?.username
+  );
   const activeForms = [];
   const activeGroupForms = [];
 
