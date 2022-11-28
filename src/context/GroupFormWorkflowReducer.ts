@@ -4,8 +4,11 @@ import { initialWorkflowState } from "./FormWorkflowContext";
 export const fdeGroupWorkflowStorageVersion = "1.0.5";
 export const fdeGroupWorkflowStorageName =
   "openmrs:fastDataEntryGroupWorkflowState";
-const persistData = (data) => {
-  localStorage.setItem(fdeGroupWorkflowStorageName, JSON.stringify(data));
+const persistData = (data, userId) => {
+  localStorage.setItem(
+    fdeGroupWorkflowStorageName + ":" + userId,
+    JSON.stringify(data)
+  );
 };
 
 const initialFormState = {
@@ -24,7 +27,9 @@ const initialFormState = {
 const reducer = (state, action) => {
   switch (action.type) {
     case "INITIALIZE_WORKFLOW_STATE": {
-      const savedData = localStorage.getItem(fdeGroupWorkflowStorageName);
+      const savedData = localStorage.getItem(
+        fdeGroupWorkflowStorageName + ":" + action.userId
+      );
       const savedDataObject = savedData ? JSON.parse(savedData) : {};
       let newState: { [key: string]: unknown } = {};
       if (
@@ -69,7 +74,7 @@ const reducer = (state, action) => {
           activeFormUuid: action.activeFormUuid,
         };
       }
-      persistData(newState);
+      persistData(newState, action.userId);
       return newState;
     }
 
@@ -99,7 +104,7 @@ const reducer = (state, action) => {
           },
         },
       };
-      persistData(newState);
+      persistData(newState, state.userId);
       return newState;
     }
     case "UNSET_GROUP": {
@@ -119,7 +124,7 @@ const reducer = (state, action) => {
           },
         },
       };
-      persistData(newState);
+      persistData(newState, state.userId);
       return newState;
     }
     case "SET_SESSION_META": {
@@ -145,7 +150,7 @@ const reducer = (state, action) => {
           },
         },
       };
-      persistData(newState);
+      persistData(newState, state.userId);
       return newState;
     }
     case "ADD_PATIENT_UUID": {
@@ -170,7 +175,7 @@ const reducer = (state, action) => {
           },
         },
       };
-      persistData(newState);
+      persistData(newState, state.userId);
       return newState;
     }
     case "REMOVE_PATIENT_UUID": {
@@ -186,7 +191,7 @@ const reducer = (state, action) => {
           },
         },
       };
-      persistData(newState);
+      persistData(newState, state.userId);
       return newState;
     }
     case "SAVE_ENCOUNTER": {
@@ -198,7 +203,7 @@ const reducer = (state, action) => {
           forms: formRest,
           activeFormUuid: null,
         };
-        persistData(newState);
+        persistData(newState, state.userId);
         // eslint-disable-next-line
         navigate({ to: "${openmrsSpaBase}/forms" });
         return newState;
@@ -227,7 +232,7 @@ const reducer = (state, action) => {
             },
           },
         };
-        persistData(newState);
+        persistData(newState, state.userId);
         return newState;
       } else return state;
     }
@@ -247,7 +252,7 @@ const reducer = (state, action) => {
           },
         },
       };
-      persistData(newState);
+      persistData(newState, state.userId);
       return newState;
     }
     case "VALIDATE_FOR_NEXT":
@@ -389,7 +394,7 @@ const reducer = (state, action) => {
           },
         },
       };
-      persistData(newState);
+      persistData(newState, state.userId);
       return newState;
     }
     case "DESTROY_SESSION": {
@@ -399,7 +404,7 @@ const reducer = (state, action) => {
         forms: formRest,
         activeFormUuid: null,
       };
-      persistData(newState);
+      persistData(newState, state.userId);
       //eslint-disable-next-line
       navigate({ to: "${openmrsSpaBase}/forms" });
       return { ...newState, formDestroyed: true };
@@ -409,7 +414,7 @@ const reducer = (state, action) => {
         ...state,
         activeFormUuid: null,
       };
-      persistData(newState);
+      persistData(newState, state.userId);
       //eslint-disable-next-line
       navigate({ to: "${openmrsSpaBase}/forms" });
       return newState;
