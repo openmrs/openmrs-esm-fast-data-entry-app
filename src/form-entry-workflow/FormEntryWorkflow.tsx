@@ -39,13 +39,6 @@ const WorkflowNavigationButtons = () => {
     <>
       <div className={styles.rightPanelActionButtons}>
         <Button
-          kind="primary"
-          onClick={() => submitForNext()}
-          disabled={navigationDisabled || workflowState === "NEW_PATIENT"}
-        >
-          {t("nextPatient", "Next Patient")}
-        </Button>
-        <Button
           kind="secondary"
           onClick={
             workflowState === "NEW_PATIENT"
@@ -130,6 +123,7 @@ const FormWorkspace = () => {
         startDatetime: visitStartDatetime.toISOString(),
         stopDatetime: visitStopDatetime.toISOString(),
         visitType: singleSessionVisitTypeUuid,
+        location: sessionLocation?.uuid,
       });
     },
     [activePatientUuid]

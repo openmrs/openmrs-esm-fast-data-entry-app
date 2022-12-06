@@ -59,7 +59,7 @@ const useStartVisit = ({
         startDatetime: data.startDatetime,
         stopDatetime: data.stopDatetime,
         visitType: data.visitType,
-        // location: selectedLocation,
+        location: data.location,
       };
       openmrsFetch("/ws/rest/v1/visit", {
         method: "POST",
