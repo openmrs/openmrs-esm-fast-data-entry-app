@@ -115,6 +115,9 @@ const FormWorkspace = () => {
   const handleEncounterCreate = useCallback(
     (payload) => {
       payload.location = sessionLocation?.uuid;
+      payload.encounterDatetime = payload.encounterDatetime
+        ? payload.encounterDatetime
+        : new Date().toISOString();
       // Create a visit with the same date as the encounter being saved
       const visitStartDatetime = new Date(payload.encounterDatetime);
       const visitStopDatetime = new Date(payload.encounterDatetime);
