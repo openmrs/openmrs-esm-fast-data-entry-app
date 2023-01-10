@@ -1,9 +1,4 @@
-import {
-  ExtensionSlot,
-  getGlobalStore,
-  useSession,
-  useStore,
-} from "@openmrs/esm-framework";
+import { ExtensionSlot, useSession } from "@openmrs/esm-framework";
 import { Button } from "@carbon/react";
 import React, { useCallback, useContext, useEffect, useState } from "react";
 import FormBootstrap from "../FormBootstrap";
@@ -20,15 +15,9 @@ import CompleteModal from "../CompleteModal";
 import CancelModal from "../CancelModal";
 import useStartVisit from "../hooks/useStartVisit";
 
-const formStore = getGlobalStore("ampath-form-state");
-
 const WorkflowNavigationButtons = () => {
   const context = useContext(FormWorkflowContext);
-  const { activeFormUuid, submitForNext, workflowState, destroySession } =
-    context;
-  const store = useStore(formStore);
-  const formState = store[activeFormUuid];
-  const navigationDisabled = formState !== "ready";
+  const { workflowState, destroySession } = context;
   const [cancelModalOpen, setCancelModalOpen] = useState(false);
   const [completeModalOpen, setCompleteModalOpen] = useState(false);
   const { t } = useTranslation();
@@ -81,7 +70,7 @@ const FormWorkspace = () => {
 
   const [encounter, setEncounter] = useState(null);
   const [visit, setVisit] = useState(null);
-  const { user, sessionLocation } = useSession();
+  const { sessionLocation } = useSession();
 
   const {
     saveVisit,
@@ -104,7 +93,7 @@ const FormWorkspace = () => {
       // Update encounter so that it belongs to the created visit
       updateEncounter({ uuid: encounter.uuid, visit: visit.uuid });
     }
-  }, [encounter, visit]);
+  }, [encounter, visit, updateEncounter]);
 
   useEffect(() => {
     if (visitSaveSuccess) {
@@ -129,7 +118,7 @@ const FormWorkspace = () => {
         location: sessionLocation?.uuid,
       });
     },
-    [activePatientUuid]
+    [activePatientUuid, singleSessionVisitTypeUuid, saveVisit, sessionLocation]
   );
 
   return (
