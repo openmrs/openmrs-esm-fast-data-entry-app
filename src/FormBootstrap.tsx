@@ -130,7 +130,7 @@ const FormBootstrap = ({
     <div>
       {formUuid && patientUuid && patient && (
         <ExtensionSlot
-          extensionSlotName="form-widget-slot"
+          name="form-widget-slot"
           state={{
             view: "form",
             formUuid,

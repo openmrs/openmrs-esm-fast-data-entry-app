@@ -59,7 +59,7 @@ const useStartVisit = ({
         startDatetime: data.startDatetime,
         stopDatetime: data.stopDatetime,
         visitType: data.visitType,
-        // location: selectedLocation,
+        location: data.location,
       };
       openmrsFetch("/ws/rest/v1/visit", {
         method: "POST",
@@ -72,8 +72,17 @@ const useStartVisit = ({
     [onError, onSave]
   );
 
+  const updateEncounter = useCallback((data) => {
+    openmrsFetch("/ws/rest/v1/encounter/" + data.uuid, {
+      method: "POST",
+      body: { visit: data.visit },
+      headers: { "Content-Type": "application/json" },
+    });
+  }, []);
+
   return {
     saveVisit,
+    updateEncounter,
     success,
     error,
     isSubmitting,

@@ -1,10 +1,6 @@
-import {
-  ExtensionSlot,
-  getGlobalStore,
-  useStore,
-} from "@openmrs/esm-framework";
+import { ExtensionSlot, useSession } from "@openmrs/esm-framework";
 import { Button } from "@carbon/react";
-import React, { useContext, useState } from "react";
+import React, { useCallback, useContext, useEffect, useState } from "react";
 import FormBootstrap from "../FormBootstrap";
 import PatientCard from "../patient-card/PatientCard";
 import styles from "./styles.scss";
@@ -17,16 +13,11 @@ import WorkflowReview from "./workflow-review";
 import PatientBanner from "./patient-banner";
 import CompleteModal from "../CompleteModal";
 import CancelModal from "../CancelModal";
-
-const formStore = getGlobalStore("ampath-form-state");
+import useStartVisit from "../hooks/useStartVisit";
 
 const WorkflowNavigationButtons = () => {
   const context = useContext(FormWorkflowContext);
-  const { activeFormUuid, submitForNext, workflowState, destroySession } =
-    context;
-  const store = useStore(formStore);
-  const formState = store[activeFormUuid];
-  const navigationDisabled = formState !== "ready";
+  const { workflowState, destroySession } = context;
   const [cancelModalOpen, setCancelModalOpen] = useState(false);
   const [completeModalOpen, setCompleteModalOpen] = useState(false);
   const { t } = useTranslation();
@@ -36,13 +27,6 @@ const WorkflowNavigationButtons = () => {
   return (
     <>
       <div className={styles.rightPanelActionButtons}>
-        <Button
-          kind="primary"
-          onClick={() => submitForNext()}
-          disabled={navigationDisabled || workflowState === "NEW_PATIENT"}
-        >
-          {t("nextPatient", "Next Patient")}
-        </Button>
         <Button
           kind="secondary"
           onClick={
@@ -80,14 +64,62 @@ const FormWorkspace = () => {
     activeFormUuid,
     editEncounter,
     encounters,
+    singleSessionVisitTypeUuid,
   } = useContext(FormWorkflowContext);
   const { t } = useTranslation();
+
+  const [encounter, setEncounter] = useState(null);
+  const [visit, setVisit] = useState(null);
+  const { sessionLocation } = useSession();
+
+  const {
+    saveVisit,
+    updateEncounter,
+    success: visitSaveSuccess,
+  } = useStartVisit({
+    showSuccessNotification: false,
+    showErrorNotification: true,
+  });
 
   const handlePostResponse = (encounter) => {
     if (encounter && encounter.uuid) {
       saveEncounter(encounter.uuid);
+      setEncounter(encounter);
     }
   };
+
+  useEffect(() => {
+    if (encounter && visit) {
+      // Update encounter so that it belongs to the created visit
+      updateEncounter({ uuid: encounter.uuid, visit: visit.uuid });
+    }
+  }, [encounter, visit, updateEncounter]);
+
+  useEffect(() => {
+    if (visitSaveSuccess) {
+      setVisit(visitSaveSuccess.data);
+    }
+  }, [visitSaveSuccess]);
+
+  const handleEncounterCreate = useCallback(
+    (payload) => {
+      payload.location = sessionLocation?.uuid;
+      payload.encounterDatetime = payload.encounterDatetime
+        ? payload.encounterDatetime
+        : new Date().toISOString();
+      // Create a visit with the same date as the encounter being saved
+      const visitStartDatetime = new Date(payload.encounterDatetime);
+      const visitStopDatetime = new Date(payload.encounterDatetime);
+      saveVisit({
+        patientUuid: activePatientUuid,
+        startDatetime: visitStartDatetime.toISOString(),
+        stopDatetime: visitStopDatetime.toISOString(),
+        visitType: singleSessionVisitTypeUuid,
+        location: sessionLocation?.uuid,
+      });
+    },
+    [activePatientUuid, singleSessionVisitTypeUuid, saveVisit, sessionLocation]
+  );
 
   return (
     <div className={styles.workspace}>
@@ -105,6 +137,7 @@ const FormWorkspace = () => {
               {...{
                 formUuid: activeFormUuid,
                 handlePostResponse,
+                handleEncounterCreate,
               }}
             />
           </div>

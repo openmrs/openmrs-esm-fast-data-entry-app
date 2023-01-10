@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useReducer } from "react";
 import reducer from "./FormWorkflowReducer";
 import { useParams, useLocation } from "react-router-dom";
+import useGetSystemSetting from "../hooks/useGetSystemSetting";
 interface ParamTypes {
   formUuid?: string;
 }
@@ -30,6 +31,7 @@ export const initialWorkflowState = {
   activeEncounterUuid: null, // pseudo field from state[activeFormUuid].encounterUuid
   patientUuids: [], // pseudo field from state[activeFormUuid].patientUuids
   encounters: {}, // pseudo field from state[activeFormUuid].encounters
+  singleSessionVisitTypeUuid: null,
 };
 
 const FormWorkflowContext = React.createContext({
@@ -46,6 +48,11 @@ const FormWorkflowProvider = ({ children }) => {
     ...initialWorkflowState,
     ...initialActions,
   });
+  const systemSetting = useGetSystemSetting(
+    "@openmrs/esm-fast-data-entry-app.groupSessionVisitTypeUuid"
+  );
+  const singleSessionVisitTypeUuid =
+    systemSetting?.result?.data?.results?.[0]?.value;
 
   const actions = useMemo(
     () => ({
@@ -103,6 +110,7 @@ const FormWorkflowProvider = ({ children }) => {
         encounters:
           state.forms?.[state.activeFormUuid]?.encounters ??
           initialWorkflowState.encounters,
+        singleSessionVisitTypeUuid,
       }}
     >
       {children}
