@@ -28,10 +28,11 @@ const FormsTable = ({
 }) => {
   const { t } = useTranslation();
 
-  const formsHeader = [
+  const tableHeaders = [
     {
       key: "display",
       header: t("formName", "Form Name"),
+      isSortable: true,
     },
     {
       key: "actions",
@@ -43,7 +44,7 @@ const FormsTable = ({
     },
   ];
 
-  const augmenteRows = rows?.map((row) => ({
+  const augmentedRows = rows?.map((row) => ({
     ...row,
     actions: (
       <Link to={`form/${row.uuid}`}>
@@ -70,7 +71,7 @@ const FormsTable = ({
       />
     );
   }
-  if (augmenteRows.length === 0) {
+  if (augmentedRows.length === 0) {
     return (
       <EmptyState
         headerTitle={t("noFormsFound", "No Forms To Show")}
@@ -82,7 +83,7 @@ const FormsTable = ({
     );
   }
   return (
-    <DataTable rows={augmenteRows} headers={formsHeader} isSortable>
+    <DataTable rows={augmentedRows} headers={tableHeaders}>
       {({
         rows,
         headers,
@@ -104,7 +105,12 @@ const FormsTable = ({
               <TableHead>
                 <TableRow>
                   {headers.map((header) => (
-                    <TableHeader {...getHeaderProps({ header })}>
+                    <TableHeader
+                      {...getHeaderProps({
+                        header,
+                        isSortable: header.isSortable,
+                      })}
+                    >
                       {header.header}
                     </TableHeader>
                   ))}
