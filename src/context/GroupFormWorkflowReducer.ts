@@ -72,6 +72,7 @@ const reducer = (state, action) => {
             [action.activeFormUuid]: initialFormState,
           },
           activeFormUuid: action.activeFormUuid,
+          userId: action.userId,
         };
       }
       persistData(newState, action.userId);
