@@ -21,7 +21,6 @@ const WorkflowNavigationButtons = () => {
   const context = useContext(GroupFormWorkflowContext);
   const {
     activeFormUuid,
-    validateForNext,
     submitForNext,
     patientUuids,
     activePatientUuid,
@@ -84,7 +83,6 @@ const GroupSessionWorkspace = () => {
   const {
     patientUuids,
     activePatientUuid,
-    editEncounter,
     encounters,
     activeEncounterUuid,
     activeVisitUuid,
@@ -95,10 +93,9 @@ const GroupSessionWorkspace = () => {
     updateVisitUuid,
     submitForNext,
     workflowState,
-    submitForComplete,
   } = useContext(GroupFormWorkflowContext);
 
-  const { user, sessionLocation } = useSession();
+  const { sessionLocation } = useSession();
   const [encounter, setEncounter] = useState(null);
   const [visit, setVisit] = useState(null);
 
@@ -121,7 +118,6 @@ const GroupSessionWorkspace = () => {
       visitSaveSuccess.data.patient.uuid === activePatientUuid
     ) {
       setVisit(visitSaveSuccess.data);
-      const visitUuid = visitSaveSuccess.data.uuid;
       // Update visit UUID on workflow
       updateVisitUuid(visitSaveSuccess.data.uuid);
     }
@@ -176,7 +172,8 @@ const GroupSessionWorkspace = () => {
       activeSessionMeta,
       groupSessionConcepts,
       groupVisitTypeUuid,
-      encounter,
+      saveVisit,
+      sessionLocation,
     ]
   );
 
@@ -185,7 +182,7 @@ const GroupSessionWorkspace = () => {
     if (encounter && visit) {
       updateEncounter({ uuid: encounter.uuid, visit: visit.uuid });
     }
-  }, [encounter, visit]);
+  }, [encounter, updateEncounter, visit]);
 
   // 4. Once form has been posted, save the new encounter uuid so we can edit it later
   const handlePostResponse = useCallback(
@@ -202,7 +199,7 @@ const GroupSessionWorkspace = () => {
     (patientUuid) => {
       submitForNext(patientUuid);
     },
-    [saveEncounter]
+    [submitForNext]
   );
 
   if (workflowState === "NEW_GROUP_SESSION") return null;
