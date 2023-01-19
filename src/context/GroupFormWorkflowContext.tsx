@@ -29,7 +29,7 @@ const initialActions = {
   validateForNext: () => undefined,
   validateForComplete: () => undefined,
   updateVisitUuid: (visitUuid: string) => undefined,
-  submitForNext: () => undefined,
+  submitForNext: (nextPatientUuid: string = null) => undefined,
   submitForReview: () => undefined,
   submitForComplete: () => undefined,
   addPatientUuid: (patientUuid: string) => undefined,
@@ -106,7 +106,8 @@ const GroupFormWorkflowProvider = ({ children }) => {
       validateForComplete: () => dispatch({ type: "VALIDATE_FOR_COMPLETE" }),
       updateVisitUuid: (visitUuid) =>
         dispatch({ type: "UPDATE_VISIT_UUID", visitUuid }),
-      submitForNext: () => dispatch({ type: "SUBMIT_FOR_NEXT" }),
+      submitForNext: (nextPatientUuid) =>
+        dispatch({ type: "SUBMIT_FOR_NEXT", nextPatientUuid }),
       submitForComplete: () => dispatch({ type: "SUBMIT_FOR_COMPLETE" }),
       editEncounter: (patientUuid) =>
         dispatch({ type: "EDIT_ENCOUNTER", patientUuid }),
