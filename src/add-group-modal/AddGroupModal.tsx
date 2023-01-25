@@ -8,7 +8,7 @@ import {
   TextInput,
   FormLabel,
 } from "@carbon/react";
-import { Add, TrashCan } from "@carbon/react/icons";
+import { TrashCan } from "@carbon/react/icons";
 import { useTranslation } from "react-i18next";
 import { ExtensionSlot, showToast } from "@openmrs/esm-framework";
 import styles from "./styles.scss";
@@ -127,11 +127,11 @@ const AddGroupModal = (props) => {
 
   const { setGroup } = useContext(GroupFormWorkflowContext);
   const { t } = useTranslation();
-  const [open, setOpen] = useState(false);
+  const [, setOpen] = useState(false);
   const [errors, setErrors] = useState({});
   const [name, setName] = useState(groupName);
   const [patientList, setPatientList] = useState(patients || []);
-  const { post, result, isPosting, error } = usePostCohort();
+  const { post, result, error } = usePostCohort();
 
   const removePatient = useCallback(
     (patientUuid: string) =>
