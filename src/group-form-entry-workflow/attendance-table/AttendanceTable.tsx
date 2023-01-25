@@ -16,7 +16,6 @@ import { useTranslation } from "react-i18next";
 import GroupFormWorkflowContext from "../../context/GroupFormWorkflowContext";
 import { useGetPatient } from "../../hooks";
 import AddGroupModal from "../../add-group-modal/AddGroupModal";
-import styles from "../group-search-header/styles.scss";
 
 const PatientRow = ({ patientUuid }) => {
   const patient = useGetPatient(patientUuid);
