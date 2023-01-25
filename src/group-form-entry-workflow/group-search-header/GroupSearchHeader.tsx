@@ -1,6 +1,6 @@
-import { Close } from "@carbon/react/icons";
+import { Close, Add } from "@carbon/react/icons";
 import { Button } from "@carbon/react";
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import GroupFormWorkflowContext from "../../context/GroupFormWorkflowContext";
 import styles from "./styles.scss";
 import { useTranslation } from "react-i18next";
@@ -12,8 +12,17 @@ const GroupSearchHeader = () => {
   const { activeGroupUuid, setGroup, destroySession } = useContext(
     GroupFormWorkflowContext
   );
+  const [isOpen, setIsOpen] = useState(false);
   const handleSelectGroup = (group) => {
     setGroup(group);
+  };
+
+  const handleCancel = () => {
+    setIsOpen(false);
+  };
+
+  const onPostSubmit = () => {
+    setIsOpen(false);
   };
 
   if (activeGroupUuid) return null;
@@ -26,7 +35,21 @@ const GroupSearchHeader = () => {
       </span>
       <span className={styles.padded}>{t("or", "or")}</span>
       <span>
-        <AddGroupModal />
+        <Button
+          onClick={() => setIsOpen(true)}
+          renderIcon={Add}
+          iconDescription="Add"
+        >
+          {t("createNewGroup", "Create New Group")}
+        </Button>
+        <AddGroupModal
+          {...{
+            isCreate: true,
+            isOpen: isOpen,
+            handleCancel: handleCancel,
+            onPostSubmit: onPostSubmit,
+          }}
+        />
       </span>
       <span style={{ flexGrow: 1 }} />
       <span>
