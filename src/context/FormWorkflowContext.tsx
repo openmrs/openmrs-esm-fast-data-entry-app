@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useReducer } from "react";
 import reducer from "./FormWorkflowReducer";
 import { useParams, useLocation } from "react-router-dom";
 import useGetSystemSetting from "../hooks/useGetSystemSetting";
+import { useSession } from "@openmrs/esm-framework";
 interface ParamTypes {
   formUuid?: string;
 }
@@ -32,6 +33,7 @@ export const initialWorkflowState = {
   patientUuids: [], // pseudo field from state[activeFormUuid].patientUuids
   encounters: {}, // pseudo field from state[activeFormUuid].encounters
   singleSessionVisitTypeUuid: null,
+  userId: null,
 };
 
 const FormWorkflowContext = React.createContext({
@@ -40,6 +42,7 @@ const FormWorkflowContext = React.createContext({
 });
 
 const FormWorkflowProvider = ({ children }) => {
+  const { user } = useSession();
   const { formUuid } = useParams() as ParamTypes;
   const activeFormUuid = formUuid.split("&")[0];
   const { search } = useLocation();
@@ -61,6 +64,7 @@ const FormWorkflowProvider = ({ children }) => {
           type: "INITIALIZE_WORKFLOW_STATE",
           activeFormUuid,
           newPatientUuid,
+          userId: user.username,
         }),
       addPatient: (patientUuid) =>
         dispatch({ type: "ADD_PATIENT", patientUuid }),
@@ -79,7 +83,7 @@ const FormWorkflowProvider = ({ children }) => {
       destroySession: () => dispatch({ type: "DESTROY_SESSION" }),
       closeSession: () => dispatch({ type: "CLOSE_SESSION" }),
     }),
-    []
+    [user]
   );
 
   // if formUuid isn't a part of state yet, grab it from the url params
