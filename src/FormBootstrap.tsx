@@ -126,6 +126,7 @@ const FormBootstrap = ({
     return () => detach("form-widget-slot", "form-widget-slot");
   });
 
+  // FIXME This should not be necessary
   const [showForm, setShowForm] = useState(true);
 
   useEffect(() => {
