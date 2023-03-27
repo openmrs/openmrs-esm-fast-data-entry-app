@@ -1,4 +1,9 @@
-import { getGlobalStore, useConfig, useStore } from "@openmrs/esm-framework";
+import {
+  getGlobalStore,
+  useConfig,
+  useSession,
+  useStore,
+} from "@openmrs/esm-framework";
 import { Button } from "@carbon/react";
 import React, { useCallback, useContext, useEffect, useState } from "react";
 import PatientCard from "../patient-card/PatientCard";
@@ -16,7 +21,7 @@ const WorkflowNavigationButtons = () => {
   const context = useContext(GroupFormWorkflowContext);
   const {
     activeFormUuid,
-    validateForNext,
+    submitForNext,
     patientUuids,
     activePatientUuid,
     workflowState,
@@ -34,7 +39,7 @@ const WorkflowNavigationButtons = () => {
 
   const handleClickNext = () => {
     if (workflowState === "EDIT_FORM") {
-      validateForNext();
+      submitForNext();
     }
   };
 
@@ -66,7 +71,7 @@ const WorkflowNavigationButtons = () => {
         open={completeModalOpen}
         setOpen={setCompleteModalOpen}
         context={context}
-        validateFirst={true}
+        validateFirst={false}
       />
     </>
   );
@@ -78,7 +83,6 @@ const GroupSessionWorkspace = () => {
   const {
     patientUuids,
     activePatientUuid,
-    editEncounter,
     encounters,
     activeEncounterUuid,
     activeVisitUuid,
@@ -89,77 +93,57 @@ const GroupSessionWorkspace = () => {
     updateVisitUuid,
     submitForNext,
     workflowState,
-    submitForComplete,
   } = useContext(GroupFormWorkflowContext);
 
-  const { saveVisit, success: visitSaveSuccess } = useStartVisit({
+  const { sessionLocation } = useSession();
+  const [encounter, setEncounter] = useState(null);
+  const [visit, setVisit] = useState(null);
+
+  const {
+    saveVisit,
+    updateEncounter,
+    success: visitSaveSuccess,
+  } = useStartVisit({
     showSuccessNotification: false,
     showErrorNotification: true,
   });
 
   // 0. user clicks "next patient" in WorkflowNavigationButtons
-  // which triggers validateForNext() if workflowState === "EDIT_FORM"
+  // which triggers submitForNext() if workflowState === "EDIT_FORM"
 
-  // 1. validate the form
-  // if the form is valid, save a visit for the user
-  // handleOnValidate is a callback passed to the form engine.
-  const handleOnValidate = useCallback(
-    (valid) => {
-      if (valid && !activeVisitUuid) {
-        // make a visit
-        // we will not persist this state or update the reducer
-        const date = new Date(activeSessionMeta.sessionDate);
-        date.setHours(date.getHours() + 1);
-        saveVisit({
-          patientUuid: activePatientUuid,
-          startDatetime: activeSessionMeta.sessionDate,
-          stopDatetime: date.toISOString(),
-          visitType: groupVisitTypeUuid,
-        });
-      } else if (valid && activeVisitUuid) {
-        // there is already a visit for this form
-        submitForNext();
-      }
-    },
-    [
-      activePatientUuid,
-      activeSessionMeta,
-      groupVisitTypeUuid,
-      saveVisit,
-      activeVisitUuid,
-      submitForNext,
-    ]
-  );
-
-  // 2. save the new visit uuid and start form submission
+  // 1. save the new visit uuid and start form submission
   useEffect(() => {
-    if (visitSaveSuccess) {
-      const visitUuid = visitSaveSuccess?.data?.uuid;
-      if (!activeVisitUuid) {
-        updateVisitUuid(visitUuid);
-      }
-      if (workflowState === "VALIDATE_FOR_NEXT") {
-        submitForNext();
-      }
-      if (workflowState === "VALIDATE_FOR_COMPLETE") {
-        submitForComplete();
-      }
+    if (
+      visitSaveSuccess &&
+      visitSaveSuccess.data.patient.uuid === activePatientUuid
+    ) {
+      setVisit(visitSaveSuccess.data);
+      // Update visit UUID on workflow
+      updateVisitUuid(visitSaveSuccess.data.uuid);
     }
   }, [
     visitSaveSuccess,
     updateVisitUuid,
-    submitForNext,
-    workflowState,
     activeVisitUuid,
-    submitForComplete,
+    activePatientUuid,
+    visit,
+    setVisit,
   ]);
 
-  // 3. on form payload creation inject the activeVisitUuid
+  // 2. If there's no active visit, trigger the creation of a new one
   const handleEncounterCreate = useCallback(
     (payload) => {
+      // Create a visit with the same date as the encounter being saved
+      if (!activeVisitUuid) {
+        saveVisit({
+          patientUuid: activePatientUuid,
+          startDatetime: activeSessionMeta.sessionDate,
+          stopDatetime: activeSessionMeta.sessionDate,
+          visitType: groupVisitTypeUuid,
+          location: sessionLocation?.uuid,
+        });
+      }
       const obsTime = new Date(activeSessionMeta.sessionDate);
-      obsTime.setMinutes(obsTime.getMinutes() + 1);
-
       payload.obs.forEach((item, index) => {
         payload.obs[index] = {
           ...item,
@@ -170,23 +154,52 @@ const GroupSessionWorkspace = () => {
           obsDatetime: obsTime.toISOString(),
         };
       });
-      Object.entries(groupSessionConcepts).forEach(([field, uuid]) => {
-        payload.obs.push({ concept: uuid, value: activeSessionMeta?.[field] });
-      });
-      payload.visit = activeVisitUuid;
+      // If this is a newly created encounter and visit, add session concepts to encounter payload.
+      if (!activeVisitUuid) {
+        Object.entries(groupSessionConcepts).forEach(([field, uuid]) => {
+          payload.obs.push({
+            concept: uuid,
+            value: activeSessionMeta?.[field],
+          });
+        });
+      }
+      payload.location = sessionLocation?.uuid;
       payload.encounterDatetime = obsTime.toISOString();
     },
-    [activeVisitUuid, activeSessionMeta, groupSessionConcepts]
+    [
+      activePatientUuid,
+      activeVisitUuid,
+      activeSessionMeta,
+      groupSessionConcepts,
+      groupVisitTypeUuid,
+      saveVisit,
+      sessionLocation,
+    ]
   );
+
+  // 3. Update encounter so that it belongs to the created visit
+  useEffect(() => {
+    if (encounter && visit) {
+      updateEncounter({ uuid: encounter.uuid, visit: visit.uuid });
+    }
+  }, [encounter, updateEncounter, visit]);
 
   // 4. Once form has been posted, save the new encounter uuid so we can edit it later
   const handlePostResponse = useCallback(
     (encounter) => {
       if (encounter && encounter.uuid) {
         saveEncounter(encounter.uuid);
+        setEncounter(encounter);
       }
     },
     [saveEncounter]
+  );
+
+  const switchPatient = useCallback(
+    (patientUuid) => {
+      submitForNext(patientUuid);
+    },
+    [submitForNext]
   );
 
   if (workflowState === "NEW_GROUP_SESSION") return null;
@@ -201,7 +214,6 @@ const GroupSessionWorkspace = () => {
             {...{
               formUuid: activeFormUuid,
               handlePostResponse,
-              handleOnValidate,
               handleEncounterCreate,
             }}
           />
@@ -215,7 +227,7 @@ const GroupSessionWorkspace = () => {
                 {...{
                   patientUuid,
                   activePatientUuid,
-                  editEncounter,
+                  editEncounter: switchPatient,
                   encounters,
                 }}
               />

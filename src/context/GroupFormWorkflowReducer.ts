@@ -203,13 +203,14 @@ const reducer = (state, action) => {
         navigate({ to: "${openmrsSpaBase}/forms" });
         return newState;
       } else if (thisForm.workflowState === "SUBMIT_FOR_NEXT") {
-        const nextPatientUuid =
-          thisForm.patientUuids[
-            Math.min(
-              thisForm.patientUuids.indexOf(thisForm.activePatientUuid) + 1,
-              thisForm.patientUuids.length - 1
-            )
-          ];
+        const nextPatientUuid = state.nextPatientUuid
+          ? state.nextPatientUuid
+          : thisForm.patientUuids[
+              Math.min(
+                thisForm.patientUuids.indexOf(thisForm.activePatientUuid) + 1,
+                thisForm.patientUuids.length - 1
+              )
+            ];
         const newState = {
           ...state,
           forms: {
@@ -310,6 +311,7 @@ const reducer = (state, action) => {
             workflowState: "SUBMIT_FOR_NEXT",
           },
         },
+        nextPatientUuid: action.nextPatientUuid,
       };
     case "SUBMIT_FOR_REVIEW":
       // this state should not be persisted
