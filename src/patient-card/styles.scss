@@ -6,6 +6,7 @@
 .cardContainer {
   padding: spacing.$spacing-05;
   display: flex;
+  cursor: pointer;
 }
 
 .skeletonText {
