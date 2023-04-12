@@ -29,7 +29,8 @@ const WorkflowNavigationButtons = () => {
   const store = useStore(formStore);
   const formState = store[activeFormUuid];
   const navigationDisabled =
-    formState !== "ready" || workflowState !== "EDIT_FORM";
+    (formState !== "ready" || workflowState !== "EDIT_FORM") &&
+    formState !== "readyWithValidationErrors";
   const [cancelModalOpen, setCancelModalOpen] = useState(false);
   const [completeModalOpen, setCompleteModalOpen] = useState(false);
   const { t } = useTranslation();
@@ -38,7 +39,10 @@ const WorkflowNavigationButtons = () => {
     activePatientUuid === patientUuids[patientUuids.length - 1];
 
   const handleClickNext = () => {
-    if (workflowState === "EDIT_FORM") {
+    if (
+      workflowState === "EDIT_FORM" ||
+      formState === "readyWithValidationErrors"
+    ) {
       submitForNext();
     }
   };
@@ -179,7 +183,7 @@ const GroupSessionWorkspace = () => {
 
   // 3. Update encounter so that it belongs to the created visit
   useEffect(() => {
-    if (encounter && visit) {
+    if (encounter && visit && encounter.patient?.uuid === visit.patient?.uuid) {
       updateEncounter({ uuid: encounter.uuid, visit: visit.uuid });
     }
   }, [encounter, updateEncounter, visit]);
