@@ -46,7 +46,6 @@
   flex-grow: 1;
   max-height: calc(100vh - 14rem);
   overflow-y: scroll;
-  text-align: left;
 }
 
 .formContainer :global(.cds--form-item) :global(.question-area) {
@@ -54,7 +53,7 @@
 }
 
 .rightPanel {
-  min-width: 13rem;
+  width: 13rem;
   text-align: left;
   overflow-y: scroll;
   display: flex;
