@@ -130,13 +130,13 @@ const FormBootstrap = ({
   const [showForm, setShowForm] = useState(true);
 
   useEffect(() => {
-    if (patientUuid) {
+    if (patientUuid && formUuid && patient) {
       setShowForm(false);
       setTimeout(() => {
         setShowForm(true);
       });
     }
-  }, [patientUuid]);
+  }, [patientUuid, formUuid, patient]);
 
   return (
     <div>
