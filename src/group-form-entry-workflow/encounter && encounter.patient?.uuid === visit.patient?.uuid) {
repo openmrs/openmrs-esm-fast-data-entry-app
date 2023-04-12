@@ -183,7 +183,7 @@ const GroupSessionWorkspace = () => {
 
   // 3. Update encounter so that it belongs to the created visit
   useEffect(() => {
-    if (encounter && encounter.patient?.uuid === visit.patient?.uuid) {
+    if (encounter && visit && encounter.patient?.uuid === visit.patient?.uuid) {
       updateEncounter({ uuid: encounter.uuid, visit: visit.uuid });
     }
   }, [encounter, updateEncounter, visit]);
