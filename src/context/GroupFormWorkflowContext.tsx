@@ -63,7 +63,7 @@ export const initialWorkflowState = {
     sessionNotes: null,
   },
   groupVisitTypeUuid: null,
-  userId: null,
+  userUuid: null, // UUID of the user to which this workflow state belongs to
 };
 
 const GroupFormWorkflowContext = React.createContext({
@@ -90,7 +90,7 @@ const GroupFormWorkflowProvider = ({ children }) => {
         dispatch({
           type: "INITIALIZE_WORKFLOW_STATE",
           activeFormUuid,
-          userId: user.username,
+          userUuid: user.userUuid,
         }),
       setGroup: (group) => dispatch({ type: "SET_GROUP", group }),
       unsetGroup: () => dispatch({ type: "UNSET_GROUP" }),

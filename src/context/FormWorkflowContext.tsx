@@ -33,7 +33,7 @@ export const initialWorkflowState = {
   patientUuids: [], // pseudo field from state[activeFormUuid].patientUuids
   encounters: {}, // pseudo field from state[activeFormUuid].encounters
   singleSessionVisitTypeUuid: null,
-  userId: null,
+  userUuid: null, // UUID of the user to which this workflow state belongs to
 };
 
 const FormWorkflowContext = React.createContext({
@@ -64,7 +64,7 @@ const FormWorkflowProvider = ({ children }) => {
           type: "INITIALIZE_WORKFLOW_STATE",
           activeFormUuid,
           newPatientUuid,
-          userId: user.username,
+          userUuid: user.userUuid,
         }),
       addPatient: (patientUuid) =>
         dispatch({ type: "ADD_PATIENT", patientUuid }),

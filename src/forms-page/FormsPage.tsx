@@ -51,10 +51,10 @@ const FormsPage = () => {
   const cleanRows = prepareRowsForTable(forms);
   const { user } = useSession();
   const savedFormsData = localStorage.getItem(
-    fdeWorkflowStorageName + ":" + user?.username
+    fdeWorkflowStorageName + ":" + user?.uuid
   );
   const savedGroupFormsData = localStorage.getItem(
-    fdeGroupWorkflowStorageName + ":" + user?.username
+    fdeGroupWorkflowStorageName + ":" + user?.uuid
   );
   const activeForms = [];
   const activeGroupForms = [];
