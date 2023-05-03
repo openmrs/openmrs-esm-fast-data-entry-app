@@ -64,7 +64,7 @@ const FormWorkflowProvider = ({ children }) => {
           type: "INITIALIZE_WORKFLOW_STATE",
           activeFormUuid,
           newPatientUuid,
-          userUuid: user.userUuid,
+          userUuid: user.uuid,
         }),
       addPatient: (patientUuid) =>
         dispatch({ type: "ADD_PATIENT", patientUuid }),

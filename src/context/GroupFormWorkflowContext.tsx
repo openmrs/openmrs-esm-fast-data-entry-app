@@ -90,7 +90,7 @@ const GroupFormWorkflowProvider = ({ children }) => {
         dispatch({
           type: "INITIALIZE_WORKFLOW_STATE",
           activeFormUuid,
-          userUuid: user.userUuid,
+          userUuid: user.uuid,
         }),
       setGroup: (group) => dispatch({ type: "SET_GROUP", group }),
       unsetGroup: () => dispatch({ type: "UNSET_GROUP" }),
