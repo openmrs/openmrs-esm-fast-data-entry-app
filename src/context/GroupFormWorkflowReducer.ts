@@ -5,7 +5,10 @@ export const fdeGroupWorkflowStorageVersion = "1.0.5";
 export const fdeGroupWorkflowStorageName =
   "openmrs:fastDataEntryGroupWorkflowState";
 const persistData = (data) => {
-  localStorage.setItem(fdeGroupWorkflowStorageName, JSON.stringify(data));
+  localStorage.setItem(
+    fdeGroupWorkflowStorageName + ":" + data.userUuid,
+    JSON.stringify(data)
+  );
 };
 
 const initialFormState = {
@@ -24,7 +27,9 @@ const initialFormState = {
 const reducer = (state, action) => {
   switch (action.type) {
     case "INITIALIZE_WORKFLOW_STATE": {
-      const savedData = localStorage.getItem(fdeGroupWorkflowStorageName);
+      const savedData = localStorage.getItem(
+        fdeGroupWorkflowStorageName + ":" + action.userUuid
+      );
       const savedDataObject = savedData ? JSON.parse(savedData) : {};
       let newState: { [key: string]: unknown } = {};
       if (
@@ -67,6 +72,7 @@ const reducer = (state, action) => {
             [action.activeFormUuid]: initialFormState,
           },
           activeFormUuid: action.activeFormUuid,
+          userUuid: action.userUuid,
         };
       }
       persistData(newState);

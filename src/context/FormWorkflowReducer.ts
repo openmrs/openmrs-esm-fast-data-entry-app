@@ -1,10 +1,13 @@
 import { navigate } from "@openmrs/esm-framework";
 import { initialWorkflowState } from "./FormWorkflowContext";
 
-export const fdeWorkflowStorageVersion = "1.0.13";
+export const fdeWorkflowStorageVersion = "1.1.13";
 export const fdeWorkflowStorageName = "openmrs:fastDataEntryWorkflowState";
 const persistData = (data) => {
-  localStorage.setItem(fdeWorkflowStorageName, JSON.stringify(data));
+  localStorage.setItem(
+    fdeWorkflowStorageName + ":" + data.userUuid,
+    JSON.stringify(data)
+  );
 };
 
 const initialFormState = {
@@ -18,7 +21,9 @@ const initialFormState = {
 const reducer = (state, action) => {
   switch (action.type) {
     case "INITIALIZE_WORKFLOW_STATE": {
-      const savedData = localStorage.getItem(fdeWorkflowStorageName);
+      const savedData = localStorage.getItem(
+        fdeWorkflowStorageName + ":" + action.userUuid
+      );
       const savedDataObject = savedData ? JSON.parse(savedData) : {};
       let newState: { [key: string]: unknown } = {};
       const newPatient = action.newPatientUuid
@@ -69,6 +74,7 @@ const reducer = (state, action) => {
             [action.activeFormUuid]: initialFormState,
           },
           activeFormUuid: action.activeFormUuid,
+          userUuid: action.userUuid,
         };
       }
       persistData(newState);
