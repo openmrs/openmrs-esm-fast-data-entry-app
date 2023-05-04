@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useReducer } from "react";
 import reducer from "./GroupFormWorkflowReducer";
 import { useParams } from "react-router-dom";
-import { Type } from "@openmrs/esm-framework";
+import { Type, useSession } from "@openmrs/esm-framework";
 import useGetSystemSetting from "../hooks/useGetSystemSetting";
 interface ParamTypes {
   formUuid?: string;
@@ -63,6 +63,7 @@ export const initialWorkflowState = {
     sessionNotes: null,
   },
   groupVisitTypeUuid: null,
+  userUuid: null, // UUID of the user to which this workflow state belongs to
 };
 
 const GroupFormWorkflowContext = React.createContext({
@@ -71,6 +72,7 @@ const GroupFormWorkflowContext = React.createContext({
 });
 
 const GroupFormWorkflowProvider = ({ children }) => {
+  const { user } = useSession();
   const { formUuid } = useParams() as ParamTypes;
   const activeFormUuid = formUuid.split("&")[0];
   const systemSetting = useGetSystemSetting(
@@ -88,6 +90,7 @@ const GroupFormWorkflowProvider = ({ children }) => {
         dispatch({
           type: "INITIALIZE_WORKFLOW_STATE",
           activeFormUuid,
+          userUuid: user.uuid,
         }),
       setGroup: (group) => dispatch({ type: "SET_GROUP", group }),
       unsetGroup: () => dispatch({ type: "UNSET_GROUP" }),
@@ -115,7 +118,7 @@ const GroupFormWorkflowProvider = ({ children }) => {
       destroySession: () => dispatch({ type: "DESTROY_SESSION" }),
       closeSession: () => dispatch({ type: "CLOSE_SESSION" }),
     }),
-    []
+    [user]
   );
 
   // if formUuid isn't a part of state yet, grab it from the url params
