@@ -14,7 +14,7 @@ const useGetPatient = (patientUuid) => {
 
   const getPatient = async (uuid) => {
     const result = await fetchCurrentPatient(uuid);
-    setPatient(result?.data);
+    setPatient(result);
   };
 
   return patient;

@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { detach, ExtensionSlot } from "@openmrs/esm-framework";
 import useGetPatient from "./hooks/useGetPatient";
 
@@ -126,9 +126,21 @@ const FormBootstrap = ({
     return () => detach("form-widget-slot", "form-widget-slot");
   });
 
+  // FIXME This should not be necessary
+  const [showForm, setShowForm] = useState(true);
+
+  useEffect(() => {
+    if (patientUuid && formUuid && patient) {
+      setShowForm(false);
+      setTimeout(() => {
+        setShowForm(true);
+      });
+    }
+  }, [patientUuid, formUuid, patient]);
+
   return (
     <div>
-      {formUuid && patientUuid && patient && (
+      {showForm && formUuid && patientUuid && patient && (
         <ExtensionSlot
           name="form-widget-slot"
           state={{
