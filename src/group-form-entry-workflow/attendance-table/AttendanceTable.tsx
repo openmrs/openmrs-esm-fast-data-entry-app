@@ -17,8 +17,7 @@ import GroupFormWorkflowContext from "../../context/GroupFormWorkflowContext";
 import { useGetPatient } from "../../hooks";
 import AddGroupModal from "../../add-group-modal/AddGroupModal";
 
-const PatientRow = ({ patientUuid }) => {
-  const patient = useGetPatient(patientUuid);
+const PatientRow = ({ patient }) => {
   const { patientUuids, addPatientUuid, removePatientUuid } = useContext(
     GroupFormWorkflowContext
   );
@@ -28,9 +27,9 @@ const PatientRow = ({ patientUuid }) => {
 
   const handleOnChange = (e, { checked }) => {
     if (checked) {
-      addPatientUuid(patientUuid);
+      addPatientUuid(patient.id);
     } else {
-      removePatientUuid(patientUuid);
+      removePatientUuid(patient.id);
     }
   };
 
@@ -60,8 +59,8 @@ const PatientRow = ({ patientUuid }) => {
       <TableCell>{identifier}</TableCell>
       <TableCell>
         <Checkbox
-          checked={patientUuids.includes(patientUuid)}
-          labelText={patientUuid}
+          checked={patientUuids.includes(patient.id)}
+          labelText={patient.id}
           hideLabel
           id={`${identifier}-attendance-checkbox`}
           onChange={handleOnChange}
@@ -71,7 +70,7 @@ const PatientRow = ({ patientUuid }) => {
   );
 };
 
-const AttendanceTable = () => {
+const AttendanceTable = ({ patients }) => {
   const { t } = useTranslation();
   const { activeGroupUuid, activeGroupName, activeGroupMembers } = useContext(
     GroupFormWorkflowContext
@@ -90,7 +89,8 @@ const AttendanceTable = () => {
   }
 
   const newArr = activeGroupMembers.map(function (value) {
-    return { uuid: value };
+    const patient = patients.find((patient) => patient.id === value);
+    return { uuid: value, ...patient };
   });
 
   const handleCancel = () => {
@@ -128,9 +128,12 @@ const AttendanceTable = () => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {activeGroupMembers.map((patientUuid, index) => (
-            <PatientRow {...{ patientUuid }} key={index} />
-          ))}
+          {activeGroupMembers.map((patientUuid, index) => {
+            const patient = patients.find(
+              (patient) => patient.id === patientUuid
+            );
+            return <PatientRow patient={patient} key={index} />;
+          })}
         </TableBody>
       </Table>
     </div>

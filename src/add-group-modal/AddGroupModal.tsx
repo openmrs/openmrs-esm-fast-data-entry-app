@@ -13,19 +13,25 @@ import { useTranslation } from "react-i18next";
 import { ExtensionSlot, showToast } from "@openmrs/esm-framework";
 import styles from "./styles.scss";
 import GroupFormWorkflowContext from "../context/GroupFormWorkflowContext";
-import { useGetPatient, usePostCohort } from "../hooks";
+import { usePostCohort } from "../hooks";
 
 const MemExtension = React.memo(ExtensionSlot);
 
 const PatientRow = ({ patient, removePatient }) => {
   const { t } = useTranslation();
-  const patientDetails = useGetPatient(patient.uuid);
-  const givenName = patientDetails?.name?.[0]?.given?.[0];
-  const familyName = patientDetails?.name?.[0]?.family;
-  const identifier = patientDetails?.identifier?.[0]?.value;
+
+  const buildPatientDisplay = () => {
+    const givenName = patient?.name?.[0]?.given?.[0];
+    const familyName = patient?.name?.[0]?.family;
+    const identifier = patient?.identifier?.[0]?.value;
+
+    let display = identifier ? identifier + " - " : "";
+    display += (givenName || "") + " " + (familyName || "");
+    return display.replace(/\s+/g, " ");
+  };
 
   return (
-    <li key={patient.uuid} className={styles.patientRow}>
+    <li key={patient?.uuid} className={styles.patientRow}>
       <span>
         <Button
           kind="tertiary"
@@ -39,7 +45,7 @@ const PatientRow = ({ patient, removePatient }) => {
         />
       </span>
       <span className={styles.patientName}>
-        {patient?.display || identifier + " - " + givenName + " " + familyName}
+        {patient?.display || buildPatientDisplay()}
       </span>
     </li>
   );
@@ -214,7 +220,7 @@ const AddGroupModal = (props) => {
         title: t("postError", "POST Error"),
         description:
           error.message ??
-          t("unknownPostError", "An unknown error occured while saving data"),
+          t("unknownPostError", "An unknown error occurred while saving data"),
       });
       if (error.fieldErrors) {
         setErrors(
