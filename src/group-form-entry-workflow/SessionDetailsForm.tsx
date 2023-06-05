@@ -6,7 +6,7 @@ import {
   DatePicker,
   DatePickerInput,
 } from "@carbon/react";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext } from "react";
 import styles from "./styles.scss";
 import { useTranslation } from "react-i18next";
 import { Controller, useFormContext } from "react-hook-form";
