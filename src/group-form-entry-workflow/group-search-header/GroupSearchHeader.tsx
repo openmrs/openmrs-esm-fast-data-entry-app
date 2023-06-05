@@ -1,6 +1,6 @@
 import { Close, Add } from "@carbon/react/icons";
 import { Button } from "@carbon/react";
-import React, { useContext, useState } from "react";
+import React, { useCallback, useContext, useState } from "react";
 import GroupFormWorkflowContext from "../../context/GroupFormWorkflowContext";
 import styles from "./styles.scss";
 import { useTranslation } from "react-i18next";
@@ -17,13 +17,13 @@ const GroupSearchHeader = () => {
     setGroup(group);
   };
 
-  const handleCancel = () => {
+  const handleCancel = useCallback(() => {
     setIsOpen(false);
-  };
+  }, []);
 
-  const onPostSubmit = () => {
+  const onPostSubmit = useCallback(() => {
     setIsOpen(false);
-  };
+  }, []);
 
   if (activeGroupUuid) return null;
 

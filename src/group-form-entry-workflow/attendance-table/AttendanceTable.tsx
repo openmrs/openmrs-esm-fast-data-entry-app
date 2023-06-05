@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useCallback, useContext, useMemo, useState } from "react";
 import { Edit } from "@carbon/react/icons";
 
 import {
@@ -14,7 +14,6 @@ import {
 } from "@carbon/react";
 import { useTranslation } from "react-i18next";
 import GroupFormWorkflowContext from "../../context/GroupFormWorkflowContext";
-import { useGetPatient } from "../../hooks";
 import AddGroupModal from "../../add-group-modal/AddGroupModal";
 
 const PatientRow = ({ patient }) => {
@@ -76,7 +75,7 @@ const AttendanceTable = ({ patients }) => {
     GroupFormWorkflowContext
   );
 
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setOpen] = useState(false);
 
   const headers = [
     t("name", "Name"),
@@ -84,27 +83,29 @@ const AttendanceTable = ({ patients }) => {
     t("patientIsPresent", "Patient is present"),
   ];
 
+  const handleCancel = useCallback(() => {
+    setOpen(false);
+  }, []);
+
+  const onPostSubmit = useCallback(() => {
+    setOpen(false);
+  }, []);
+
+  const newArr = useMemo(() => {
+    return activeGroupMembers.map(function (value) {
+      const patient = patients.find((patient) => patient.id === value);
+      return { uuid: value, ...patient };
+    });
+  }, [activeGroupMembers, patients]);
+
   if (!activeGroupUuid) {
     return <div>{t("selectGroupFirst", "Please select a group first")}</div>;
   }
 
-  const newArr = activeGroupMembers.map(function (value) {
-    const patient = patients.find((patient) => patient.id === value);
-    return { uuid: value, ...patient };
-  });
-
-  const handleCancel = () => {
-    setIsOpen(false);
-  };
-
-  const onPostSubmit = () => {
-    setIsOpen(false);
-  };
-
   return (
     <div>
       <span style={{ flexGrow: 1 }} />
-      <Button kind="ghost" onClick={() => setIsOpen(true)}>
+      <Button kind="ghost" onClick={() => setOpen(true)}>
         {t("editGroup", "Edit Group")}&nbsp;
         <Edit size={20} />
       </Button>

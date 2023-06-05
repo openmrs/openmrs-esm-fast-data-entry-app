@@ -120,17 +120,15 @@ const NewGroupForm = (props) => {
   );
 };
 
-const AddGroupModal = (props) => {
-  const {
-    patients,
-    isCreate,
-    groupName,
-    cohortUuid,
-    isOpen,
-    handleCancel,
-    onPostSubmit,
-  } = props;
-
+const AddGroupModal = ({
+  patients = undefined,
+  isCreate = undefined,
+  groupName = "",
+  cohortUuid = undefined,
+  isOpen,
+  handleCancel,
+  onPostSubmit,
+}) => {
   const { setGroup } = useContext(GroupFormWorkflowContext);
   const { t } = useTranslation();
   const [, setOpen] = useState(false);
