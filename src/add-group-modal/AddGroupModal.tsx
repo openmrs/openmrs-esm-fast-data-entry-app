@@ -131,7 +131,6 @@ const AddGroupModal = ({
 }) => {
   const { setGroup } = useContext(GroupFormWorkflowContext);
   const { t } = useTranslation();
-  const [, setOpen] = useState(false);
   const [errors, setErrors] = useState({});
   const [name, setName] = useState(groupName);
   const [patientList, setPatientList] = useState(patients || []);
@@ -235,7 +234,7 @@ const AddGroupModal = ({
 
   return (
     <div className={styles.modal}>
-      <ComposedModal open={isOpen} onClose={() => setOpen(false)}>
+      <ComposedModal open={isOpen} onClose={handleCancel}>
         <ModalHeader>
           {isCreate
             ? t("createNewGroup", "Create New Group")
