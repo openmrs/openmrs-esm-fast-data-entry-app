@@ -12,21 +12,21 @@ const GroupSearchHeader = () => {
   const { activeGroupUuid, setGroup, destroySession } = useContext(
     GroupFormWorkflowContext
   );
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setOpen] = useState(false);
   const handleSelectGroup = (group) => {
     setGroup(group);
   };
 
   const handleCancel = useCallback(() => {
-    setIsOpen(false);
+    setOpen(false);
   }, []);
 
   const onPostSubmit = useCallback(() => {
-    setIsOpen(false);
+    setOpen(false);
   }, []);
 
   const handleOpenClick = useCallback(() => {
-    setIsOpen(true);
+    setOpen(true);
   }, []);
 
   if (activeGroupUuid) return null;
