@@ -25,6 +25,10 @@ const GroupSearchHeader = () => {
     setIsOpen(false);
   }, []);
 
+  const handleOpenClick = useCallback(() => {
+    setIsOpen(true);
+  }, []);
+
   if (activeGroupUuid) return null;
 
   return (
@@ -36,7 +40,7 @@ const GroupSearchHeader = () => {
       <span className={styles.padded}>{t("or", "or")}</span>
       <span>
         <Button
-          onClick={() => setIsOpen(true)}
+          onClick={handleOpenClick}
           renderIcon={Add}
           iconDescription="Add"
         >
