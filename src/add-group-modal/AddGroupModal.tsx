@@ -1,4 +1,10 @@
-import React, { useCallback, useContext, useEffect, useState } from "react";
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import {
   ComposedModal,
   Button,
@@ -17,18 +23,33 @@ import { usePostCohort } from "../hooks";
 
 const MemExtension = React.memo(ExtensionSlot);
 
+const buildPatientDisplay = (patient) => {
+  const givenName = patient?.name?.[0]?.given?.[0];
+  const familyName = patient?.name?.[0]?.family;
+  const identifier = patient?.identifier?.[0]?.value;
+
+  let display = identifier ? identifier + " - " : "";
+  display += (givenName || "") + " " + (familyName || "");
+  return display.replace(/\s+/g, " ");
+};
+
 const PatientRow = ({ patient, removePatient }) => {
   const { t } = useTranslation();
+  const onClickHandler = useCallback(
+    () => removePatient(patient?.uuid),
+    [patient, removePatient]
+  );
+  const patientDisplay = useMemo(() => {
+    if (!patient) {
+      return "";
+    }
 
-  const buildPatientDisplay = () => {
-    const givenName = patient?.name?.[0]?.given?.[0];
-    const familyName = patient?.name?.[0]?.family;
-    const identifier = patient?.identifier?.[0]?.value;
+    if (patient.display) {
+      return patient.display;
+    }
 
-    let display = identifier ? identifier + " - " : "";
-    display += (givenName || "") + " " + (familyName || "");
-    return display.replace(/\s+/g, " ");
-  };
+    return buildPatientDisplay(patient);
+  }, [patient]);
 
   return (
     <li key={patient?.uuid} className={styles.patientRow}>
@@ -37,16 +58,14 @@ const PatientRow = ({ patient, removePatient }) => {
           kind="tertiary"
           size="sm"
           hasIconOnly
-          onClick={() => removePatient(patient.uuid)}
+          onClick={onClickHandler}
           renderIcon={TrashCan}
           tooltipAlignment="start"
           tooltipPosition="top"
           iconDescription={t("remove", "Remove")}
         />
       </span>
-      <span className={styles.patientName}>
-        {patient?.display || buildPatientDisplay()}
-      </span>
+      <span className={styles.patientName}>{patientDisplay}</span>
     </li>
   );
 };

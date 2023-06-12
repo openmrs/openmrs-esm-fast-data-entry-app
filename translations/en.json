@@ -65,5 +65,5 @@
   "startGroupSession": "Start Group Session",
   "trySearchWithPatientUniqueID": "Try searching with the cohort's description",
   "unknown": "Unknown",
-  "unknownPostError": "An unknown error occured while saving data"
+  "unknownPostError": "An unknown error occurred while saving data"
 }
