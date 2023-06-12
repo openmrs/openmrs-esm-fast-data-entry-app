@@ -1,4 +1,10 @@
-import React, { useCallback, useContext, useEffect, useState } from "react";
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import {
   ComposedModal,
   Button,
@@ -7,9 +13,8 @@ import {
   ModalBody,
   TextInput,
   FormLabel,
-  Loading,
 } from "@carbon/react";
-import { Add, TrashCan } from "@carbon/react/icons";
+import { TrashCan } from "@carbon/react/icons";
 import { useTranslation } from "react-i18next";
 import { ExtensionSlot, showToast } from "@openmrs/esm-framework";
 import styles from "./styles.scss";
@@ -18,23 +23,49 @@ import { usePostCohort } from "../hooks";
 
 const MemExtension = React.memo(ExtensionSlot);
 
+const buildPatientDisplay = (patient) => {
+  const givenName = patient?.name?.[0]?.given?.[0];
+  const familyName = patient?.name?.[0]?.family;
+  const identifier = patient?.identifier?.[0]?.value;
+
+  let display = identifier ? identifier + " - " : "";
+  display += (givenName || "") + " " + (familyName || "");
+  return display.replace(/\s+/g, " ");
+};
+
 const PatientRow = ({ patient, removePatient }) => {
   const { t } = useTranslation();
+  const onClickHandler = useCallback(
+    () => removePatient(patient?.uuid),
+    [patient, removePatient]
+  );
+  const patientDisplay = useMemo(() => {
+    if (!patient) {
+      return "";
+    }
+
+    if (patient.display) {
+      return patient.display;
+    }
+
+    return buildPatientDisplay(patient);
+  }, [patient]);
+
   return (
-    <li key={patient.uuid} className={styles.patientRow}>
+    <li key={patient?.uuid} className={styles.patientRow}>
       <span>
         <Button
           kind="tertiary"
           size="sm"
           hasIconOnly
-          onClick={() => removePatient(patient.uuid)}
+          onClick={onClickHandler}
           renderIcon={TrashCan}
           tooltipAlignment="start"
           tooltipPosition="top"
           iconDescription={t("remove", "Remove")}
         />
       </span>
-      <span className={styles.patientName}>{patient?.display}</span>
+      <span className={styles.patientName}>{patientDisplay}</span>
     </li>
   );
 };
@@ -108,18 +139,21 @@ const NewGroupForm = (props) => {
   );
 };
 
-const AddGroupModal = () => {
+const AddGroupModal = ({
+  patients = undefined,
+  isCreate = undefined,
+  groupName = "",
+  cohortUuid = undefined,
+  isOpen,
+  handleCancel,
+  onPostSubmit,
+}) => {
   const { setGroup } = useContext(GroupFormWorkflowContext);
   const { t } = useTranslation();
-  const [open, setOpen] = useState(false);
   const [errors, setErrors] = useState({});
-  const [name, setName] = useState("");
-  const [patientList, setPatientList] = useState([]);
-  const { post, result, isPosting, error } = usePostCohort();
-
-  const handleCancel = () => {
-    setOpen(false);
-  };
+  const [name, setName] = useState(groupName);
+  const [patientList, setPatientList] = useState(patients || []);
+  const { post, result, error } = usePostCohort();
 
   const removePatient = useCallback(
     (patientUuid: string) =>
@@ -174,9 +208,13 @@ const AddGroupModal = () => {
   const handleSubmit = () => {
     if (validate()) {
       post({
+        uuid: cohortUuid,
         name: name,
         cohortMembers: patientList.map((p) => ({ patient: p.uuid })),
       });
+      if (onPostSubmit) {
+        onPostSubmit();
+      }
     }
   };
 
@@ -198,7 +236,7 @@ const AddGroupModal = () => {
         title: t("postError", "POST Error"),
         description:
           error.message ??
-          t("unknownPostError", "An unknown error occured while saving data"),
+          t("unknownPostError", "An unknown error occurred while saving data"),
       });
       if (error.fieldErrors) {
         setErrors(
@@ -215,43 +253,31 @@ const AddGroupModal = () => {
 
   return (
     <div className={styles.modal}>
-      <Button
-        onClick={() => setOpen(true)}
-        renderIcon={Add}
-        iconDescription="Add"
-      >
-        {t("createNewGroup", "Create New Group")}
-      </Button>
-      <ComposedModal open={open} onClose={() => setOpen(false)}>
-        <ModalHeader>{t("createNewGroup", "Create New Group")}</ModalHeader>
+      <ComposedModal open={isOpen} onClose={handleCancel}>
+        <ModalHeader>
+          {isCreate
+            ? t("createNewGroup", "Create New Group")
+            : t("editGroup", "Edit Group")}
+        </ModalHeader>
         <ModalBody>
-          {result ? (
-            <p>Group saved succesfully</p>
-          ) : isPosting ? (
-            <div className={styles.loading}>
-              <Loading withOverlay={false} />
-              <span>Saving new group...</span>
-            </div>
-          ) : (
-            <NewGroupForm
-              {...{
-                name,
-                setName,
-                patientList,
-                updatePatientList,
-                errors,
-                validate,
-                removePatient,
-              }}
-            />
-          )}
+          <NewGroupForm
+            {...{
+              name,
+              setName,
+              patientList,
+              updatePatientList,
+              errors,
+              validate,
+              removePatient,
+            }}
+          />
         </ModalBody>
         <ModalFooter>
-          <Button kind="secondary" onClick={handleCancel} disabled={isPosting}>
+          <Button kind="secondary" onClick={handleCancel}>
             {t("cancel", "Cancel")}
           </Button>
-          <Button kind="primary" onClick={handleSubmit} disabled={isPosting}>
-            {t("createGroup", "Create Group")}
+          <Button kind="primary" onClick={handleSubmit}>
+            {isCreate ? t("createGroup", "Create Group") : t("save", "Save")}
           </Button>
         </ModalFooter>
       </ComposedModal>
