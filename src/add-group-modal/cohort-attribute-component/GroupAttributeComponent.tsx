@@ -3,11 +3,11 @@ import { TextInput, Checkbox } from "@carbon/react";
 import { useTranslation } from "react-i18next";
 import styles from "./styles.scss";
 
-interface CohortAttributeComponentProps {
+interface GroupAttributeComponentProps {
   cohortAttributeTypes: CohortAttribute[];
   onChange: any;
 }
-const CohortAttributeComponent: React.FC<CohortAttributeComponentProps> = (
+const GroupAttributeComponent: React.FC<GroupAttributeComponentProps> = (
   props
 ) => {
   const { cohortAttributeTypes, onChange } = props;
@@ -22,6 +22,7 @@ const CohortAttributeComponent: React.FC<CohortAttributeComponentProps> = (
               <TextInput
                 id={attribute.attributeType.uuid}
                 labelText={t(attribute.labelCode, attribute.attributeType.name)}
+                value={attribute.value}
                 type="text"
                 onChange={(event) => {
                   onChange(event.target.id, event.target.value);
@@ -46,7 +47,7 @@ const CohortAttributeComponent: React.FC<CohortAttributeComponentProps> = (
     </>
   );
 };
-export default CohortAttributeComponent;
+export default GroupAttributeComponent;
 
 export type CohortAttribute = {
   uuid?: string;

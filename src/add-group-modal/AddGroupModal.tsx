@@ -20,9 +20,9 @@ import { ExtensionSlot, showToast, useConfig } from "@openmrs/esm-framework";
 import styles from "./styles.scss";
 import GroupFormWorkflowContext from "../context/GroupFormWorkflowContext";
 import { usePostCohort } from "../hooks";
-import CohortAttributeComponent, {
+import GroupAttributeComponent, {
   CohortAttribute,
-} from "./cohort-attribute-component/CohortAttributeComponent";
+} from "./cohort-attribute-component/GroupAttributeComponent";
 
 const MemExtension = React.memo(ExtensionSlot);
 
@@ -108,7 +108,7 @@ const NewGroupForm = (props) => {
             : errors.name}
         </p>
       )}
-      <CohortAttributeComponent
+      <GroupAttributeComponent
         cohortAttributeTypes={groupAttributes}
         onChange={onCohortAttributeValueChange}
       />
