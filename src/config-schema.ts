@@ -82,6 +82,48 @@ export const configSchema = {
       _default: "fa8fedc0-c066-4da3-8dc1-2ad8621fc480",
     },
   },
+  groupAttributesConfig: {
+    _type: Type.Array,
+    _description:
+      "List of group attributes, must correspond to an Cohort Attribute Type on the database",
+    _elements: {
+      uuid: {
+        _type: Type.String,
+        _description: "UUID of the Cohort Attribute Type",
+      },
+      name: {
+        _type: Type.String,
+        _description: "Name of the Cohort Attribute Type",
+      },
+      id: {
+        _type: Type.String,
+        _description: "ID of the attribute.",
+      },
+      labelCode: {
+        _type: Type.String,
+        _description: "Code to be use in translation.",
+      },
+      type: {
+        _type: Type.String,
+        _description:
+          "Datatype of the Cohort Attribute Type, acceptable values are 'FreeTextDatatype' | 'BooleanDatatype'",
+      },
+    },
+    _default: [
+      {
+        uuid: "09790099-9190-429d-811a-aac9edb8d98a",
+        name: "Test 01",
+        labelCode: "test01",
+        type: "org.openmrs.customdatatype.datatype.FreeTextDatatype",
+      },
+      {
+        uuid: "09790099-9190-429d-811a-aac9edb8d98d",
+        name: "Close Group",
+        labelCode: "closeGroup",
+        type: "org.openmrs.customdatatype.datatype.BooleanDatatype",
+      },
+    ],
+  },
 };
 
 export type Form = {
@@ -94,7 +136,17 @@ export type Category = {
   forms: Array<Form>;
 };
 
+export type CohortAttributeTypeConfig = {
+  uuid: string;
+  name: string;
+  labelCode: string;
+  type:
+    | "org.openmrs.customdatatype.datatype.FreeTextDatatype"
+    | "org.openmrs.customdatatype.datatype.BooleanDatatype";
+};
+
 export type Config = {
   formCategories: Array<Category>;
   formCategoriesToShow: Array<string>;
+  groupAttributesConfig: Array<CohortAttributeTypeConfig>;
 };

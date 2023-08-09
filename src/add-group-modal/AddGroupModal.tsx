@@ -16,10 +16,13 @@ import {
 } from "@carbon/react";
 import { TrashCan } from "@carbon/react/icons";
 import { useTranslation } from "react-i18next";
-import { ExtensionSlot, showToast } from "@openmrs/esm-framework";
+import { ExtensionSlot, showToast, useConfig } from "@openmrs/esm-framework";
 import styles from "./styles.scss";
 import GroupFormWorkflowContext from "../context/GroupFormWorkflowContext";
 import { usePostCohort } from "../hooks";
+import CohortAttributeComponent, {
+  CohortAttribute,
+} from "./cohort-attribute-component/CohortAttributeComponent";
 
 const MemExtension = React.memo(ExtensionSlot);
 
@@ -79,6 +82,8 @@ const NewGroupForm = (props) => {
     errors,
     validate,
     removePatient,
+    groupAttributes,
+    onCohortAttributeValueChange,
   } = props;
   const { t } = useTranslation();
 
@@ -103,6 +108,10 @@ const NewGroupForm = (props) => {
             : errors.name}
         </p>
       )}
+      <CohortAttributeComponent
+        cohortAttributeTypes={groupAttributes}
+        onChange={onCohortAttributeValueChange}
+      />
       <FormLabel>
         {patientList.length} {t("patientsInGroup", "Patients in group")}
       </FormLabel>
@@ -154,6 +163,8 @@ const AddGroupModal = ({
   const [name, setName] = useState(groupName);
   const [patientList, setPatientList] = useState(patients || []);
   const { post, result, error } = usePostCohort();
+  const { groupAttributesConfig } = useConfig();
+  const [groupAttributes, setGroupAttributes] = useState([]);
 
   const removePatient = useCallback(
     (patientUuid: string) =>
@@ -205,11 +216,47 @@ const AddGroupModal = ({
     [setPatientList]
   );
 
+  useMemo(() => {
+    setGroupAttributes(
+      groupAttributesConfig?.map((config) => {
+        return {
+          labelCode: config.labelCode,
+          attributeType: {
+            name: config.name,
+            type: config.type,
+            uuid: config.uuid,
+          },
+        };
+      })
+    );
+  }, [groupAttributesConfig]);
+
+  const onCohortAttributeValueChange = (attributeId: string, value: any) => {
+    const updatedAttributes = [...groupAttributes];
+    updatedAttributes.find(
+      (a: CohortAttribute) => a.attributeType.uuid == attributeId
+    ).value = value;
+    setGroupAttributes(updatedAttributes);
+  };
+
+  const getAttributesPayload = () => {
+    return groupAttributes.map((a: CohortAttribute) => {
+      return {
+        uuid: a.uuid,
+        value: a.value,
+        attributeType: {
+          uuid: a.attributeType.uuid,
+        },
+      };
+    });
+  };
+
   const handleSubmit = () => {
     if (validate()) {
       post({
         uuid: cohortUuid,
         name: name,
+        attributes: getAttributesPayload(),
         cohortMembers: patientList.map((p) => ({ patient: p.uuid })),
       });
       if (onPostSubmit) {
@@ -269,6 +316,8 @@ const AddGroupModal = ({
               errors,
               validate,
               removePatient,
+              groupAttributes,
+              onCohortAttributeValueChange,
             }}
           />
         </ModalBody>
