@@ -156,6 +156,7 @@ const AddGroupModal = ({
   isOpen,
   handleCancel,
   onPostSubmit,
+  attributes = undefined,
 }) => {
   const { setGroup } = useContext(GroupFormWorkflowContext);
   const { t } = useTranslation();
@@ -164,7 +165,7 @@ const AddGroupModal = ({
   const [patientList, setPatientList] = useState(patients || []);
   const { post, result, error } = usePostCohort();
   const { groupAttributesConfig } = useConfig();
-  const [groupAttributes, setGroupAttributes] = useState([]);
+  const [groupAttributes, setGroupAttributes] = useState<CohortAttribute[]>([]);
 
   const removePatient = useCallback(
     (patientUuid: string) =>
@@ -219,8 +220,13 @@ const AddGroupModal = ({
   useMemo(() => {
     setGroupAttributes(
       groupAttributesConfig?.map((config) => {
+        const attribute = attributes?.find(
+          (a) => a.attributeType.uuid == config.uuid
+        );
         return {
+          uuid: attribute?.uuid,
           labelCode: config.labelCode,
+          value: attribute?.value,
           attributeType: {
             name: config.name,
             type: config.type,
@@ -229,7 +235,7 @@ const AddGroupModal = ({
         };
       })
     );
-  }, [groupAttributesConfig]);
+  }, [groupAttributesConfig, attributes]);
 
   const onCohortAttributeValueChange = (attributeId: string, value: any) => {
     const updatedAttributes = [...groupAttributes];
