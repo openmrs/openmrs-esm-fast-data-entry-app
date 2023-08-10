@@ -167,6 +167,9 @@ const AddGroupModal = ({
   const { groupAttributesConfig } = useConfig();
   const [groupAttributes, setGroupAttributes] = useState<CohortAttribute[]>([]);
 
+  console.log("result", result);
+  console.log("groupName", groupName);
+
   const removePatient = useCallback(
     (patientUuid: string) =>
       setPatientList((patientList) =>

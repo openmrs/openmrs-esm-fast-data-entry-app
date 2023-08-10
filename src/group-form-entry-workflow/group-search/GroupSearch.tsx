@@ -35,6 +35,8 @@ const GroupSearch: React.FC<GroupSearchProps> = ({
     },
   });
 
+  console.log("results", results);
+
   const lastItem = useRef(null);
   const observer = useRef(null);
   const loadingRef = useCallback(

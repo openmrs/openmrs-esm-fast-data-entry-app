@@ -71,9 +71,12 @@ const PatientRow = ({ patient }) => {
 
 const AttendanceTable = ({ patients }) => {
   const { t } = useTranslation();
-  const { activeGroupUuid, activeGroupName, activeGroupMembers } = useContext(
-    GroupFormWorkflowContext
-  );
+  const {
+    activeGroupUuid,
+    activeGroupName,
+    activeGroupAttributes,
+    activeGroupMembers,
+  } = useContext(GroupFormWorkflowContext);
 
   const [isOpen, setOpen] = useState(false);
 
@@ -118,6 +121,7 @@ const AttendanceTable = ({ patients }) => {
           isOpen: isOpen,
           handleCancel: handleCancel,
           onPostSubmit: onPostSubmit,
+          attributes: activeGroupAttributes,
         }}
       />
       <Table>
