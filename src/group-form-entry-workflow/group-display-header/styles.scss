@@ -1,26 +1,26 @@
-@use '@carbon/styles/scss/spacing';
-@use '@carbon/styles/scss/type';
-@import '~@openmrs/esm-styleguide/src/vars';
+@use '@carbon/colors';
+@use '@carbon/layout';
+@use '@carbon/type';
 
 .container {
-  height: spacing.$spacing-11;
+  height: layout.$spacing-11;
   display: flex;
   align-items: center;
-  background-color: $ui-02;
-  border-top: 0.0125rem solid $ui-03;
-  border-bottom: 0.0125rem solid $ui-03;
-  padding: 0 spacing.$spacing-05;
+  background-color: colors.$white-0;
+  border-top: 0.0125rem solid colors.$gray-20;
+  border-bottom: 0.0125rem solid colors.$gray-20;
+  padding: 0 layout.$spacing-05;
 }
 
 .photoPlaceholder {
-  height: spacing.$spacing-09;
-  width: spacing.$spacing-09;
+  height: layout.$spacing-09;
+  width: layout.$spacing-09;
 }
 
 .groupAvatar {
-  width: spacing.$spacing-09;
-  height: spacing.$spacing-09;
-  margin: spacing.$spacing-03 spacing.$spacing-05 spacing.$spacing-03 0;
+  width: layout.$spacing-09;
+  height: layout.$spacing-09;
+  margin: layout.$spacing-03 layout.$spacing-05 layout.$spacing-03 0;
   border-radius: 1px;
 }
 
@@ -30,29 +30,29 @@
 }
 
 .groupInfoContent {
-  margin-left: spacing.$spacing-05;
-  margin-right: spacing.$spacing-10;
+  margin-left: layout.$spacing-05;
+  margin-right: layout.$spacing-10;
 }
 
 .groupInfoRow {
   display: flex;
   align-items: center;
   & > button {
-    min-height: spacing.$spacing-07;
+    min-height: layout.$spacing-07;
   }
   @include type.type-style('body-compact-02');
-  color: $text-02;
+  color: colors.$gray-70;
   column-gap: 0.8rem;
 
 }
 .sessionNotesLabel {
   @include type.type-style('label-01');
-  margin-bottom: spacing.$spacing-01
+  margin-bottom: layout.$spacing-01
 }
 
 .groupEditBtn {
-  color: $ui-05;
-  margin: spacing.$spacing-03;
+  color: colors.$gray-100;
+  margin: layout.$spacing-03;
 }
 
 .groupMetaContent {

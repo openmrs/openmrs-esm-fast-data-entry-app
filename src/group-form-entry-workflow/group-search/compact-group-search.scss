@@ -1,7 +1,6 @@
 
-@use '@carbon/styles/scss/spacing';
-@use '@carbon/styles/scss/colors';
-@import '~@openmrs/esm-styleguide/src/vars';
+@use '@carbon/colors';
+@use '@carbon/layout';
 
 .patientSearchBar {
   width: 50vw;
@@ -11,11 +10,11 @@
 .floatingSearchResultsContainer {
   position: absolute;
   overflow-y: auto;
-  box-shadow: 0 spacing.$spacing-03 spacing.$spacing-05 $ui-03;
+  box-shadow: 0 layout.$spacing-03 layout.$spacing-05 colors.$gray-20;
   z-index: 99;
-  border: 0 1px 1px 1px solid $ui-03;
+  border: 0 1px 1px 1px solid colors.$gray-20;
   width: 100%;
-  background-color: $ui-02;
+  background-color: colors.$white-0;
 }
 
 .searchArea {
@@ -23,7 +22,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  border: 1px solid $ui-04;
+  color: colors.$gray-50;
 }
 
 .patientSearchInput {

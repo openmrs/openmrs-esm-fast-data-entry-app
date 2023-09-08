@@ -1,36 +1,36 @@
-@import "~@openmrs/esm-styleguide/src/vars";
-@import "~carbon-components/src/globals/scss/vars";
-@import "~carbon-components/src/globals/scss/mixins";
+@use '@carbon/colors';
+@use '@carbon/layout';
+@use '@carbon/type';
 
 .action {
-  margin-bottom: $spacing-03;
+  margin-bottom: layout.$spacing-03;
 }
 
 .content {
-  @include carbon--type-style("productive-heading-01");
-  color: $text-02;
-  margin-top: $spacing-05;
-  margin-bottom: $spacing-03;
+  @include type.type-style("heading-compact-01");
+  color: colors.$gray-70;
+  margin-top: layout.$spacing-05;
+  margin-bottom: layout.$spacing-03;
 }
 
 .desktopHeading {
   h4 {
-    @include carbon--type-style('productive-heading-02');
-    color: $text-02;
+    @include type.type-style('heading-compact-02');
+    color: colors.$gray-70;
   }
 }
 
 .tabletHeading {
   h4 {
-    @include carbon--type-style('productive-heading-03');
-    color: $text-02;
+    @include type.type-style('heading-03');
+    color: colors.$gray-70;
   }
 }
 
 .desktopHeading, .tabletHeading {
   text-align: left;
   text-transform: capitalize;
-  margin-bottom: $spacing-05;
+  margin-bottom: layout.$spacing-05;
 
   h4:after {
     content: "";
@@ -51,5 +51,5 @@
 
 .tile {
   text-align: center;
-  border: 1px solid $ui-03;
+  border: 1px solid colors.$gray-20;
 }

@@ -1,11 +1,9 @@
-import { useConfig, useSession } from "@openmrs/esm-framework";
-import { Tab, Tabs, TabList, TabPanels, TabPanel } from "@carbon/react";
 import React from "react";
-import { Config } from "../config-schema";
+import { Tab, Tabs, TabList, TabPanels, TabPanel } from "@carbon/react";
+import { useTranslation } from "react-i18next";
+import { useConfig, useSession } from "@openmrs/esm-framework";
 import { useGetAllForms } from "../hooks";
 import FormsTable from "./forms-table";
-import styles from "./styles.scss";
-import { useTranslation } from "react-i18next";
 import {
   fdeWorkflowStorageName,
   fdeWorkflowStorageVersion,
@@ -14,6 +12,7 @@ import {
   fdeGroupWorkflowStorageName,
   fdeGroupWorkflowStorageVersion,
 } from "../context/GroupFormWorkflowReducer";
+import styles from "./styles.scss";
 
 // helper function useful for debugging
 // given a list of forms, it will organize into permissions
@@ -44,7 +43,7 @@ const prepareRowsForTable = (rawFormData) => {
 };
 
 const FormsPage = () => {
-  const config = useConfig() as Config;
+  const config = useConfig();
   const { t } = useTranslation();
   const { formCategories, formCategoriesToShow } = config;
   const { forms, isLoading, error } = useGetAllForms();
