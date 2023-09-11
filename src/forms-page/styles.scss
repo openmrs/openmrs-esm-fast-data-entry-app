@@ -1,11 +1,9 @@
-@use '@carbon/styles/scss/spacing';
-// @use '@carbon/styles/scss/type';
-// @import '~@openmrs/esm-styleguide/src/vars';
+@use '@carbon/layout';
 
 .mainContent {
-  padding: spacing.$spacing-07;
+  padding: layout.$spacing-07;
 }
 
 .pageTitle {
-  margin-bottom: spacing.$spacing-06;
+  margin-bottom: layout.$spacing-06;
 }

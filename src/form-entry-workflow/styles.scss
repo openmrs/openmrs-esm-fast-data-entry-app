@@ -1,13 +1,11 @@
-@use '@carbon/styles/scss/spacing';
 @use '@carbon/colors';
-@use '@carbon/styles/scss/type';
-@import '~@openmrs/esm-styleguide/src/vars';
-
+@use '@carbon/layout';
+@use '@carbon/type';
 
 .breadcrumbsContainer > div > div > nav {
-  background-color: $ui-02;
-  padding: spacing.$spacing-04 spacing.$spacing-05;
-  height: spacing.$spacing-08;
+  background-color: colors.$white-0;
+  padding: layout.$spacing-04 layout.$spacing-05;
+  height: layout.$spacing-08;
 }
 
 .workspaceWrapper {
@@ -20,16 +18,16 @@
 }
 
 .selectPatientMessage {
-  @include type.type-style('productive-heading-03');
-  margin: spacing.$spacing-07;
+  @include type.type-style('heading-03');
+  margin: layout.$spacing-07;
   text-align: center;
 }
 
 .formMainContent {
   display: flex;
   text-align: center;
-  margin-top: spacing.$spacing-05;
-  column-gap: spacing.$spacing-05;
+  margin-top: layout.$spacing-05;
+  column-gap: layout.$spacing-05;
 }
 
 .formContainer {
@@ -50,14 +48,14 @@
 }
 
 .patientCardsSection {
-  margin: spacing.$spacing-05 0;
+  margin: layout.$spacing-05 0;
   border-bottom: 1px solid colors.$gray-10;
 }
 
 .rightPanelActionButtons {
   display: flex;
   flex-direction: column;
-  row-gap: spacing.$spacing-03;
+  row-gap: layout.$spacing-03;
   & button {
     width: 100%;
     text-decoration: "none";

@@ -1,16 +1,15 @@
-@use '@carbon/styles/scss/spacing';
-// @use '@carbon/colors';
-// @use '@carbon/styles/scss/type';
-@import '~@openmrs/esm-styleguide/src/vars';
+@use '@carbon/colors';
+@use '@carbon/layout';
+@use '@carbon/type';
 
 .searchHeaderContainer {
-  height: spacing.$spacing-11;
+  height: layout.$spacing-11;
   display: flex;
   align-items: center;
-  background-color: $ui-02;
-  border-top: 0.0125rem solid $ui-03;
-  border-bottom: 0.0125rem solid $ui-03;
-  padding: 0 spacing.$spacing-05;
+  background-color: colors.$white-0;
+  border-top: 0.0125rem solid colors.$gray-20;
+  border-bottom: 0.0125rem solid colors.$gray-20;
+  padding: 0 layout.$spacing-05;
 }
 
 .searchBarWrapper {
@@ -22,5 +21,5 @@
 }
 
 .padded {
-  padding: spacing.$spacing-05;
+  padding: layout.$spacing-05;
 }

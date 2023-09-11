@@ -1,11 +1,10 @@
-@import "~@openmrs/esm-styleguide/src/vars";
-@import "~carbon-components/src/globals/scss/vars";
-@import "~carbon-components/src/globals/scss/mixins";
+@use '@carbon/colors';
+@use '@carbon/layout';
 
 .toolbarWrapper {
   position: relative;
   display: flex;
-  height: $spacing-09;
+  height: layout.$spacing-09;
   justify-content: flex-end;
 }
 
@@ -15,6 +14,6 @@
 }
 
 .inactiveLink {
-  color: $carbon--gray-40;
+  color: colors.$gray-40;
   cursor: not-allowed;
 }
