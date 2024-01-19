@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { detach, ExtensionSlot } from "@openmrs/esm-framework";
 import useGetPatient from "./hooks/useGetPatient";
+import GroupFormWorkflowContext from "./context/GroupFormWorkflowContext";
 
 export interface Order {
   uuid: string;
@@ -98,12 +99,17 @@ export interface Encounter {
   obs: Array<Observation>;
   orders: Array<Order>;
 }
+
+type PreFilledQuestions = {
+  [key: string]: string;
+};
 interface FormParams {
   formUuid: string;
   patientUuid: string;
   visitUuid?: string;
   visitTypeUuid?: string;
   encounterUuid?: string;
+  preFilledQuestions?: PreFilledQuestions;
   showDiscardSubmitButtons?: boolean;
   handlePostResponse?: (Encounter) => void;
   handleEncounterCreate?: (Object) => void;
@@ -138,6 +144,7 @@ const FormBootstrap = ({
     }
   }, [patientUuid, formUuid, patient]);
 
+  const { activeSessionMeta } = useContext(GroupFormWorkflowContext);
   return (
     <div>
       {showForm && formUuid && patientUuid && patient && (
@@ -156,6 +163,7 @@ const FormBootstrap = ({
             handleEncounterCreate,
             handleOnValidate,
             showDiscardSubmitButtons: false,
+            preFilledQuestions: { ...activeSessionMeta },
           }}
         />
       )}

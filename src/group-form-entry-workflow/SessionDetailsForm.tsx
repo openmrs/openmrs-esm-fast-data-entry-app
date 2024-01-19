@@ -6,15 +6,31 @@ import {
   DatePicker,
   DatePickerInput,
 } from "@carbon/react";
-import React, { useContext } from "react";
+import React, { useContext, useMemo } from "react";
+import { useConfig } from "@openmrs/esm-framework";
+import { useParams } from "react-router-dom";
 import styles from "./styles.scss";
 import { useTranslation } from "react-i18next";
 import { Controller, useFormContext } from "react-hook-form";
 import { AttendanceTable } from "./attendance-table";
 import GroupFormWorkflowContext from "../context/GroupFormWorkflowContext";
 import useGetPatients from "../hooks/useGetPatients";
+import ConfigurableQuestionsSection from "./configurable-questions/ConfigurableQuestionsSection";
+import { getSpecificQuestionsByForm } from "./configurable-questions/helper";
+
+interface ParamTypes {
+  formUuid?: string;
+}
 
 const SessionDetailsForm = () => {
+  const { specificQuestions } = useConfig();
+  const { formUuid } = useParams() as ParamTypes;
+
+  const questions = useMemo(
+    () => getSpecificQuestionsByForm(specificQuestions, formUuid),
+    [formUuid, specificQuestions]
+  );
+
   const { t } = useTranslation();
   const {
     register,
@@ -122,6 +138,41 @@ const SessionDetailsForm = () => {
               </Layer>
             </Tile>
           </Layer>
+          {getSpecificQuestionsByForm(specificQuestions, formUuid).length >
+            0 && (
+            <>
+              <h4>{t("sessionSpecificDetails", "3. Specific details")}</h4>
+              <div>
+                <p>
+                  {t(
+                    "sessionSpecificDetailsDescription",
+                    "They will be mapped to form responses for all patients as pre-filled data."
+                  )}
+                </p>
+              </div>
+              <Layer>
+                <Tile className={styles.formSectionTile}>
+                  <Layer>
+                    <div
+                      style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        rowGap: "1.5rem",
+                      }}
+                    >
+                      <ConfigurableQuestionsSection
+                        register={register}
+                        specificQuestions={getSpecificQuestionsByForm(
+                          questions,
+                          formUuid
+                        )}
+                      />
+                    </div>
+                  </Layer>
+                </Tile>
+              </Layer>
+            </>
+          )}
         </div>
       )}
     </div>
