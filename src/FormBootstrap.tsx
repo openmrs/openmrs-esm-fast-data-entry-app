@@ -103,6 +103,7 @@ export interface Encounter {
 type PreFilledQuestions = {
   [key: string]: string;
 };
+
 interface FormParams {
   formUuid: string;
   patientUuid: string;
@@ -127,6 +128,7 @@ const FormBootstrap = ({
   handleOnValidate,
 }: FormParams) => {
   const patient = useGetPatient(patientUuid);
+  const { activeSessionMeta } = useContext(GroupFormWorkflowContext);
 
   useEffect(() => {
     return () => detach("form-widget-slot", "form-widget-slot");
@@ -144,7 +146,6 @@ const FormBootstrap = ({
     }
   }, [patientUuid, formUuid, patient]);
 
-  const { activeSessionMeta } = useContext(GroupFormWorkflowContext);
   return (
     <div>
       {showForm && formUuid && patientUuid && patient && (

@@ -138,8 +138,7 @@ const SessionDetailsForm = () => {
               </Layer>
             </Tile>
           </Layer>
-          {getSpecificQuestionsByForm(specificQuestions, formUuid).length >
-            0 && (
+          {questions.length > 0 ? (
             <>
               <h4>{t("sessionSpecificDetails", "3. Specific details")}</h4>
               <div>
@@ -172,7 +171,7 @@ const SessionDetailsForm = () => {
                 </Tile>
               </Layer>
             </>
-          )}
+          ) : null}
         </div>
       )}
     </div>
