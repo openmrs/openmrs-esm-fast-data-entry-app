@@ -92,21 +92,12 @@ export const configSchema = {
         _elements: {
           _type: Type.UUID,
         },
+        _default: [],
       },
       questionId: {
         _type: Type.String,
         _description: "ID of the question.",
-      },
-      question: {
-        _type: Type.UUID,
-        _description: "Concept UUID of the question.",
-      },
-      answers: {
-        _type: Type.Array,
-        _description: "Concept list of possible answers for the question.",
-        _elements: {
-          _type: Type.String,
-        },
+        _default: "",
       },
     },
   },

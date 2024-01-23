@@ -1,10 +1,7 @@
-import { TextInput, Select, SelectItem, InlineLoading } from "@carbon/react";
 import React from "react";
-import { useTranslation } from "react-i18next";
-import { useConcepts } from "../../hooks";
-import { extractUUIDs, getConceptLabel } from "./helper";
-import { SpecificQuestion } from "../../types";
+import { TextInput, Select, SelectItem } from "@carbon/react";
 import { FieldValues, UseFormRegister } from "react-hook-form";
+import { SpecificQuestion } from "../../types";
 
 interface ConfigurableQuestionsSectionProps {
   specificQuestions: Array<SpecificQuestion>;
@@ -14,36 +11,31 @@ interface ConfigurableQuestionsSectionProps {
 const ConfigurableQuestionsSection: React.FC<
   ConfigurableQuestionsSectionProps
 > = ({ register, specificQuestions }) => {
-  const { t } = useTranslation();
-  const { concepts, isLoading } = useConcepts(extractUUIDs(specificQuestions));
-
-  return isLoading ? (
-    <InlineLoading description={`${t("loading", "Loading")} ...`} />
-  ) : (
+  return (
     <>
       {specificQuestions?.map((specificQuestion) => (
-        <div key={specificQuestion.questionId}>
+        <div key={specificQuestion.question.id}>
           {specificQuestion?.answers?.length > 0 ? (
             <Select
-              {...register(specificQuestion.questionId, { required: false })}
-              id={specificQuestion.questionId}
-              labelText={getConceptLabel(concepts, specificQuestion.question)}
+              {...register(specificQuestion.question.id, { required: false })}
+              id={specificQuestion.question.id}
+              labelText={specificQuestion.question.display}
             >
               <SelectItem value="" text="" />
               {specificQuestion.answers.map((answer) => (
                 <SelectItem
-                  key={answer}
-                  value={answer}
-                  text={getConceptLabel(concepts, answer)}
+                  key={answer.value}
+                  value={answer.value}
+                  text={answer.display}
                 />
               ))}
             </Select>
           ) : (
             <TextInput
-              id={specificQuestion.questionId}
-              {...register(specificQuestion.questionId, { required: false })}
+              id={specificQuestion.question.id}
+              {...register(specificQuestion.question.id, { required: false })}
               type="text"
-              labelText={getConceptLabel(concepts, specificQuestion?.question)}
+              labelText={specificQuestion.question.display}
             />
           )}
         </div>

@@ -2,13 +2,13 @@ import useGetAllForms from "./useGetAllForms";
 import useGetPatient from "./useGetPatient";
 import useFormState from "./useFormState";
 import useGetEncounter from "./useGetEncounter";
-import useConcepts from "./useConcepts";
+import useForm from "./useForm";
 
 export {
   useGetAllForms,
   useGetPatient,
   useFormState,
   useGetEncounter,
-  useConcepts,
+  useForm,
 };
 export * from "./usePostEndpoint";

@@ -6,7 +6,7 @@ import {
   DatePicker,
   DatePickerInput,
 } from "@carbon/react";
-import React, { useContext, useMemo } from "react";
+import React, { useContext } from "react";
 import { useConfig } from "@openmrs/esm-framework";
 import { useParams } from "react-router-dom";
 import styles from "./styles.scss";
@@ -16,7 +16,7 @@ import { AttendanceTable } from "./attendance-table";
 import GroupFormWorkflowContext from "../context/GroupFormWorkflowContext";
 import useGetPatients from "../hooks/useGetPatients";
 import ConfigurableQuestionsSection from "./configurable-questions/ConfigurableQuestionsSection";
-import { getSpecificQuestionsByForm } from "./configurable-questions/helper";
+import useSpecificQuestions from "../hooks/useForm";
 
 interface ParamTypes {
   formUuid?: string;
@@ -25,11 +25,7 @@ interface ParamTypes {
 const SessionDetailsForm = () => {
   const { specificQuestions } = useConfig();
   const { formUuid } = useParams() as ParamTypes;
-
-  const questions = useMemo(
-    () => getSpecificQuestionsByForm(specificQuestions, formUuid),
-    [formUuid, specificQuestions]
-  );
+  const { questions } = useSpecificQuestions(formUuid, specificQuestions);
 
   const { t } = useTranslation();
   const {
@@ -70,7 +66,7 @@ const SessionDetailsForm = () => {
                     labelText={t("sessionName", "Session Name")}
                     {...register("sessionName", { required: true })}
                     invalid={errors.sessionName}
-                    invalidText={"This field is required"}
+                    invalidText={t("requiredField", "This field is required")}
                   />
                   <TextInput
                     id="text"
@@ -78,7 +74,7 @@ const SessionDetailsForm = () => {
                     labelText={t("practitionerName", "Practitioner Name")}
                     {...register("practitionerName", { required: true })}
                     invalid={errors.practitionerName}
-                    invalidText={"This field is required"}
+                    invalidText={t("requiredField", "This field is required")}
                   />
                   <Controller
                     name="sessionDate"
@@ -97,7 +93,10 @@ const SessionDetailsForm = () => {
                           placeholder="mm/dd/yyyy"
                           size="md"
                           invalid={errors.sessionDate}
-                          invalidText={"This field is required"}
+                          invalidText={t(
+                            "requiredField",
+                            "This field is required"
+                          )}
                         />
                       </DatePicker>
                     )}
@@ -108,7 +107,7 @@ const SessionDetailsForm = () => {
                     labelText={t("sessionNotes", "Session Notes")}
                     {...register("sessionNotes", { required: true })}
                     invalid={errors.sessionNotes}
-                    invalidText={"This field is required"}
+                    invalidText={t("requiredField", "This field is required")}
                   />
                 </div>
               </Layer>
@@ -138,7 +137,7 @@ const SessionDetailsForm = () => {
               </Layer>
             </Tile>
           </Layer>
-          {questions.length > 0 ? (
+          {questions?.length > 0 ? (
             <>
               <h4>{t("sessionSpecificDetails", "3. Specific details")}</h4>
               <div>
@@ -161,10 +160,7 @@ const SessionDetailsForm = () => {
                     >
                       <ConfigurableQuestionsSection
                         register={register}
-                        specificQuestions={getSpecificQuestionsByForm(
-                          questions,
-                          formUuid
-                        )}
+                        specificQuestions={questions}
                       />
                     </div>
                   </Layer>

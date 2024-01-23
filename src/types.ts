@@ -4,8 +4,17 @@ export interface Concept {
 }
 
 export interface SpecificQuestion {
+  question: {
+    id: string;
+    display: string;
+  };
+  answers: Array<{
+    value: string;
+    display: string;
+  }>;
+}
+
+export interface SpecificQuestionConfig {
   forms: Array<string>;
   questionId: string;
-  question: string;
-  answers?: Array<string>;
 }
