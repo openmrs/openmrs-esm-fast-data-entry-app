@@ -100,6 +100,7 @@ export const configSchema = {
         _default: "",
       },
     },
+    _default: [],
   },
 };
 
