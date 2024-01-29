@@ -9,9 +9,9 @@ import React, { useCallback, useContext, useEffect, useState } from "react";
 import PatientCard from "../patient-card/PatientCard";
 import styles from "./styles.scss";
 import { useTranslation } from "react-i18next";
+import { v4 as uuid } from "uuid";
 import GroupFormWorkflowContext from "../context/GroupFormWorkflowContext";
 import FormBootstrap from "../FormBootstrap";
-import useStartVisit from "../hooks/useStartVisit";
 import CompleteModal from "../CompleteModal";
 import CancelModal from "../CancelModal";
 
@@ -100,53 +100,17 @@ const GroupSessionWorkspace = () => {
   } = useContext(GroupFormWorkflowContext);
 
   const { sessionLocation } = useSession();
-  const [encounter, setEncounter] = useState(null);
-  const [visit, setVisit] = useState(null);
 
-  const {
-    saveVisit,
-    updateEncounter,
-    success: visitSaveSuccess,
-  } = useStartVisit({
-    showSuccessNotification: false,
-    showErrorNotification: true,
-  });
-
-  // 0. user clicks "next patient" in WorkflowNavigationButtons
-  // which triggers submitForNext() if workflowState === "EDIT_FORM"
-
-  // 1. save the new visit uuid and start form submission
   useEffect(() => {
-    if (
-      visitSaveSuccess &&
-      visitSaveSuccess.data.patient.uuid === activePatientUuid
-    ) {
-      setVisit(visitSaveSuccess.data);
-      // Update visit UUID on workflow
-      updateVisitUuid(visitSaveSuccess.data.uuid);
+    if (activeVisitUuid) {
+      updateVisitUuid(activeVisitUuid);
     }
-  }, [
-    visitSaveSuccess,
-    updateVisitUuid,
-    activeVisitUuid,
-    activePatientUuid,
-    visit,
-    setVisit,
-  ]);
+  }, [updateVisitUuid, activeVisitUuid, activePatientUuid]);
 
-  // 2. If there's no active visit, trigger the creation of a new one
+  // If there's no active visit, trigger the creation of a new one
   const handleEncounterCreate = useCallback(
     (payload) => {
       // Create a visit with the same date as the encounter being saved
-      if (!activeVisitUuid) {
-        saveVisit({
-          patientUuid: activePatientUuid,
-          startDatetime: activeSessionMeta.sessionDate,
-          stopDatetime: activeSessionMeta.sessionDate,
-          visitType: groupVisitTypeUuid,
-          location: sessionLocation?.uuid,
-        });
-      }
       const obsTime = new Date(activeSessionMeta.sessionDate);
       payload.obs.forEach((item, index) => {
         payload.obs[index] = {
@@ -158,42 +122,52 @@ const GroupSessionWorkspace = () => {
           obsDatetime: obsTime.toISOString(),
         };
       });
-      // If this is a newly created encounter and visit, add session concepts to encounter payload.
+      const visitUuid = activeVisitUuid ? activeVisitUuid : uuid();
       if (!activeVisitUuid) {
         Object.entries(groupSessionConcepts).forEach(([field, uuid]) => {
+          updateVisitUuid(visitUuid);
           payload.obs.push({
             concept: uuid,
             value: activeSessionMeta?.[field],
           });
         });
+        // If this is a newly created encounter and visit, add session concepts to encounter payload.
+        const visitInfo = {
+          startDatetime: activeSessionMeta.sessionDate,
+          stopDatetime: activeSessionMeta.sessionDate,
+          uuid: visitUuid,
+          patient: {
+            uuid: activePatientUuid,
+          },
+          location: {
+            uuid: sessionLocation?.uuid,
+          },
+          visitType: {
+            uuid: groupVisitTypeUuid,
+          },
+        };
+        payload.visit = visitInfo;
+        updateVisitUuid(visitUuid);
       }
       payload.location = sessionLocation?.uuid;
       payload.encounterDatetime = obsTime.toISOString();
     },
     [
-      activePatientUuid,
-      activeVisitUuid,
       activeSessionMeta,
+      activeVisitUuid,
+      sessionLocation?.uuid,
       groupSessionConcepts,
+      activePatientUuid,
       groupVisitTypeUuid,
-      saveVisit,
-      sessionLocation,
+      updateVisitUuid,
     ]
   );
 
-  // 3. Update encounter so that it belongs to the created visit
-  useEffect(() => {
-    if (encounter && visit && encounter.patient?.uuid === visit.patient?.uuid) {
-      updateEncounter({ uuid: encounter.uuid, visit: visit.uuid });
-    }
-  }, [encounter, updateEncounter, visit]);
-
-  // 4. Once form has been posted, save the new encounter uuid so we can edit it later
+  // Once form has been posted, save the new encounter uuid so we can edit it later
   const handlePostResponse = useCallback(
     (encounter) => {
       if (encounter && encounter.uuid) {
         saveEncounter(encounter.uuid);
-        setEncounter(encounter);
       }
     },
     [saveEncounter]

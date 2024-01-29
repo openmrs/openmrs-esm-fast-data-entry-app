@@ -6,6 +6,7 @@ import PatientCard from "../patient-card/PatientCard";
 import styles from "./styles.scss";
 import PatientSearchHeader from "./patient-search-header";
 import { useTranslation } from "react-i18next";
+import { v4 as uuid } from "uuid";
 import FormWorkflowContext, {
   FormWorkflowProvider,
 } from "../context/FormWorkflowContext";
@@ -72,11 +73,7 @@ const FormWorkspace = () => {
   const [visit, setVisit] = useState(null);
   const { sessionLocation } = useSession();
 
-  const {
-    saveVisit,
-    updateEncounter,
-    success: visitSaveSuccess,
-  } = useStartVisit({
+  const { updateEncounter, success: visitSaveSuccess } = useStartVisit({
     showSuccessNotification: false,
     showErrorNotification: true,
   });
@@ -110,15 +107,24 @@ const FormWorkspace = () => {
       // Create a visit with the same date as the encounter being saved
       const visitStartDatetime = new Date(payload.encounterDatetime);
       const visitStopDatetime = new Date(payload.encounterDatetime);
-      saveVisit({
-        patientUuid: activePatientUuid,
-        startDatetime: visitStartDatetime.toISOString(),
-        stopDatetime: visitStopDatetime.toISOString(),
-        visitType: singleSessionVisitTypeUuid,
-        location: sessionLocation?.uuid,
-      });
+      const visitInfo = {
+        startDatetime: visitStartDatetime,
+        stopDatetime: visitStopDatetime,
+        uuid: uuid(),
+        patient: {
+          uuid: activePatientUuid,
+        },
+        location: {
+          uuid: sessionLocation?.uuid,
+        },
+        visitType: {
+          uuid: singleSessionVisitTypeUuid,
+        },
+      };
+
+      payload.visit = visitInfo;
     },
-    [activePatientUuid, singleSessionVisitTypeUuid, saveVisit, sessionLocation]
+    [activePatientUuid, singleSessionVisitTypeUuid, sessionLocation]
   );
 
   return (
@@ -142,7 +148,7 @@ const FormWorkspace = () => {
             />
           </div>
           <div className={styles.rightPanel}>
-            <h4>Forms filled</h4>
+            <h4>{t("formsFilled", "Forms filled")}</h4>
             <div className={styles.patientCardsSection}>
               {patientUuids.map((patientUuid) => (
                 <PatientCard
