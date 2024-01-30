@@ -11,6 +11,7 @@ export interface GroupType {
   id: string;
   name: string;
   members: Array<Type.Object>;
+  attributes: Array<Type.Object>;
 }
 export interface MetaType {
   sessionName: string;
@@ -56,6 +57,7 @@ export const initialWorkflowState = {
   activeGroupUuid: null, // pseudo field from state[activeFormUuid].groupUuid
   activeGroupName: null, // pseudo field from state[activeFormUuid].groupName
   activeGroupMembers: [], // pseudo field from state[activeFormUuid].groupMembers
+  activeGroupAttributes: [], // pseudo field from state[activeFormUuid].groupAttributes
   activeSessionMeta: {
     sessionName: null,
     practitionerName: null,
@@ -162,6 +164,9 @@ const GroupFormWorkflowProvider = ({ children }) => {
         activeGroupMembers:
           state.forms?.[state.activeFormUuid]?.groupMembers ??
           initialWorkflowState.activeGroupMembers,
+        activeGroupAttributes:
+          state.forms?.[state.activeFormUuid]?.groupAttributes ??
+          initialWorkflowState.activeGroupAttributes,
         activeSessionMeta:
           state.forms?.[state.activeFormUuid]?.sessionMeta ??
           initialWorkflowState.activeSessionMeta,
