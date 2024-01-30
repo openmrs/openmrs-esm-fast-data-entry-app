@@ -125,7 +125,6 @@ const GroupSessionWorkspace = () => {
       const visitUuid = activeVisitUuid ? activeVisitUuid : uuid();
       if (!activeVisitUuid) {
         Object.entries(groupSessionConcepts).forEach(([field, uuid]) => {
-          updateVisitUuid(visitUuid);
           payload.obs.push({
             concept: uuid,
             value: activeSessionMeta?.[field],
