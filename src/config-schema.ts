@@ -82,6 +82,26 @@ export const configSchema = {
       _default: "fa8fedc0-c066-4da3-8dc1-2ad8621fc480",
     },
   },
+  specificQuestions: {
+    _type: Type.Array,
+    _description: "List of specific questions to populate forms.",
+    _elements: {
+      forms: {
+        _type: Type.Array,
+        _description: "List of form UUIDs for which the question applies.",
+        _elements: {
+          _type: Type.UUID,
+        },
+        _default: [],
+      },
+      questionId: {
+        _type: Type.String,
+        _description: "ID of the question.",
+        _default: "",
+      },
+    },
+    _default: [],
+  },
 };
 
 export type Form = {
