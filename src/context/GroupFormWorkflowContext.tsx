@@ -57,6 +57,7 @@ export const initialWorkflowState = {
   activeGroupName: null, // pseudo field from state[activeFormUuid].groupName
   activeGroupMembers: [], // pseudo field from state[activeFormUuid].groupMembers
   activeSessionMeta: {
+    sessionUuid: null,
     sessionName: null,
     practitionerName: null,
     sessionDate: null,
