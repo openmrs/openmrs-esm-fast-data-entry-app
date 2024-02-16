@@ -93,6 +93,7 @@ const GroupSessionWorkspace = () => {
     activeFormUuid,
     activeGroupUuid,
     activeGroupName,
+    activeSessionUuid,
     saveEncounter,
     activeSessionMeta,
     groupVisitTypeUuid,
@@ -138,6 +139,10 @@ const GroupSessionWorkspace = () => {
         const otherIdentifiers = [
           { concept: groupSessionConcepts.cohortId, value: activeGroupUuid },
           { concept: groupSessionConcepts.cohortName, value: activeGroupName },
+          {
+            concept: groupSessionConcepts.sessionUuid,
+            value: activeSessionUuid,
+          },
         ];
         payload.obs.push(...otherIdentifiers);
         // If this is a newly created encounter and visit, add session concepts to encounter payload.
@@ -168,6 +173,7 @@ const GroupSessionWorkspace = () => {
       groupSessionConcepts,
       activeGroupUuid,
       activeGroupName,
+      activeSessionUuid,
       activePatientUuid,
       groupVisitTypeUuid,
       updateVisitUuid,

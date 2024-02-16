@@ -7,7 +7,6 @@ import {
   DatePickerInput,
 } from "@carbon/react";
 import React, { useContext } from "react";
-import { v4 as uuid } from "uuid";
 import { useConfig } from "@openmrs/esm-framework";
 import { useParams } from "react-router-dom";
 import styles from "./styles.scss";
@@ -37,7 +36,6 @@ const SessionDetailsForm = () => {
 
   const { patientUuids } = useContext(GroupFormWorkflowContext);
   const { patients, isLoading } = useGetPatients(patientUuids);
-  register("sessionUuid", { value: uuid() });
 
   return (
     <div>

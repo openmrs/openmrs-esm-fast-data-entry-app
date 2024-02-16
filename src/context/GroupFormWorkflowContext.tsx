@@ -49,6 +49,7 @@ export const initialWorkflowState = {
   workflowState: null, // pseudo field from state[activeFormUuid].workflowState
   activePatientUuid: null, // pseudo field from state[activeFormUuid].activePatientUuid
   activeEncounterUuid: null, // pseudo field from state[activeFormUuid].activeEncounterUuid
+  activeSessionUuid: null, // pseudo field from state[activeFormUuid].activeSessionUuid
   activeVisitUuid: null, // pseudo field from state[activeFormUuid].activeVisitUuid
   patientUuids: [], // pseudo field from state[activeFormUuid].patientUuids
   encounters: {}, // pseudo field from state[activeFormUuid].encounters
@@ -57,7 +58,6 @@ export const initialWorkflowState = {
   activeGroupName: null, // pseudo field from state[activeFormUuid].groupName
   activeGroupMembers: [], // pseudo field from state[activeFormUuid].groupMembers
   activeSessionMeta: {
-    sessionUuid: null,
     sessionName: null,
     practitionerName: null,
     sessionDate: null,
@@ -139,6 +139,9 @@ const GroupFormWorkflowProvider = ({ children }) => {
         workflowState:
           state.forms?.[state.activeFormUuid]?.workflowState ??
           initialWorkflowState.workflowState,
+        activeSessionUuid:
+          state.forms?.[state.activeFormUuid]?.activeSessionUuid ??
+          initialWorkflowState.activeSessionUuid,
         activePatientUuid:
           state.forms?.[state.activeFormUuid]?.activePatientUuid ??
           initialWorkflowState.activePatientUuid,
