@@ -1,4 +1,4 @@
-import { openmrsFetch } from "@openmrs/esm-framework";
+import { openmrsFetch, restBaseUrl } from "@openmrs/esm-framework";
 import { useCallback, useState } from "react";
 
 const usePostEndpoint = ({ endpointUrl }) => {
@@ -66,11 +66,11 @@ const usePostEndpoint = ({ endpointUrl }) => {
 };
 
 const usePostVisit = () => {
-  return usePostEndpoint({ endpointUrl: "/ws/rest/v1/visit" });
+  return usePostEndpoint({ endpointUrl: `${restBaseUrl}/visit` });
 };
 
 const usePostCohort = () => {
-  return usePostEndpoint({ endpointUrl: "/ws/rest/v1/cohortm/cohort" });
+  return usePostEndpoint({ endpointUrl: `${restBaseUrl}/cohortm/cohort` });
 };
 
 export { usePostEndpoint, usePostVisit, usePostCohort };
