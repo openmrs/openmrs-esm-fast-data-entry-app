@@ -15,7 +15,7 @@ const PatientSearchHeader = () => {
   const { addPatient, workflowState, activeFormUuid } =
     useContext(FormWorkflowContext);
   const handleSelectPatient = (patient) => {
-    addPatient(patient.uuid);
+    addPatient(patient);
   };
   const { t } = useTranslation();
 
@@ -33,7 +33,7 @@ const PatientSearchHeader = () => {
       <span className={styles.padded}>{t("nextPatient", "Next patient")}:</span>
       <span className={styles.searchBarWrapper}>
         <ExtensionSlot
-          extensionSlotName="patient-search-bar-slot"
+          name="patient-search-bar-slot"
           state={{
             selectPatientAction: handleSelectPatient,
             buttonProps: {

@@ -20,3 +20,7 @@
 .padded {
   padding: spacing.$spacing-05;
 }
+
+[data-extension-id=patient-search-bar]>div button {
+  height: auto;
+}

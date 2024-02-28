@@ -11,7 +11,7 @@ const GroupFormEntryWorkflow = () => {
   return (
     <GroupFormWorkflowProvider>
       <div className={styles.breadcrumbsContainer}>
-        <ExtensionSlot extensionSlotName="breadcrumbs-slot" />
+        <ExtensionSlot name="breadcrumbs-slot" />
       </div>
       <GroupSearchHeader />
       <GroupDisplayHeader />

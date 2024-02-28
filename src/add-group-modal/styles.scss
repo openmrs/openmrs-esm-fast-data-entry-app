@@ -43,3 +43,7 @@
   align-items: center;
   row-gap: spacing.$spacing-05;
 }
+
+[data-extension-id=patient-search-bar]>div button {
+  height: auto;
+}
