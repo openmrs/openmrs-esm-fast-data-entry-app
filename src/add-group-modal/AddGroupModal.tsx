@@ -36,10 +36,13 @@ const PatientRow = ({ patient, removePatient }) => {
 
     const { identifier, name } = patientInfo;
     const displayIdentifier = identifier?.[0]?.value || "";
-    const givenNames = (name?.[0]?.given || []).join(" ");
-    const displayName = name?.[0]?.family || "";
+    const givenNames = `${(name?.[0]?.given || []).join(" ")} ${
+      name?.[0]?.family || ""
+    }`;
 
-    return `${displayIdentifier} - ${givenNames} ${displayName}`;
+    return `${displayIdentifier ? `${displayIdentifier} -` : ""}${
+      givenNames ? ` ${givenNames}` : ""
+    }`.trim();
   }, [isLoading, error, patientInfo]);
 
   return (
@@ -190,7 +193,7 @@ const AddGroupModal = ({
   const updatePatientList = useCallback(
     (patient) => {
       setPatientList((patientList) => {
-        if (!patientList.find((p) => p.uuid === patient.uuid)) {
+        if (!patientList.find((p) => p.uuid === patient)) {
           return [...patientList, { uuid: patient }];
         } else {
           return patientList;

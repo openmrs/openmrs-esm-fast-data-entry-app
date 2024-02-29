@@ -17,10 +17,10 @@
   min-width: 35rem;
 }
 
-.padded {
-  padding: spacing.$spacing-05;
+.searchBarWrapper > div button {
+  height: auto;
 }
 
-[data-extension-id=patient-search-bar]>div button {
-  height: auto;
+.padded {
+  padding: spacing.$spacing-05;
 }
