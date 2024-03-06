@@ -12,7 +12,7 @@
     "build": "webpack --mode production",
     "analyze": "webpack --mode=production --env.analyze=true",
     "lint": "eslint \"src/**/*.ts\" \"src/**/*.tsx\" --fix --max-warnings=0 -c .eslintrc.js",
-    "prettier": "prettier --write \"src/**/*.{ts,tsx}\"",
+    "prettier": "prettier --write \"src/**/*.{ts,tsx}\" --list-different",
     "typescript": "tsc",
     "test": "jest --config jest.config.json --passWithNoTests",
     "verify": "concurrently 'yarn:lint' 'yarn:test' 'yarn:typescript'",
