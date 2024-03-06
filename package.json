@@ -95,7 +95,8 @@
     "i18next": "^21.10.0",
     "i18next-parser": "^6.6.0",
     "react-hook-form": "^7.34.2",
+    "turbo": "^1.12.4",
     "uuid": "^9.0.1"
   },
-  "packageManager": "yarn@3.6.4"
+  "packageManager": "yarn@4.1.1"
 }

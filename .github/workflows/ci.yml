@@ -32,6 +32,7 @@ jobs:
           name: dist
           path: |
             dist
+          overwrite: true
 
   pre_release:
     runs-on: ubuntu-latest
@@ -68,6 +69,7 @@ jobs:
           name: dist
           path: |
             dist
+          overwrite: true
 
   deploy_fast_data_entry_app:
     runs-on: ubuntu-latest
