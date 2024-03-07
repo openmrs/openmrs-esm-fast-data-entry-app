@@ -6,6 +6,7 @@ import GroupFormWorkflowContext from "../context/GroupFormWorkflowContext";
 import { FormProvider, useForm, useFormContext } from "react-hook-form";
 import CancelModal from "../CancelModal";
 import SessionDetailsForm from "./SessionDetailsForm";
+import dayjs from "dayjs";
 
 const NewGroupWorkflowButtons = () => {
   const { t } = useTranslation();
@@ -78,7 +79,12 @@ const SessionMetaWorkspace = () => {
 
   const onSubmit = (data) => {
     const { sessionDate, ...rest } = data;
-    setSessionMeta({ ...rest, sessionDate: sessionDate[0] });
+    setSessionMeta({
+      ...rest,
+      sessionDate: sessionDate.isSame(dayjs(), "day")
+        ? sessionDate
+        : sessionDate.startOf("day"),
+    });
   };
 
   if (workflowState !== "NEW_GROUP_SESSION") return null;
