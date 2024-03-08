@@ -1,4 +1,8 @@
-import { openmrsFetch, FetchResponse } from "@openmrs/esm-framework";
+import {
+  openmrsFetch,
+  FetchResponse,
+  restBaseUrl,
+} from "@openmrs/esm-framework";
 import { useCallback, useMemo } from "react";
 import useSWRInfinite from "swr/infinite";
 
@@ -111,7 +115,7 @@ const useSearchCohortInfinite = ({
   ...props
 }: SearchInfiniteProps): SearchResponse => {
   return useSearchEndpointInfinite({
-    baseUrl: "/ws/rest/v1/cohortm/cohort",
+    baseUrl: `${restBaseUrl}/cohortm/cohort`,
     resultsToFetch: 10,
     ...props,
   });

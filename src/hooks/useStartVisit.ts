@@ -4,6 +4,7 @@ import {
   showNotification,
   showToast,
   openmrsFetch,
+  restBaseUrl,
 } from "@openmrs/esm-framework";
 
 const useStartVisit = ({
@@ -61,7 +62,7 @@ const useStartVisit = ({
         visitType: data.visitType,
         location: data.location,
       };
-      openmrsFetch("/ws/rest/v1/visit", {
+      openmrsFetch(`${restBaseUrl}/visit`, {
         method: "POST",
         body: payload,
         headers: { "Content-Type": "application/json" },
@@ -73,7 +74,7 @@ const useStartVisit = ({
   );
 
   const updateEncounter = useCallback((data) => {
-    openmrsFetch("/ws/rest/v1/encounter/" + data.uuid, {
+    openmrsFetch(`${restBaseUrl}/encounter/` + data.uuid, {
       method: "POST",
       body: { visit: data.visit },
       headers: { "Content-Type": "application/json" },
