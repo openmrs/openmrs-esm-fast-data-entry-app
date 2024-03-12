@@ -17,6 +17,10 @@
   min-width: 35rem;
 }
 
+.searchBarWrapper > div button {
+  height: auto;
+}
+
 .padded {
   padding: spacing.$spacing-05;
 }

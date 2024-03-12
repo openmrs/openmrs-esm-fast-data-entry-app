@@ -16,43 +16,37 @@ import {
 } from "@carbon/react";
 import { TrashCan } from "@carbon/react/icons";
 import { useTranslation } from "react-i18next";
-import { ExtensionSlot, showToast } from "@openmrs/esm-framework";
+import { ExtensionSlot, showToast, usePatient } from "@openmrs/esm-framework";
 import styles from "./styles.scss";
 import GroupFormWorkflowContext from "../context/GroupFormWorkflowContext";
 import { usePostCohort } from "../hooks";
 
 const MemExtension = React.memo(ExtensionSlot);
 
-const buildPatientDisplay = (patient) => {
-  const givenName = patient?.name?.[0]?.given?.[0];
-  const familyName = patient?.name?.[0]?.family;
-  const identifier = patient?.identifier?.[0]?.value;
-
-  let display = identifier ? identifier + " - " : "";
-  display += (givenName || "") + " " + (familyName || "");
-  return display.replace(/\s+/g, " ");
-};
-
 const PatientRow = ({ patient, removePatient }) => {
   const { t } = useTranslation();
+  const { patient: patientInfo, error, isLoading } = usePatient(patient?.uuid);
   const onClickHandler = useCallback(
     () => removePatient(patient?.uuid),
     [patient, removePatient]
   );
+
   const patientDisplay = useMemo(() => {
-    if (!patient) {
-      return "";
-    }
+    if (isLoading || error || !patientInfo) return "";
 
-    if (patient.display) {
-      return patient.display;
-    }
+    const { identifier, name } = patientInfo;
+    const displayIdentifier = identifier?.[0]?.value || "";
+    const givenNames = `${(name?.[0]?.given || []).join(" ")} ${
+      name?.[0]?.family || ""
+    }`;
 
-    return buildPatientDisplay(patient);
-  }, [patient]);
+    return `${displayIdentifier ? `${displayIdentifier} -` : ""}${
+      givenNames ? ` ${givenNames}` : ""
+    }`.trim();
+  }, [isLoading, error, patientInfo]);
 
   return (
-    <li key={patient?.uuid} className={styles.patientRow}>
+    <li className={styles.patientRow}>
       <span>
         <Button
           kind="tertiary"
@@ -123,7 +117,12 @@ const NewGroupForm = (props) => {
         </ul>
       )}
 
-      <FormLabel>Search for patients to add to group</FormLabel>
+      <FormLabel>
+        {t(
+          "searchForPatientsToAddToGroup",
+          "Search for patients to add to group"
+        )}
+      </FormLabel>
       <div className={styles.searchBar}>
         <MemExtension
           extensionSlotName="patient-search-bar-slot"
@@ -194,8 +193,8 @@ const AddGroupModal = ({
   const updatePatientList = useCallback(
     (patient) => {
       setPatientList((patientList) => {
-        if (!patientList.find((p) => p.uuid === patient.uuid)) {
-          return [...patientList, patient];
+        if (!patientList.find((p) => p.uuid === patient)) {
+          return [...patientList, { uuid: patient }];
         } else {
           return patientList;
         }
