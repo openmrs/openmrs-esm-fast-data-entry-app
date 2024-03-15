@@ -34,8 +34,8 @@ const SessionDetailsForm = () => {
     control,
   } = useFormContext();
 
-  const { patientUuids } = useContext(GroupFormWorkflowContext);
-  const { patients, isLoading } = useGetPatients(patientUuids);
+  const { activeGroupMembers} = useContext(GroupFormWorkflowContext);
+  const { patients, isLoading } = useGetPatients(activeGroupMembers);
 
   return (
     <div>
