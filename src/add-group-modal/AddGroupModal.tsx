@@ -16,7 +16,11 @@ import {
 } from "@carbon/react";
 import { TrashCan } from "@carbon/react/icons";
 import { useTranslation } from "react-i18next";
-import { ExtensionSlot, showToast, usePatient } from "@openmrs/esm-framework";
+import {
+  ExtensionSlot,
+  fetchCurrentPatient,
+  showToast,
+} from "@openmrs/esm-framework";
 import styles from "./styles.scss";
 import GroupFormWorkflowContext from "../context/GroupFormWorkflowContext";
 import { usePostCohort } from "../hooks";
@@ -25,25 +29,10 @@ const MemExtension = React.memo(ExtensionSlot);
 
 const PatientRow = ({ patient, removePatient }) => {
   const { t } = useTranslation();
-  const { patient: patientInfo, error, isLoading } = usePatient(patient?.uuid);
   const onClickHandler = useCallback(
     () => removePatient(patient?.uuid),
     [patient, removePatient]
   );
-
-  const patientDisplay = useMemo(() => {
-    if (isLoading || error || !patientInfo) return "";
-
-    const { identifier, name } = patientInfo;
-    const displayIdentifier = identifier?.[0]?.value || "";
-    const givenNames = `${(name?.[0]?.given || []).join(" ")} ${
-      name?.[0]?.family || ""
-    }`;
-
-    return `${displayIdentifier ? `${displayIdentifier} -` : ""}${
-      givenNames ? ` ${givenNames}` : ""
-    }`.trim();
-  }, [isLoading, error, patientInfo]);
 
   return (
     <li className={styles.patientRow}>
@@ -59,8 +48,68 @@ const PatientRow = ({ patient, removePatient }) => {
           iconDescription={t("remove", "Remove")}
         />
       </span>
-      <span className={styles.patientName}>{patientDisplay}</span>
+      <span className={styles.patientName}>{patient.display}</span>
     </li>
+  );
+};
+
+const SortedPatientList = ({ patientList, removePatient }) => {
+  const [patients, setPatients] = useState([]);
+
+  const getPatients = async (uuids) => {
+    const results = await Promise.all(
+      uuids.map(async (uuid) => await fetchCurrentPatient(uuid))
+    );
+    setPatients(results);
+  };
+
+  useEffect(() => {
+    getPatients(patientList.map((obj) => obj.uuid));
+  }, [patientList]);
+
+  const sortedPatientList = useMemo(() => {
+    if (!patients || !patientList) return [];
+
+    const getPersonDisplay = (patient) => {
+      if (!patient) return null;
+
+      const { identifier, name } = patient;
+      const displayIdentifier = identifier?.[0]?.value || "";
+      const givenNames = `${(name?.[0]?.given || []).join(" ")} ${
+        name?.[0]?.family || ""
+      }`;
+
+      return `${
+        displayIdentifier ? `${displayIdentifier} -` : ""
+      } ${givenNames}`.trim();
+    };
+
+    return patientList
+      .map((obj) => {
+        return {
+          uuid: obj.uuid,
+          display: getPersonDisplay(
+            patients.find((value) => value.id === obj.uuid)
+          ),
+        };
+      })
+      .sort((a, b) => a.display?.localeCompare(b?.display));
+  }, [patients, patientList]);
+
+  return (
+    <div>
+      {
+        <ul className={styles.patientList}>
+          {sortedPatientList?.map((patient) => (
+            <PatientRow
+              patient={patient}
+              removePatient={removePatient}
+              key={patient?.uuid}
+            />
+          ))}
+        </ul>
+      }
+    </div>
   );
 };
 
@@ -106,15 +155,10 @@ const NewGroupForm = (props) => {
         </p>
       )}
       {!errors?.patientList && (
-        <ul className={styles.patientList}>
-          {patientList?.map((patient, index) => (
-            <PatientRow
-              patient={patient}
-              removePatient={removePatient}
-              key={index}
-            />
-          ))}
-        </ul>
+        <SortedPatientList
+          patientList={patientList}
+          removePatient={removePatient}
+        />
       )}
 
       <FormLabel>
@@ -144,7 +188,7 @@ const AddGroupModal = ({
   groupName = "",
   cohortUuid = undefined,
   isOpen,
-  handleCancel,
+  onPostCancel,
   onPostSubmit,
 }) => {
   const { setGroup } = useContext(GroupFormWorkflowContext);
@@ -214,6 +258,13 @@ const AddGroupModal = ({
       if (onPostSubmit) {
         onPostSubmit();
       }
+    }
+  };
+
+  const handleCancel = () => {
+    setPatientList(patients || []);
+    if (onPostCancel) {
+      onPostCancel();
     }
   };
 

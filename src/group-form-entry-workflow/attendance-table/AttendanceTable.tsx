@@ -16,12 +16,17 @@ import { useTranslation } from "react-i18next";
 import GroupFormWorkflowContext from "../../context/GroupFormWorkflowContext";
 import AddGroupModal from "../../add-group-modal/AddGroupModal";
 
+const getPatientName = (patient) =>
+  patient.display ||
+  patient.displayName ||
+  `${(patient.name?.[0]?.given || []).join(" ")} ${
+    patient.name?.[0]?.family || ""
+  }`;
+
 const PatientRow = ({ patient }) => {
   const { patientUuids, addPatientUuid, removePatientUuid } = useContext(
     GroupFormWorkflowContext
   );
-  const givenName = patient?.name?.[0]?.given?.[0];
-  const familyName = patient?.name?.[0]?.family;
   const identifier = patient?.identifier?.[0]?.value;
 
   const handleOnChange = (e, { checked }) => {
@@ -50,11 +55,7 @@ const PatientRow = ({ patient }) => {
 
   return (
     <TableRow>
-      <TableCell>
-        {patient.display ||
-          patient.displayName ||
-          [givenName, familyName].join(" ")}
-      </TableCell>
+      <TableCell>{getPatientName(patient)}</TableCell>
       <TableCell>{identifier}</TableCell>
       <TableCell>
         <Checkbox
@@ -83,7 +84,7 @@ const AttendanceTable = ({ patients }) => {
     t("patientIsPresent", "Patient is present"),
   ];
 
-  const handleCancel = useCallback(() => {
+  const onPostCancel = useCallback(() => {
     setOpen(false);
   }, []);
 
@@ -116,7 +117,7 @@ const AttendanceTable = ({ patients }) => {
           isCreate: false,
           groupName: activeGroupName,
           isOpen: isOpen,
-          handleCancel: handleCancel,
+          onPostCancel: onPostCancel,
           onPostSubmit: onPostSubmit,
         }}
       />
@@ -129,12 +130,16 @@ const AttendanceTable = ({ patients }) => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {activeGroupMembers.map((patientUuid, index) => {
-            const patient = patients.find(
-              (patient) => patient.id === patientUuid
-            );
-            return <PatientRow patient={patient} key={index} />;
-          })}
+          {activeGroupMembers
+            .map((patientUuid, index) => {
+              return patients.find((patient) => patient.id === patientUuid);
+            })
+            .sort((a, b) => {
+              return getPatientName(a).localeCompare(getPatientName(b));
+            })
+            .map((patient, index) => {
+              return <PatientRow patient={patient} key={index} />;
+            })}
         </TableBody>
       </Table>
     </div>

@@ -50,7 +50,7 @@ const GroupSearchHeader = () => {
           {...{
             isCreate: true,
             isOpen: isOpen,
-            handleCancel: handleCancel,
+            onPostCancel: handleCancel,
             onPostSubmit: onPostSubmit,
           }}
         />

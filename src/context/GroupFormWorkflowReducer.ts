@@ -80,6 +80,9 @@ const reducer = (state, action) => {
     }
 
     case "SET_GROUP": {
+      action.group.cohortMembers.sort((a, b) =>
+        a.display?.localeCompare(b?.display)
+      );
       const newState = {
         ...state,
         forms: {
