@@ -164,7 +164,10 @@ const FormBootstrap = ({
             handleEncounterCreate,
             handleOnValidate,
             showDiscardSubmitButtons: false,
-            preFilledQuestions: { ...activeSessionMeta },
+            preFilledQuestions: {
+              ...activeSessionMeta,
+              encDate: activeSessionMeta.sessionDate,
+            },
           }}
         />
       )}
