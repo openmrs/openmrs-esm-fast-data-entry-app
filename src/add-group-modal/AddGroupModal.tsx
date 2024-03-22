@@ -219,10 +219,15 @@ const AddGroupModal = ({
 
   const handleSubmit = () => {
     if (validate()) {
+      const startDate = new Date().toISOString();
       post({
         uuid: cohortUuid,
         name: name,
-        cohortMembers: patientList.map((p) => ({ patient: p.uuid })),
+        startDate: startDate,
+        cohortMembers: patientList.map((p) => ({
+          patient: p.uuid,
+          startDate: startDate,
+        })),
       });
       if (onPostSubmit) {
         onPostSubmit();
