@@ -91,6 +91,9 @@ const GroupSessionWorkspace = () => {
     activeEncounterUuid,
     activeVisitUuid,
     activeFormUuid,
+    activeGroupUuid,
+    activeGroupName,
+    activeSessionUuid,
     saveEncounter,
     activeSessionMeta,
     groupVisitTypeUuid,
@@ -125,11 +128,23 @@ const GroupSessionWorkspace = () => {
       const visitUuid = activeVisitUuid ? activeVisitUuid : uuid();
       if (!activeVisitUuid) {
         Object.entries(groupSessionConcepts).forEach(([field, uuid]) => {
-          payload.obs.push({
-            concept: uuid,
-            value: activeSessionMeta?.[field],
-          });
+          if (activeSessionMeta?.[field] != null) {
+            payload.obs.push({
+              concept: uuid,
+              value: activeSessionMeta[field],
+            });
+          }
         });
+
+        const otherIdentifiers = [
+          { concept: groupSessionConcepts.cohortId, value: activeGroupUuid },
+          { concept: groupSessionConcepts.cohortName, value: activeGroupName },
+          {
+            concept: groupSessionConcepts.sessionUuid,
+            value: activeSessionUuid,
+          },
+        ];
+        payload.obs.push(...otherIdentifiers);
         // If this is a newly created encounter and visit, add session concepts to encounter payload.
         const visitInfo = {
           startDatetime: activeSessionMeta.sessionDate,
@@ -156,6 +171,9 @@ const GroupSessionWorkspace = () => {
       activeVisitUuid,
       sessionLocation?.uuid,
       groupSessionConcepts,
+      activeGroupUuid,
+      activeGroupName,
+      activeSessionUuid,
       activePatientUuid,
       groupVisitTypeUuid,
       updateVisitUuid,
