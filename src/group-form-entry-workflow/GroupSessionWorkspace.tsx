@@ -57,7 +57,7 @@ const WorkflowNavigationButtons = () => {
         >
           {isLastPatient
             ? t("saveForm", "Save Form")
-            : t("nextPatient", "Next Patient")}
+            : t("nextPatient", "Next patient")}
         </Button>
         <Button kind="secondary" onClick={() => setCompleteModalOpen(true)}>
           {t("saveAndComplete", "Save & Complete")}
