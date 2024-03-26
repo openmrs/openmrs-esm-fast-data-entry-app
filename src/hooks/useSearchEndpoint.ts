@@ -1,6 +1,6 @@
 import {
   openmrsFetch,
-  FetchResponse,
+  type FetchResponse,
   restBaseUrl,
 } from "@openmrs/esm-framework";
 import { useCallback, useMemo } from "react";
@@ -15,12 +15,14 @@ export interface SearchResponse {
   currentPage: number;
   totalResults: number;
   setPage: (size: number | ((_size: number) => number)) => Promise<
-    FetchResponse<{
-      results: Array<Record<string, unknown>>;
-      links: Array<{
-        rel: "prev" | "next";
-      }>;
-    }>[]
+    Array<
+      FetchResponse<{
+        results: Array<Record<string, unknown>>;
+        links: Array<{
+          rel: "prev" | "next";
+        }>;
+      }>
+    >
   >;
 }
 

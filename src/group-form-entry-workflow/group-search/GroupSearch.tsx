@@ -6,7 +6,7 @@ import { EmptyDataIllustration } from "../../empty-state/EmptyDataIllustration";
 import CompactGroupResults, {
   SearchResultSkeleton,
 } from "./CompactGroupResults";
-import { GroupType } from "../../context/GroupFormWorkflowContext";
+import { type GroupType } from "../../context/GroupFormWorkflowContext";
 import { useSearchCohortInfinite } from "../../hooks/useSearchEndpoint";
 
 interface GroupSearchProps {

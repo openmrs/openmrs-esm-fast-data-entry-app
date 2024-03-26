@@ -4,7 +4,7 @@ import {
   restBaseUrl,
 } from "@openmrs/esm-framework";
 import useSWR from "swr";
-import { SpecificQuestion, SpecificQuestionConfig } from "../types";
+import { type SpecificQuestion, type SpecificQuestionConfig } from "../types";
 import { useMemo } from "react";
 
 const formUrl = `${restBaseUrl}/o3/forms`;

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { GroupType } from "../../context/GroupFormWorkflowContext";
+import { type GroupType } from "../../context/GroupFormWorkflowContext";
 import styles from "./compact-group-search.scss";
 import GroupSearch from "./GroupSearch";
 import { Button, Search } from "@carbon/react";
