@@ -1,12 +1,8 @@
-import {
-  Layer,
-  Tile,
-  TextInput,
-  TextArea,
-  DatePicker,
-  DatePickerInput,
-} from "@carbon/react";
+import { Layer, Tile, TextInput, TextArea } from "@carbon/react";
 import React, { useContext } from "react";
+import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import dayjs from "dayjs";
 import { useConfig } from "@openmrs/esm-framework";
 import { useParams } from "react-router-dom";
 import styles from "./styles.scss";
@@ -80,25 +76,22 @@ const SessionDetailsForm = () => {
                     name="sessionDate"
                     control={control}
                     rules={{ required: true }}
+                    defaultValue={dayjs()}
                     render={({ field }) => (
-                      <DatePicker
-                        datePickerType="single"
-                        size="md"
-                        maxDate={new Date()}
-                        {...field}
-                      >
-                        <DatePickerInput
-                          id="session-date"
-                          labelText={t("sessionDate", "Session Date")}
-                          placeholder="mm/dd/yyyy"
-                          size="md"
-                          invalid={errors.sessionDate}
-                          invalidText={t(
-                            "requiredField",
-                            "This field is required"
-                          )}
-                        />
-                      </DatePicker>
+                      <LocalizationProvider dateAdapter={AdapterDayjs}>
+                        <div className={`cds--form-item ${styles.sessionDate}`}>
+                          <label className="cds--label">
+                            {t("sessionDate", "Session Date")}
+                          </label>
+                          <DatePicker
+                            name="sessionDate"
+                            views={["day", "month", "year"]}
+                            maxDate={dayjs()}
+                            className="cds--date-picker__input"
+                            {...field}
+                          />
+                        </div>
+                      </LocalizationProvider>
                     )}
                   />
                   <TextArea

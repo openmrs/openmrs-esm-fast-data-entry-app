@@ -95,3 +95,19 @@
   @include type.type-style("helper-text-02");
   color: colors.$red-60;
 }
+
+.sessionDate input {
+    background-color: var(--cds-field);
+    font-family: var(--cds-code-02-font-family, "IBM Plex Mono");
+    font-size: var(--cds-code-02-font-size, .875rem);
+    height: 2.5rem;
+    letter-spacing: var(--cds-code-02-letter-spacing, .32px);
+    line-height: var(--cds-code-02-line-height, 1.42857);
+    padding: 0 1rem;
+}
+
+.sessionDate fieldset {
+    border: 0;
+    border-bottom: 1px solid var(--cds-border-strong);
+    border-radius: 0;
+}
