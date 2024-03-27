@@ -82,27 +82,31 @@ const SortedPatientList = (props) => {
     const getPersonDisplay = (patient) => {
       if (!patient) return null;
 
-      const { identifier, name } = patient;
-      const displayIdentifier = identifier?.[0]?.value || "";
-      const givenNames = `${(name?.[0]?.given || []).join(" ")} ${
-        name?.[0]?.family || ""
-      }`;
+      const displayIdentifier = patient.identifier?.[0]?.value || "";
 
       return `${
         displayIdentifier ? `${displayIdentifier} -` : ""
-      } ${givenNames}`.trim();
+      } ${getPersonName(patient)}`.trim();
+    };
+
+    const getPersonName = (patient) => {
+      if (!patient) return null;
+      return `${(patient.name?.[0]?.given || []).join(" ")} ${
+        patient.name?.[0]?.family
+      }`.trim();
     };
 
     return patientList
       .map((obj) => {
         return {
           uuid: obj.uuid,
+          name: getPersonName(obj),
           display: getPersonDisplay(
             patients.find((value) => value.id === obj.uuid)
           ),
         };
       })
-      .sort((a, b) => a.display?.localeCompare(b?.display));
+      .sort((a, b) => a.name?.localeCompare(b?.name));
   }, [patients, patientList]);
 
   return (
