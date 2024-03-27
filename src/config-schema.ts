@@ -81,6 +81,21 @@ export const configSchema = {
       _description: "UUID of concept for Session Notes",
       _default: "fa8fedc0-c066-4da3-8dc1-2ad8621fc480",
     },
+    cohortId: {
+      _type: Type.UUID,
+      _description: "UUID of concept for cohort identifier",
+      _default: "5461f231-7e59-4be8-93a4-6d49fd13c00a",
+    },
+    cohortName: {
+      _type: Type.UUID,
+      _description: "UUID of concept for cohort name",
+      _default: "6029f289-92a6-4a68-80f1-3078d0152449",
+    },
+    sessionUuid: {
+      _type: Type.UUID,
+      _description: "UUID of concept for session identifier",
+      _default: "6a803908-8a5b-4598-adea-19358c83529a",
+    },
   },
   specificQuestions: {
     _type: Type.Array,

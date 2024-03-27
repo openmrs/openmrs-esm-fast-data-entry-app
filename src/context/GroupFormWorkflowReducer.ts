@@ -1,5 +1,6 @@
 import { navigate } from "@openmrs/esm-framework";
 import { initialWorkflowState } from "./FormWorkflowContext";
+import { v4 as uuid } from "uuid";
 
 export const fdeGroupWorkflowStorageVersion = "1.0.5";
 export const fdeGroupWorkflowStorageName =
@@ -19,6 +20,7 @@ const initialFormState = {
   activePatientUuid: null,
   activeEncounterUuid: null,
   activeVisitUuid: null,
+  activeSessionUuid: null,
   patientUuids: [],
   encounters: {},
   visits: {},
@@ -45,6 +47,7 @@ const reducer = (state, action) => {
           thisSavedForm?.patientUuids?.[0] ||
           // something probably went wrong...
           null;
+        const activeSessionUuid = thisSavedForm?.activeSessionUuid || uuid();
         newState = {
           ...savedDataObject,
           // set current form to this one
@@ -60,6 +63,7 @@ const reducer = (state, action) => {
                 thisSavedForm?.encounters?.[activePatientUuid] || null,
               activeVisitUuid:
                 thisSavedForm?.visits?.[activePatientUuid] || null,
+              activeSessionUuid: activeSessionUuid,
             },
           },
         };
@@ -102,6 +106,7 @@ const reducer = (state, action) => {
             activePatientUuid: null,
             activeEncounterUuid: null,
             activeVisitUuid: null,
+            activeSessionUuid: null,
           },
         },
       };
@@ -122,6 +127,7 @@ const reducer = (state, action) => {
             activePatientUuid: null,
             activeEncounterUuid: null,
             activeVisitUuid: null,
+            activeSessionUuid: null,
           },
         },
       };
@@ -147,6 +153,7 @@ const reducer = (state, action) => {
               state.forms[state.activeFormUuid].visits[
                 state.forms[state.activeFormUuid].patientUuids?.[0]
               ] || null,
+            activeSessionUuid: uuid(),
             workflowState: "EDIT_FORM",
           },
         },
@@ -231,6 +238,7 @@ const reducer = (state, action) => {
               activePatientUuid: nextPatientUuid,
               activeEncounterUuid: encounters[nextPatientUuid] || null,
               activeVisitUuid: thisForm.visits[nextPatientUuid] || null,
+              activeSessionUuid: thisForm.activeSessionUuid,
               workflowState: "EDIT_FORM",
             },
           },
@@ -251,6 +259,7 @@ const reducer = (state, action) => {
             activeVisitUuid:
               state.forms[state.activeFormUuid].visits[action.patientUuid],
             activePatientUuid: action.patientUuid,
+            activeSessionUuid: action.activeSessionUuid,
             workflowState: "EDIT_FORM",
           },
         },
@@ -394,6 +403,7 @@ const reducer = (state, action) => {
             activeEncounterUuid: null,
             activVisitUuid: null,
             activePatientUuid: null,
+            activeSessionUuid: null,
             workflowState: "REVIEW",
           },
         },
