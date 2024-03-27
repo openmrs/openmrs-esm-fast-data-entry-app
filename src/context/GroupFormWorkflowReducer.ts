@@ -217,18 +217,19 @@ const reducer = (state, action) => {
                 thisForm.patientUuids.length - 1
               )
             ];
+        const encounters = {
+          ...thisForm.encounters,
+          [thisForm.activePatientUuid]: action.encounterUuid,
+        };
         const newState = {
           ...state,
           forms: {
             ...state.forms,
             [state.activeFormUuid]: {
               ...thisForm,
-              encounters: {
-                ...thisForm.encounters,
-                [thisForm.activePatientUuid]: action.encounterUuid,
-              },
+              encounters: encounters,
               activePatientUuid: nextPatientUuid,
-              activeEncounterUuid: thisForm.encounters[nextPatientUuid] || null,
+              activeEncounterUuid: encounters[nextPatientUuid] || null,
               activeVisitUuid: thisForm.visits[nextPatientUuid] || null,
               workflowState: "EDIT_FORM",
             },
