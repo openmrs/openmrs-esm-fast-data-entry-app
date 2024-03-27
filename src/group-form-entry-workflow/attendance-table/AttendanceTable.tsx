@@ -131,15 +131,17 @@ const AttendanceTable = ({ patients }) => {
         </TableHead>
         <TableBody>
           {activeGroupMembers
-            .map((patientUuid, index) => {
-              return patients.find((patient) => patient.id === patientUuid);
-            })
-            .sort((a, b) => {
-              return getPatientName(a).localeCompare(getPatientName(b));
-            })
-            .map((patient, index) => {
-              return <PatientRow patient={patient} key={index} />;
-            })}
+            .map((patientUuid) =>
+              patients.find((patient) => patient.id === patientUuid)
+            )
+            .filter(Boolean)
+            .sort((a, b) =>
+              getPatientName(a).localeCompare(
+                getPatientName(b).map((patient, index) => (
+                  <PatientRow patient={patient} key={index} />
+                ))
+              )
+            )}
         </TableBody>
       </Table>
     </div>
