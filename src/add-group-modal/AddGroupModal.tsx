@@ -53,22 +53,31 @@ const PatientRow = ({ patient, removePatient }) => {
   );
 };
 
-const SortedPatientList = ({ patientList, removePatient }) => {
+const SortedPatientList = (props) => {
+  const { patientList, removePatient } = props;
+
   const [patients, setPatients] = useState([]);
 
-  const getPatients = async (uuids) => {
-    const results = await Promise.all(
-      uuids.map(async (uuid) => await fetchCurrentPatient(uuid))
-    );
-    setPatients(results);
-  };
-
   useEffect(() => {
-    getPatients(patientList.map((obj) => obj.uuid));
+    let ignore = false;
+
+    const getPatients = async (uuids) => {
+      return await Promise.all(uuids.map((uuid) => fetchCurrentPatient(uuid)));
+    };
+
+    getPatients(patientList.map((obj) => obj.uuid)).then((result) => {
+      if (!ignore) {
+        setPatients(result);
+      }
+    });
+
+    return () => {
+      ignore = true;
+    };
   }, [patientList]);
 
   const sortedPatientList = useMemo(() => {
-    if (!patients || !patientList) return [];
+    if (patients?.length === 0 || patientList?.length === 0) return [];
 
     const getPersonDisplay = (patient) => {
       if (!patient) return null;
