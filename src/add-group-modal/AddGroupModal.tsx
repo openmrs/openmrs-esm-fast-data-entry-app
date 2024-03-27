@@ -165,7 +165,7 @@ const NewGroupForm = (props) => {
       </FormLabel>
       <div className={styles.searchBar}>
         <MemExtension
-          extensionSlotName="patient-search-bar-slot"
+          name="patient-search-bar-slot"
           state={{
             selectPatientAction: updatePatientList,
             buttonProps: {
