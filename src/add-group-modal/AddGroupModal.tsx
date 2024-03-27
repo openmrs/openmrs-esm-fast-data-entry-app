@@ -97,19 +97,15 @@ const SortedPatientList = ({ patientList, removePatient }) => {
   }, [patients, patientList]);
 
   return (
-    <div>
-      {
-        <ul className={styles.patientList}>
-          {sortedPatientList?.map((patient) => (
-            <PatientRow
-              patient={patient}
-              removePatient={removePatient}
-              key={patient?.uuid}
-            />
-          ))}
-        </ul>
-      }
-    </div>
+    <ul className={styles.patientList}>
+      {sortedPatientList?.map((patient) => (
+        <PatientRow
+          patient={patient}
+          removePatient={removePatient}
+          key={patient?.uuid}
+        />
+      ))}
+    </ul>
   );
 };
 
