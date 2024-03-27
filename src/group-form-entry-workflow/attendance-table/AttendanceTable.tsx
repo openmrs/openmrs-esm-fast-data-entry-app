@@ -135,13 +135,10 @@ const AttendanceTable = ({ patients }) => {
               patients.find((patient) => patient.id === patientUuid)
             )
             .filter(Boolean)
-            .sort((a, b) =>
-              getPatientName(a).localeCompare(
-                getPatientName(b).map((patient, index) => (
-                  <PatientRow patient={patient} key={index} />
-                ))
-              )
-            )}
+            .sort((a, b) => getPatientName(a).localeCompare(getPatientName(b)))
+            .map((patient, index) => (
+              <PatientRow patient={patient} key={index} />
+            ))}
         </TableBody>
       </Table>
     </div>
