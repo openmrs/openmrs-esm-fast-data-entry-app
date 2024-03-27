@@ -16,7 +16,11 @@ import {
 } from "@carbon/react";
 import { TrashCan } from "@carbon/react/icons";
 import { useTranslation } from "react-i18next";
-import { ExtensionSlot, showToast, usePatient } from "@openmrs/esm-framework";
+import {
+  ExtensionSlot,
+  fetchCurrentPatient,
+  showToast,
+} from "@openmrs/esm-framework";
 import styles from "./styles.scss";
 import GroupFormWorkflowContext from "../context/GroupFormWorkflowContext";
 import { usePostCohort } from "../hooks";
@@ -25,25 +29,10 @@ const MemExtension = React.memo(ExtensionSlot);
 
 const PatientRow = ({ patient, removePatient }) => {
   const { t } = useTranslation();
-  const { patient: patientInfo, error, isLoading } = usePatient(patient?.uuid);
   const onClickHandler = useCallback(
     () => removePatient(patient?.uuid),
     [patient, removePatient]
   );
-
-  const patientDisplay = useMemo(() => {
-    if (isLoading || error || !patientInfo) return "";
-
-    const { identifier, name } = patientInfo;
-    const displayIdentifier = identifier?.[0]?.value || "";
-    const givenNames = `${(name?.[0]?.given || []).join(" ")} ${
-      name?.[0]?.family || ""
-    }`;
-
-    return `${displayIdentifier ? `${displayIdentifier} -` : ""}${
-      givenNames ? ` ${givenNames}` : ""
-    }`.trim();
-  }, [isLoading, error, patientInfo]);
 
   return (
     <li className={styles.patientRow}>
@@ -59,8 +48,77 @@ const PatientRow = ({ patient, removePatient }) => {
           iconDescription={t("remove", "Remove")}
         />
       </span>
-      <span className={styles.patientName}>{patientDisplay}</span>
+      <span className={styles.patientName}>{patient.display}</span>
     </li>
+  );
+};
+
+const SortedPatientList = (props) => {
+  const { patientList, removePatient } = props;
+
+  const [patients, setPatients] = useState([]);
+
+  useEffect(() => {
+    let ignore = false;
+
+    const getPatients = async (uuids) => {
+      return await Promise.all(uuids.map((uuid) => fetchCurrentPatient(uuid)));
+    };
+
+    getPatients(patientList.map((obj) => obj.uuid)).then((result) => {
+      if (!ignore) {
+        setPatients(result);
+      }
+    });
+
+    return () => {
+      ignore = true;
+    };
+  }, [patientList]);
+
+  const sortedPatientList = useMemo(() => {
+    if (patients?.length === 0 || patientList?.length === 0) return [];
+
+    const getPersonDisplay = (patient) => {
+      if (!patient) return null;
+
+      const displayIdentifier = patient.identifier?.[0]?.value || "";
+
+      return `${
+        displayIdentifier ? `${displayIdentifier} -` : ""
+      } ${getPersonName(patient)}`.trim();
+    };
+
+    const getPersonName = (patient) => {
+      if (!patient) return null;
+      return `${(patient.name?.[0]?.given || []).join(" ")} ${
+        patient.name?.[0]?.family
+      }`.trim();
+    };
+
+    return patientList
+      .map((obj) => {
+        return {
+          uuid: obj.uuid,
+          name: getPersonName(obj),
+          display: getPersonDisplay(
+            patients.find((value) => value.id === obj.uuid)
+          ),
+        };
+      })
+      .sort((a, b) => a.name?.localeCompare(b?.name));
+  }, [patients, patientList]);
+
+  return (
+    <ul className={styles.patientList}>
+      {sortedPatientList?.map((patient) => (
+        <PatientRow
+          patient={patient}
+          removePatient={removePatient}
+          key={patient?.uuid}
+        />
+      ))}
+    </ul>
   );
 };
 
@@ -106,15 +164,10 @@ const NewGroupForm = (props) => {
         </p>
       )}
       {!errors?.patientList && (
-        <ul className={styles.patientList}>
-          {patientList?.map((patient, index) => (
-            <PatientRow
-              patient={patient}
-              removePatient={removePatient}
-              key={index}
-            />
-          ))}
-        </ul>
+        <SortedPatientList
+          patientList={patientList}
+          removePatient={removePatient}
+        />
       )}
 
       <FormLabel>
@@ -125,7 +178,7 @@ const NewGroupForm = (props) => {
       </FormLabel>
       <div className={styles.searchBar}>
         <MemExtension
-          extensionSlotName="patient-search-bar-slot"
+          name="patient-search-bar-slot"
           state={{
             selectPatientAction: updatePatientList,
             buttonProps: {
@@ -144,7 +197,7 @@ const AddGroupModal = ({
   groupName = "",
   cohortUuid = undefined,
   isOpen,
-  handleCancel,
+  onPostCancel,
   onPostSubmit,
 }) => {
   const { setGroup } = useContext(GroupFormWorkflowContext);
@@ -214,6 +267,13 @@ const AddGroupModal = ({
       if (onPostSubmit) {
         onPostSubmit();
       }
+    }
+  };
+
+  const handleCancel = () => {
+    setPatientList(patients || []);
+    if (onPostCancel) {
+      onPostCancel();
     }
   };
 
