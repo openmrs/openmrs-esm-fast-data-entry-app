@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useReducer } from "react";
 import reducer from "./GroupFormWorkflowReducer";
 import { useParams } from "react-router-dom";
-import { Type, useSession } from "@openmrs/esm-framework";
+import { type Type, useSession } from "@openmrs/esm-framework";
 import useGetSystemSetting from "../hooks/useGetSystemSetting";
 interface ParamTypes {
   formUuid?: string;

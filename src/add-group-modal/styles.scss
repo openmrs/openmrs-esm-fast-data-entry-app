@@ -1,5 +1,5 @@
-@use '@carbon/styles/scss/spacing';
 @use '@carbon/colors';
+@use '@carbon/layout';
 
 .modal {
   :global(.cds--modal) {
@@ -36,7 +36,7 @@
 
 .patientName {
   flex-grow: 1;
-  padding-left: spacing.$spacing-05;
+  padding-left: layout.$spacing-05;
 }
 
 .loading {
@@ -45,5 +45,5 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  row-gap: spacing.$spacing-05;
+  row-gap: layout.$spacing-05;
 }

@@ -1,10 +1,8 @@
-@use '@carbon/styles/scss/spacing';
 @use '@carbon/colors';
-// @use '@carbon/styles/scss/type';
-// @import '~@openmrs/esm-styleguide/src/vars';
+@use '@carbon/layout';
 
 .cardContainer {
-  padding: spacing.$spacing-05;
+  padding: layout.$spacing-05;
   display: flex;
   cursor: pointer;
 }

@@ -1,7 +1,7 @@
 import { useConfig, useSession } from "@openmrs/esm-framework";
 import { Tab, Tabs, TabList, TabPanels, TabPanel } from "@carbon/react";
 import React from "react";
-import { Config } from "../config-schema";
+import { type Config } from "../config-schema";
 import { useGetAllForms } from "../hooks";
 import FormsTable from "./forms-table";
 import styles from "./styles.scss";
@@ -44,7 +44,7 @@ const prepareRowsForTable = (rawFormData) => {
 };
 
 const FormsPage = () => {
-  const config = useConfig() as Config;
+  const config = useConfig();
   const { t } = useTranslation();
   const { formCategories, formCategoriesToShow } = config;
   const { forms, isLoading, error } = useGetAllForms();

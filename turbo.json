@@ -1,0 +1,18 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "pipeline": {
+    "build": {
+      "outputs": ["dist/**"]
+    },
+    "extract-translations": {
+      "outputs": ["./translations/*"]
+    },
+    "lint": {},
+    "test": {},
+    "coverage": {
+      "outputs": ["coverage/**"]
+    },
+    "typescript": {},
+    "verify": {}
+  }
+}

@@ -1,7 +1,7 @@
 import React from "react";
 import { TextInput, Select, SelectItem } from "@carbon/react";
-import { FieldValues, UseFormRegister } from "react-hook-form";
-import { SpecificQuestion } from "../../types";
+import { type FieldValues, type UseFormRegister } from "react-hook-form";
+import { type SpecificQuestion } from "../../types";
 
 interface ConfigurableQuestionsSectionProps {
   specificQuestions: Array<SpecificQuestion>;

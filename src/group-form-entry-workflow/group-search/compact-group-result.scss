@@ -1,18 +1,17 @@
-@use '@carbon/styles/scss/spacing';
-@use '@carbon/styles/scss/type';
-@use '@carbon/styles/scss/colors';
-@import '~@openmrs/esm-styleguide/src/vars';
+@use '@carbon/colors';
+@use '@carbon/layout';
+@use '@carbon/type';
 
 .patientSearchResult {
   text-decoration: none;
   display: flex;
   align-items: center;
-  border-bottom: 1px solid $ui-03;
-  padding: 0 spacing.$spacing-04;
+  border-bottom: 1px solid colors.$gray-20;
+  padding: 0 layout.$spacing-04;
 
   &:hover,
   &:focus {
-    background-color: $ui-01;
+    background-color: colors.$gray-10;
   }
 }
 
@@ -29,9 +28,9 @@
 }
 
 .patientAvatar {
-  width: spacing.$spacing-09;
-  height: spacing.$spacing-09;
-  margin: spacing.$spacing-03 spacing.$spacing-05 spacing.$spacing-03 0;
+  width: layout.$spacing-09;
+  height: layout.$spacing-09;
+  margin: layout.$spacing-03 layout.$spacing-05 layout.$spacing-03 0;
   border-radius: 1px;
 }
 
@@ -39,26 +38,26 @@
   width: 100%;
   display: flex;
   flex-flow: column wrap;
-  margin: spacing.$spacing-05;
+  margin: layout.$spacing-05;
   cursor: pointer;
 }
 
 .demographics {
-  margin-top: spacing.$spacing-03;
+  margin-top: layout.$spacing-03;
   @include type.type-style('body-compact-02');
-  color: $text-02;
+  color: colors.$gray-70;
 }
 
 .identifiers {
   @include type.type-style('body-compact-02');
-  color: $ui-04;
+  color: colors.$gray-50;
 }
 
 .actionsContainer {
-  padding-top: spacing.$spacing-03;
-  margin-top: spacing.$spacing-05;
+  padding-top: layout.$spacing-03;
+  margin-top: layout.$spacing-05;
 }
 
 .middot {
-  margin: 0 spacing.$spacing-03;
+  margin: 0 layout.$spacing-03;
 }
