@@ -137,14 +137,12 @@ const FormBootstrap = ({
   // FIXME This should not be necessary
   const [showForm, setShowForm] = useState(true);
 
-  useEffect(() => {
-    if (patientUuid && formUuid && patient) {
-      setShowForm(false);
-      setTimeout(() => {
-        setShowForm(true);
-      });
-    }
-  }, [patientUuid, formUuid, patient]);
+  const updateFormComponent = () => {
+    setShowForm(false);
+    setTimeout(() => {
+      setShowForm(true);
+    });
+  };
 
   return (
     <div>
@@ -160,7 +158,10 @@ const FormBootstrap = ({
             patient,
             encounterUuid: encounterUuid ?? "",
             closeWorkspace: () => undefined,
-            handlePostResponse,
+            handlePostResponse: (encounter) => {
+              handlePostResponse(encounter);
+              updateFormComponent();
+            },
             handleEncounterCreate,
             handleOnValidate,
             showDiscardSubmitButtons: false,
