@@ -16,17 +16,12 @@ import { useTranslation } from "react-i18next";
 import GroupFormWorkflowContext from "../../context/GroupFormWorkflowContext";
 import AddGroupModal from "../../add-group-modal/AddGroupModal";
 
-const getPatientName = (patient) =>
-  patient.display ||
-  patient.displayName ||
-  `${(patient.name?.[0]?.given || []).join(" ")} ${
-    patient.name?.[0]?.family || ""
-  }`;
-
 const PatientRow = ({ patient }) => {
   const { patientUuids, addPatientUuid, removePatientUuid } = useContext(
     GroupFormWorkflowContext
   );
+  const givenName = patient?.name?.[0]?.given?.[0];
+  const familyName = patient?.name?.[0]?.family;
   const identifier = patient?.identifier?.[0]?.value;
 
   const handleOnChange = (e, { checked }) => {
@@ -55,7 +50,11 @@ const PatientRow = ({ patient }) => {
 
   return (
     <TableRow>
-      <TableCell>{getPatientName(patient)}</TableCell>
+      <TableCell>
+        {patient.display ||
+          patient.displayName ||
+          [givenName, familyName].join(" ")}
+      </TableCell>
       <TableCell>{identifier}</TableCell>
       <TableCell>
         <Checkbox
@@ -130,15 +129,12 @@ const AttendanceTable = ({ patients }) => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {activeGroupMembers
-            .map((patientUuid) =>
-              patients.find((patient) => patient.id === patientUuid)
-            )
-            .filter(Boolean)
-            .sort((a, b) => getPatientName(a).localeCompare(getPatientName(b)))
-            .map((patient, index) => (
-              <PatientRow patient={patient} key={index} />
-            ))}
+          {activeGroupMembers.map((patientUuid, index) => {
+            const patient = patients.find(
+              (patient) => patient.id === patientUuid
+            );
+            return <PatientRow patient={patient} key={index} />;
+          })}
         </TableBody>
       </Table>
     </div>

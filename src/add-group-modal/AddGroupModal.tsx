@@ -20,6 +20,7 @@ import {
   ExtensionSlot,
   fetchCurrentPatient,
   showToast,
+  usePatient,
 } from "@openmrs/esm-framework";
 import styles from "./styles.scss";
 import GroupFormWorkflowContext from "../context/GroupFormWorkflowContext";
@@ -29,10 +30,25 @@ const MemExtension = React.memo(ExtensionSlot);
 
 const PatientRow = ({ patient, removePatient }) => {
   const { t } = useTranslation();
+  const { patient: patientInfo, error, isLoading } = usePatient(patient?.uuid);
   const onClickHandler = useCallback(
     () => removePatient(patient?.uuid),
     [patient, removePatient]
   );
+
+  const patientDisplay = useMemo(() => {
+    if (isLoading || error || !patientInfo) return "";
+
+    const { identifier, name } = patientInfo;
+    const displayIdentifier = identifier?.[0]?.value || "";
+    const givenNames = `${(name?.[0]?.given || []).join(" ")} ${
+      name?.[0]?.family || ""
+    }`;
+
+    return `${displayIdentifier ? `${displayIdentifier} -` : ""}${
+      givenNames ? ` ${givenNames}` : ""
+    }`.trim();
+  }, [isLoading, error, patientInfo]);
 
   return (
     <li className={styles.patientRow}>
@@ -48,77 +64,8 @@ const PatientRow = ({ patient, removePatient }) => {
           iconDescription={t("remove", "Remove")}
         />
       </span>
-      <span className={styles.patientName}>{patient.display}</span>
+      <span className={styles.patientName}>{patientDisplay}</span>
     </li>
-  );
-};
-
-const SortedPatientList = (props) => {
-  const { patientList, removePatient } = props;
-
-  const [patients, setPatients] = useState([]);
-
-  useEffect(() => {
-    let ignore = false;
-
-    const getPatients = async (uuids) => {
-      return await Promise.all(uuids.map((uuid) => fetchCurrentPatient(uuid)));
-    };
-
-    getPatients(patientList.map((obj) => obj.uuid)).then((result) => {
-      if (!ignore) {
-        setPatients(result);
-      }
-    });
-
-    return () => {
-      ignore = true;
-    };
-  }, [patientList]);
-
-  const sortedPatientList = useMemo(() => {
-    if (patients?.length === 0 || patientList?.length === 0) return [];
-
-    const getPersonDisplay = (patient) => {
-      if (!patient) return null;
-
-      const displayIdentifier = patient.identifier?.[0]?.value || "";
-
-      return `${
-        displayIdentifier ? `${displayIdentifier} -` : ""
-      } ${getPersonName(patient)}`.trim();
-    };
-
-    const getPersonName = (patient) => {
-      if (!patient) return null;
-      return `${(patient.name?.[0]?.given || []).join(" ")} ${
-        patient.name?.[0]?.family
-      }`.trim();
-    };
-
-    return patientList
-      .map((obj) => {
-        return {
-          uuid: obj.uuid,
-          name: getPersonName(obj),
-          display: getPersonDisplay(
-            patients.find((value) => value.id === obj.uuid)
-          ),
-        };
-      })
-      .sort((a, b) => a.name?.localeCompare(b?.name));
-  }, [patients, patientList]);
-
-  return (
-    <ul className={styles.patientList}>
-      {sortedPatientList?.map((patient) => (
-        <PatientRow
-          patient={patient}
-          removePatient={removePatient}
-          key={patient?.uuid}
-        />
-      ))}
-    </ul>
   );
 };
 
@@ -164,10 +111,15 @@ const NewGroupForm = (props) => {
         </p>
       )}
       {!errors?.patientList && (
-        <SortedPatientList
-          patientList={patientList}
-          removePatient={removePatient}
-        />
+        <ul className={styles.patientList}>
+          {patientList?.map((patient, index) => (
+            <PatientRow
+              patient={patient}
+              removePatient={removePatient}
+              key={patient.uuid}
+            />
+          ))}
+        </ul>
       )}
 
       <FormLabel>
@@ -192,14 +144,14 @@ const NewGroupForm = (props) => {
 };
 
 const AddGroupModal = ({
-  patients = undefined,
-  isCreate = undefined,
-  groupName = "",
-  cohortUuid = undefined,
-  isOpen,
-  onPostCancel,
-  onPostSubmit,
-}) => {
+                         patients = undefined,
+                         isCreate = undefined,
+                         groupName = "",
+                         cohortUuid = undefined,
+                         isOpen,
+                         onPostCancel,
+                         onPostSubmit,
+                       }) => {
   const { setGroup } = useContext(GroupFormWorkflowContext);
   const { t } = useTranslation();
   const [errors, setErrors] = useState({});
@@ -244,17 +196,25 @@ const AddGroupModal = ({
   );
 
   const updatePatientList = useCallback(
-    (patient) => {
-      setPatientList((patientList) => {
-        if (!patientList.find((p) => p.uuid === patient)) {
-          return [...patientList, { uuid: patient }];
-        } else {
-          return patientList;
-        }
-      });
+    (patientUuid) => {
+      if (!patientList.find((p) => p.uuid === patientUuid)) {
+        fetchCurrentPatient(patientUuid).then((result) => {
+          const newPatient = {
+            uuid: patientUuid,
+            name: [result?.name?.[0]?.given, result?.name?.[0]?.family].join(
+              " "
+            ),
+          };
+          setPatientList(
+            [...patientList, newPatient].sort((a, b) =>
+              a.name?.localeCompare(b?.name, { sensitivity: "base" })
+            )
+          );
+        });
+      }
       setErrors((errors) => ({ ...errors, patientList: null }));
     },
-    [setPatientList]
+    [patientList, setPatientList]
   );
 
   const handleSubmit = () => {
