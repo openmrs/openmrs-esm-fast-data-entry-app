@@ -83,7 +83,7 @@ const AttendanceTable = ({ patients }) => {
     t("patientIsPresent", "Patient is present"),
   ];
 
-  const handleCancel = useCallback(() => {
+  const onPostCancel = useCallback(() => {
     setOpen(false);
   }, []);
 
@@ -116,7 +116,7 @@ const AttendanceTable = ({ patients }) => {
           isCreate: false,
           groupName: activeGroupName,
           isOpen: isOpen,
-          handleCancel: handleCancel,
+          onPostCancel: onPostCancel,
           onPostSubmit: onPostSubmit,
         }}
       />
