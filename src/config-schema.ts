@@ -81,6 +81,11 @@ export const configSchema = {
       _description: "UUID of concept for Session Notes",
       _default: "fa8fedc0-c066-4da3-8dc1-2ad8621fc480",
     },
+    cohortTypeId: {
+      _type: Type.UUID,
+      _description: "UUID of cohort type",
+      _default: "eee9970e-7ca0-4e8c-a280-c33e9d5f6a04",
+    },
     cohortId: {
       _type: Type.UUID,
       _description: "UUID of concept for cohort identifier",
