@@ -14,8 +14,11 @@ const GroupSearchHeader = () => {
   );
   const [isOpen, setOpen] = useState(false);
   const handleSelectGroup = (group) => {
-    group.cohortMembers.sort((a, b) =>
-      a.display?.localeCompare(b?.display, undefined, { sensitivity: "base" })
+    group.cohortMembers.sort((a, b) => {
+        let aName = a?.patient?.person?.names?.[0]?.display;
+        let bName = b?.patient?.person?.names?.[0]?.display;
+        return aName.localeCompare(bName, undefined, {sensitivity: "base"});
+      }
     );
     setGroup(group);
   };
