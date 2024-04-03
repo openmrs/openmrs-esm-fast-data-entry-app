@@ -144,14 +144,14 @@ const NewGroupForm = (props) => {
 };
 
 const AddGroupModal = ({
-                         patients = undefined,
-                         isCreate = undefined,
-                         groupName = "",
-                         cohortUuid = undefined,
-                         isOpen,
-                         onPostCancel,
-                         onPostSubmit,
-                       }) => {
+  patients = undefined,
+  isCreate = undefined,
+  groupName = "",
+  cohortUuid = undefined,
+  isOpen,
+  onPostCancel,
+  onPostSubmit,
+}) => {
   const { setGroup } = useContext(GroupFormWorkflowContext);
   const { t } = useTranslation();
   const [errors, setErrors] = useState({});
@@ -197,17 +197,19 @@ const AddGroupModal = ({
 
   const updatePatientList = useCallback(
     (patientUuid) => {
+      function getPatientName(patient) {
+        return [patient?.name?.[0]?.given, patient?.name?.[0]?.family].join(
+          " "
+        );
+      }
       if (!patientList.find((p) => p.uuid === patientUuid)) {
         fetchCurrentPatient(patientUuid).then((result) => {
-          const newPatient = {
-            uuid: patientUuid,
-            name: [result?.name?.[0]?.given, result?.name?.[0]?.family].join(
-              " "
-            ),
-          };
+          const newPatient = { uuid: patientUuid, ...result };
           setPatientList(
             [...patientList, newPatient].sort((a, b) =>
-              a.name?.localeCompare(b?.name, { sensitivity: "base" })
+              getPatientName(a).localeCompare(getPatientName(b), undefined, {
+                sensitivity: "base",
+              })
             )
           );
         });
