@@ -15,7 +15,7 @@ const GroupSearchHeader = () => {
   const [isOpen, setOpen] = useState(false);
   const handleSelectGroup = (group) => {
     group.cohortMembers.sort((a, b) =>
-      a.display?.localeCompare(b?.display, { sensitivity: "base" })
+      a.display?.localeCompare(b?.display, undefined, { sensitivity: "base" })
     );
     setGroup(group);
   };
