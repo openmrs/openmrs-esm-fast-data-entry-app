@@ -234,7 +234,7 @@ const reducer = (state, action) => {
             ...state.forms,
             [state.activeFormUuid]: {
               ...thisForm,
-              encounters: encounters,
+              encounters,
               activePatientUuid: nextPatientUuid,
               activeEncounterUuid: encounters[nextPatientUuid] || null,
               activeVisitUuid: thisForm.visits[nextPatientUuid] || null,
