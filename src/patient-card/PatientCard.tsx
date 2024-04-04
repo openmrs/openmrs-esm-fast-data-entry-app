@@ -1,8 +1,8 @@
-import { CheckmarkOutline, WarningAlt } from "@carbon/react/icons";
-import { SkeletonText } from "@carbon/react";
-import React from "react";
-import useGetPatient from "../hooks/useGetPatient";
-import styles from "./styles.scss";
+import { CheckmarkOutline, WarningAlt } from '@carbon/react/icons';
+import { SkeletonText } from '@carbon/react';
+import React from 'react';
+import useGetPatient from '../hooks/useGetPatient';
+import styles from './styles.scss';
 
 const CardContainer = ({ onClick = () => undefined, active, children }) => {
   return (
@@ -17,12 +17,7 @@ const CardContainer = ({ onClick = () => undefined, active, children }) => {
   );
 };
 
-const PatientCard = ({
-  patientUuid,
-  activePatientUuid,
-  editEncounter,
-  encounters,
-}) => {
+const PatientCard = ({ patientUuid, activePatientUuid, editEncounter, encounters }) => {
   const patient = useGetPatient(patientUuid);
   const givenName = patient?.name?.[0]?.given?.[0];
   const familyName = patient?.name?.[0]?.family;
@@ -39,17 +34,10 @@ const PatientCard = ({
   const active = activePatientUuid === patientUuid;
 
   return (
-    <CardContainer
-      onClick={active ? () => undefined : () => editEncounter(patientUuid)}
-      active={active}
-    >
+    <CardContainer onClick={active ? () => undefined : () => editEncounter(patientUuid)} active={active}>
       <div className={styles.patientInfo}>
         <div className={styles.identifier}>{identifier}</div>
-        <div
-          className={`${styles.displayName} ${
-            active && styles.activeDisplayName
-          }`}
-        >
+        <div className={`${styles.displayName} ${active && styles.activeDisplayName}`}>
           {givenName} {familyName}
         </div>
       </div>

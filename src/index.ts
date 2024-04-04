@@ -1,30 +1,18 @@
-import {
-  getAsyncLifecycle,
-  defineConfigSchema,
-  registerBreadcrumbs,
-} from "@openmrs/esm-framework";
-import { configSchema } from "./config-schema";
+import { getAsyncLifecycle, defineConfigSchema, registerBreadcrumbs } from '@openmrs/esm-framework';
+import { configSchema } from './config-schema';
 
-const moduleName = "@openmrs/esm-fast-data-entry-app";
+const moduleName = '@openmrs/esm-fast-data-entry-app';
 
 const options = {
-  featureName: "fast-data-entry-app",
+  featureName: 'fast-data-entry-app',
   moduleName,
 };
 
-export const importTranslation = require.context(
-  "../translations",
-  false,
-  /.json$/,
-  "lazy"
-);
+export const importTranslation = require.context('../translations', false, /.json$/, 'lazy');
 
-export const root = getAsyncLifecycle(() => import("./Root"), options);
+export const root = getAsyncLifecycle(() => import('./Root'), options);
 
-export const formsAppMenuLink = getAsyncLifecycle(
-  () => import("./forms-app-menu-link"),
-  options
-);
+export const formsAppMenuLink = getAsyncLifecycle(() => import('./forms-app-menu-link'), options);
 
 export function startupApp() {
   defineConfigSchema(moduleName, configSchema);
@@ -32,7 +20,7 @@ export function startupApp() {
   registerBreadcrumbs([
     {
       path: `${window.spaBase}/forms`,
-      title: "Forms",
+      title: 'Forms',
       parent: `${window.spaBase}/home`,
     },
   ]);

@@ -1,3 +1,3 @@
-import FormEntryWorkflow from "./FormEntryWorkflow";
+import FormEntryWorkflow from './FormEntryWorkflow';
 
 export default FormEntryWorkflow;

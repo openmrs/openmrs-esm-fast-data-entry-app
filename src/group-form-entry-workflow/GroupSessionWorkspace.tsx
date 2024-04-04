@@ -1,48 +1,32 @@
-import {
-  getGlobalStore,
-  useConfig,
-  useSession,
-  useStore,
-} from "@openmrs/esm-framework";
-import { Button } from "@carbon/react";
-import React, { useCallback, useContext, useEffect, useState } from "react";
-import PatientCard from "../patient-card/PatientCard";
-import styles from "./styles.scss";
-import { useTranslation } from "react-i18next";
-import { v4 as uuid } from "uuid";
-import GroupFormWorkflowContext from "../context/GroupFormWorkflowContext";
-import FormBootstrap from "../FormBootstrap";
-import CompleteModal from "../CompleteModal";
-import CancelModal from "../CancelModal";
+import { getGlobalStore, useConfig, useSession, useStore } from '@openmrs/esm-framework';
+import { Button } from '@carbon/react';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
+import PatientCard from '../patient-card/PatientCard';
+import styles from './styles.scss';
+import { useTranslation } from 'react-i18next';
+import { v4 as uuid } from 'uuid';
+import GroupFormWorkflowContext from '../context/GroupFormWorkflowContext';
+import FormBootstrap from '../FormBootstrap';
+import CompleteModal from '../CompleteModal';
+import CancelModal from '../CancelModal';
 
-const formStore = getGlobalStore("ampath-form-state");
+const formStore = getGlobalStore('ampath-form-state');
 
 const WorkflowNavigationButtons = () => {
   const context = useContext(GroupFormWorkflowContext);
-  const {
-    activeFormUuid,
-    submitForNext,
-    patientUuids,
-    activePatientUuid,
-    workflowState,
-  } = context;
+  const { activeFormUuid, submitForNext, patientUuids, activePatientUuid, workflowState } = context;
   const store = useStore(formStore);
   const formState = store[activeFormUuid];
   const navigationDisabled =
-    (formState !== "ready" || workflowState !== "EDIT_FORM") &&
-    formState !== "readyWithValidationErrors";
+    (formState !== 'ready' || workflowState !== 'EDIT_FORM') && formState !== 'readyWithValidationErrors';
   const [cancelModalOpen, setCancelModalOpen] = useState(false);
   const [completeModalOpen, setCompleteModalOpen] = useState(false);
   const { t } = useTranslation();
 
-  const isLastPatient =
-    activePatientUuid === patientUuids[patientUuids.length - 1];
+  const isLastPatient = activePatientUuid === patientUuids[patientUuids.length - 1];
 
   const handleClickNext = () => {
-    if (
-      workflowState === "EDIT_FORM" ||
-      formState === "readyWithValidationErrors"
-    ) {
+    if (workflowState === 'EDIT_FORM' || formState === 'readyWithValidationErrors') {
       submitForNext();
     }
   };
@@ -50,33 +34,18 @@ const WorkflowNavigationButtons = () => {
   return (
     <>
       <div className={styles.rightPanelActionButtons}>
-        <Button
-          kind="primary"
-          onClick={handleClickNext}
-          disabled={navigationDisabled}
-        >
-          {isLastPatient
-            ? t("saveForm", "Save Form")
-            : t("nextPatient", "Next patient")}
+        <Button kind="primary" onClick={handleClickNext} disabled={navigationDisabled}>
+          {isLastPatient ? t('saveForm', 'Save Form') : t('nextPatient', 'Next patient')}
         </Button>
         <Button kind="secondary" onClick={() => setCompleteModalOpen(true)}>
-          {t("saveAndComplete", "Save & Complete")}
+          {t('saveAndComplete', 'Save & Complete')}
         </Button>
         <Button kind="tertiary" onClick={() => setCancelModalOpen(true)}>
-          {t("cancel", "Cancel")}
+          {t('cancel', 'Cancel')}
         </Button>
       </div>
-      <CancelModal
-        open={cancelModalOpen}
-        setOpen={setCancelModalOpen}
-        context={context}
-      />
-      <CompleteModal
-        open={completeModalOpen}
-        setOpen={setCompleteModalOpen}
-        context={context}
-        validateFirst={false}
-      />
+      <CancelModal open={cancelModalOpen} setOpen={setCancelModalOpen} context={context} />
+      <CompleteModal open={completeModalOpen} setOpen={setCompleteModalOpen} context={context} validateFirst={false} />
     </>
   );
 };
@@ -177,7 +146,7 @@ const GroupSessionWorkspace = () => {
       activePatientUuid,
       groupVisitTypeUuid,
       updateVisitUuid,
-    ]
+    ],
   );
 
   // Once form has been posted, save the new encounter uuid so we can edit it later
@@ -187,17 +156,17 @@ const GroupSessionWorkspace = () => {
         saveEncounter(encounter.uuid);
       }
     },
-    [saveEncounter]
+    [saveEncounter],
   );
 
   const switchPatient = useCallback(
     (patientUuid) => {
       submitForNext(patientUuid);
     },
-    [submitForNext]
+    [submitForNext],
   );
 
-  if (workflowState === "NEW_GROUP_SESSION") return null;
+  if (workflowState === 'NEW_GROUP_SESSION') return null;
 
   return (
     <div className={styles.workspace}>
@@ -214,7 +183,7 @@ const GroupSessionWorkspace = () => {
           />
         </div>
         <div className={styles.rightPanel}>
-          <h4>{t("formsFilled", "Forms filled")}</h4>
+          <h4>{t('formsFilled', 'Forms filled')}</h4>
           <div className={styles.patientCardsSection}>
             {patientUuids?.map((patientUuid) => (
               <PatientCard

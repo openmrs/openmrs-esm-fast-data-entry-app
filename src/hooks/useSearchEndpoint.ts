@@ -1,10 +1,6 @@
-import {
-  openmrsFetch,
-  type FetchResponse,
-  restBaseUrl,
-} from "@openmrs/esm-framework";
-import { useCallback, useMemo } from "react";
-import useSWRInfinite from "swr/infinite";
+import { openmrsFetch, type FetchResponse, restBaseUrl } from '@openmrs/esm-framework';
+import { useCallback, useMemo } from 'react';
+import useSWRInfinite from 'swr/infinite';
 
 export interface SearchResponse {
   data: Array<Record<string, unknown>> | null;
@@ -19,7 +15,7 @@ export interface SearchResponse {
       FetchResponse<{
         results: Array<Record<string, unknown>>;
         links: Array<{
-          rel: "prev" | "next";
+          rel: 'prev' | 'next';
         }>;
       }>
     >
@@ -34,29 +30,18 @@ interface SearchInfiniteProps {
   resultsToFetch?: number;
 }
 
-const useSearchEndpointInfinite = (
-  arg0: SearchInfiniteProps
-): SearchResponse => {
-  const {
-    baseUrl,
-    searchTerm,
-    parameters,
-    searching = true,
-    resultsToFetch = 10,
-  } = arg0;
+const useSearchEndpointInfinite = (arg0: SearchInfiniteProps): SearchResponse => {
+  const { baseUrl, searchTerm, parameters, searching = true, resultsToFetch = 10 } = arg0;
 
   const getUrl = useCallback(
     (
       page: number,
       prevPageData: FetchResponse<{
         results: Array<Record<string, unknown>>;
-        links: Array<{ rel: "prev" | "next" }>;
-      }>
+        links: Array<{ rel: 'prev' | 'next' }>;
+      }>,
     ) => {
-      if (
-        prevPageData &&
-        !prevPageData?.data?.links.some((link) => link.rel === "next")
-      ) {
+      if (prevPageData && !prevPageData?.data?.links.some((link) => link.rel === 'next')) {
         return null;
       }
       let url = `${baseUrl}?q=${searchTerm}`;
@@ -78,13 +63,13 @@ const useSearchEndpointInfinite = (
       }
       return url;
     },
-    [baseUrl, searchTerm, parameters, resultsToFetch]
+    [baseUrl, searchTerm, parameters, resultsToFetch],
   );
 
   const { data, isValidating, setSize, error, size } = useSWRInfinite<
     FetchResponse<{
       results: Array<Record<string, unknown>>;
-      links: Array<{ rel: "prev" | "next" }>;
+      links: Array<{ rel: 'prev' | 'next' }>;
       totalCount: number;
     }>,
     Error
@@ -92,30 +77,22 @@ const useSearchEndpointInfinite = (
 
   const results = useMemo(
     () => ({
-      data: data
-        ? [].concat(...(data?.map((resp) => resp?.data?.results) ?? []))
-        : null,
+      data: data ? [].concat(...(data?.map((resp) => resp?.data?.results) ?? [])) : null,
       isLoading: !data && !error,
       error,
-      hasMore: data?.length
-        ? !!data[data.length - 1].data?.links?.some(
-            (link) => link.rel === "next"
-          )
-        : false,
+      hasMore: data?.length ? !!data[data.length - 1].data?.links?.some((link) => link.rel === 'next') : false,
       loadingNewData: isValidating,
       setPage: setSize,
       currentPage: size,
       totalResults: data?.[0]?.data?.totalCount,
     }),
-    [data, isValidating, error, setSize, size]
+    [data, isValidating, error, setSize, size],
   );
 
   return results;
 };
 
-const useSearchCohortInfinite = ({
-  ...props
-}: SearchInfiniteProps): SearchResponse => {
+const useSearchCohortInfinite = ({ ...props }: SearchInfiniteProps): SearchResponse => {
   return useSearchEndpointInfinite({
     baseUrl: `${restBaseUrl}/cohortm/cohort`,
     resultsToFetch: 10,

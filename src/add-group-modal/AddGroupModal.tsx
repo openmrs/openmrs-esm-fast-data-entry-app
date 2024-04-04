@@ -1,54 +1,27 @@
-import React, {
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
-import {
-  ComposedModal,
-  Button,
-  ModalHeader,
-  ModalFooter,
-  ModalBody,
-  TextInput,
-  FormLabel,
-} from "@carbon/react";
-import { TrashCan } from "@carbon/react/icons";
-import { useTranslation } from "react-i18next";
-import {
-  ExtensionSlot,
-  fetchCurrentPatient,
-  showToast,
-  useConfig,
-  usePatient,
-} from "@openmrs/esm-framework";
-import styles from "./styles.scss";
-import GroupFormWorkflowContext from "../context/GroupFormWorkflowContext";
-import { usePostCohort } from "../hooks";
+import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import { ComposedModal, Button, ModalHeader, ModalFooter, ModalBody, TextInput, FormLabel } from '@carbon/react';
+import { TrashCan } from '@carbon/react/icons';
+import { useTranslation } from 'react-i18next';
+import { ExtensionSlot, fetchCurrentPatient, showToast, useConfig, usePatient } from '@openmrs/esm-framework';
+import styles from './styles.scss';
+import GroupFormWorkflowContext from '../context/GroupFormWorkflowContext';
+import { usePostCohort } from '../hooks';
 
 const MemExtension = React.memo(ExtensionSlot);
 
 const PatientRow = ({ patient, removePatient }) => {
   const { t } = useTranslation();
   const { patient: patientInfo, error, isLoading } = usePatient(patient?.uuid);
-  const onClickHandler = useCallback(
-    () => removePatient(patient?.uuid),
-    [patient, removePatient]
-  );
+  const onClickHandler = useCallback(() => removePatient(patient?.uuid), [patient, removePatient]);
 
   const patientDisplay = useMemo(() => {
-    if (isLoading || error || !patientInfo) return "";
+    if (isLoading || error || !patientInfo) return '';
 
     const { identifier, name } = patientInfo;
-    const displayIdentifier = identifier?.[0]?.value || "";
-    const givenNames = `${(name?.[0]?.given || []).join(" ")} ${
-      name?.[0]?.family || ""
-    }`;
+    const displayIdentifier = identifier?.[0]?.value || '';
+    const givenNames = `${(name?.[0]?.given || []).join(' ')} ${name?.[0]?.family || ''}`;
 
-    return `${displayIdentifier ? `${displayIdentifier} -` : ""}${
-      givenNames ? ` ${givenNames}` : ""
-    }`.trim();
+    return `${displayIdentifier ? `${displayIdentifier} -` : ''}${givenNames ? ` ${givenNames}` : ''}`.trim();
   }, [isLoading, error, patientInfo]);
 
   return (
@@ -62,7 +35,7 @@ const PatientRow = ({ patient, removePatient }) => {
           renderIcon={TrashCan}
           tooltipAlignment="start"
           tooltipPosition="top"
-          iconDescription={t("remove", "Remove")}
+          iconDescription={t('remove', 'Remove')}
         />
       </span>
       <span className={styles.patientName}>{patientDisplay}</span>
@@ -71,71 +44,50 @@ const PatientRow = ({ patient, removePatient }) => {
 };
 
 const NewGroupForm = (props) => {
-  const {
-    name,
-    setName,
-    patientList,
-    updatePatientList,
-    errors,
-    validate,
-    removePatient,
-  } = props;
+  const { name, setName, patientList, updatePatientList, errors, validate, removePatient } = props;
   const { t } = useTranslation();
 
   return (
     <div
       style={{
-        display: "flex",
-        flexDirection: "column",
-        rowGap: "1rem",
+        display: 'flex',
+        flexDirection: 'column',
+        rowGap: '1rem',
       }}
     >
       <TextInput
-        labelText={t("newGroupName", "New Group Name")}
+        labelText={t('newGroupName', 'New Group Name')}
         value={name}
         onChange={(e) => setName(e.target.value)}
-        onBlur={() => validate("name")}
+        onBlur={() => validate('name')}
       />
       {errors?.name && (
         <p className={styles.formError}>
-          {errors.name === "required"
-            ? t("groupNameError", "Please enter a group name.")
-            : errors.name}
+          {errors.name === 'required' ? t('groupNameError', 'Please enter a group name.') : errors.name}
         </p>
       )}
       <FormLabel>
-        {patientList.length} {t("patientsInGroup", "Patients in group")}
+        {patientList.length} {t('patientsInGroup', 'Patients in group')}
       </FormLabel>
       {errors?.patientList && (
-        <p className={styles.formError}>
-          {t("noPatientError", "Please enter at least one patient.")}
-        </p>
+        <p className={styles.formError}>{t('noPatientError', 'Please enter at least one patient.')}</p>
       )}
       {!errors?.patientList && (
         <ul className={styles.patientList}>
           {patientList?.map((patient, index) => (
-            <PatientRow
-              patient={patient}
-              removePatient={removePatient}
-              key={patient.uuid}
-            />
+            <PatientRow patient={patient} removePatient={removePatient} key={patient.uuid} />
           ))}
         </ul>
       )}
 
-      <FormLabel>
-        {t(
-          "searchForPatientsToAddToGroup",
-          "Search for patients to add to group"
-        )}
-      </FormLabel>
+      <FormLabel>{t('searchForPatientsToAddToGroup', 'Search for patients to add to group')}</FormLabel>
       <div className={styles.searchBar}>
         <MemExtension
           extensionSlotName="patient-search-bar-slot"
           state={{
             selectPatientAction: updatePatientList,
             buttonProps: {
-              kind: "secondary",
+              kind: 'secondary',
             },
           }}
         />
@@ -147,7 +99,7 @@ const NewGroupForm = (props) => {
 const AddGroupModal = ({
   patients = undefined,
   isCreate = undefined,
-  groupName = "",
+  groupName = '',
   cohortUuid = undefined,
   isOpen,
   onPostCancel,
@@ -163,30 +115,28 @@ const AddGroupModal = ({
 
   const removePatient = useCallback(
     (patientUuid: string) =>
-      setPatientList((patientList) =>
-        patientList.filter((patient) => patient.uuid !== patientUuid)
-      ),
-    [setPatientList]
+      setPatientList((patientList) => patientList.filter((patient) => patient.uuid !== patientUuid)),
+    [setPatientList],
   );
 
   const validate = useCallback(
     (field?: string | undefined) => {
       let valid = true;
       if (field) {
-        valid = field === "name" ? !!name : !!patientList.length;
+        valid = field === 'name' ? !!name : !!patientList.length;
         setErrors((errors) => ({
           ...errors,
-          [field]: valid ? null : "required",
+          [field]: valid ? null : 'required',
         }));
       } else {
         if (!name) {
-          setErrors((errors) => ({ ...errors, name: "required" }));
+          setErrors((errors) => ({ ...errors, name: 'required' }));
           valid = false;
         } else {
           setErrors((errors) => ({ ...errors, name: null }));
         }
         if (!patientList.length) {
-          setErrors((errors) => ({ ...errors, patientList: "required" }));
+          setErrors((errors) => ({ ...errors, patientList: 'required' }));
           valid = false;
         } else {
           setErrors((errors) => ({ ...errors, patientList: null }));
@@ -194,15 +144,13 @@ const AddGroupModal = ({
       }
       return valid;
     },
-    [name, patientList.length]
+    [name, patientList.length],
   );
 
   const updatePatientList = useCallback(
     (patientUuid) => {
       function getPatientName(patient) {
-        return [patient?.name?.[0]?.given, patient?.name?.[0]?.family].join(
-          " "
-        );
+        return [patient?.name?.[0]?.given, patient?.name?.[0]?.family].join(' ');
       }
       if (!patientList.find((p) => p.uuid === patientUuid)) {
         fetchCurrentPatient(patientUuid).then((result) => {
@@ -210,15 +158,15 @@ const AddGroupModal = ({
           setPatientList(
             [...patientList, newPatient].sort((a, b) =>
               getPatientName(a).localeCompare(getPatientName(b), undefined, {
-                sensitivity: "base",
-              })
-            )
+                sensitivity: 'base',
+              }),
+            ),
           );
         });
       }
       setErrors((errors) => ({ ...errors, patientList: null }));
     },
-    [patientList, setPatientList]
+    [patientList, setPatientList],
   );
 
   const handleSubmit = () => {
@@ -256,20 +204,13 @@ const AddGroupModal = ({
   useEffect(() => {
     if (error) {
       showToast({
-        kind: "error",
-        title: t("postError", "POST Error"),
-        description:
-          error.message ??
-          t("unknownPostError", "An unknown error occurred while saving data"),
+        kind: 'error',
+        title: t('postError', 'POST Error'),
+        description: error.message ?? t('unknownPostError', 'An unknown error occurred while saving data'),
       });
       if (error.fieldErrors) {
         setErrors(
-          Object.fromEntries(
-            Object.entries(error.fieldErrors).map(([key, value]) => [
-              key,
-              value?.[0]?.message,
-            ])
-          )
+          Object.fromEntries(Object.entries(error.fieldErrors).map(([key, value]) => [key, value?.[0]?.message])),
         );
       }
     }
@@ -278,11 +219,7 @@ const AddGroupModal = ({
   return (
     <div className={styles.modal}>
       <ComposedModal open={isOpen} onClose={handleCancel}>
-        <ModalHeader>
-          {isCreate
-            ? t("createNewGroup", "Create New Group")
-            : t("editGroup", "Edit Group")}
-        </ModalHeader>
+        <ModalHeader>{isCreate ? t('createNewGroup', 'Create New Group') : t('editGroup', 'Edit Group')}</ModalHeader>
         <ModalBody>
           <NewGroupForm
             {...{
@@ -298,10 +235,10 @@ const AddGroupModal = ({
         </ModalBody>
         <ModalFooter>
           <Button kind="secondary" onClick={handleCancel}>
-            {t("cancel", "Cancel")}
+            {t('cancel', 'Cancel')}
           </Button>
           <Button kind="primary" onClick={handleSubmit}>
-            {isCreate ? t("createGroup", "Create Group") : t("save", "Save")}
+            {isCreate ? t('createGroup', 'Create Group') : t('save', 'Save')}
           </Button>
         </ModalFooter>
       </ComposedModal>

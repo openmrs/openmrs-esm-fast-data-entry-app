@@ -1,5 +1,5 @@
-import { openmrsFetch, restBaseUrl } from "@openmrs/esm-framework";
-import { useCallback, useState } from "react";
+import { openmrsFetch, restBaseUrl } from '@openmrs/esm-framework';
+import { useCallback, useState } from 'react';
 
 const usePostEndpoint = ({ endpointUrl }) => {
   const [submissionInProgress, setSubmissionInProgress] = useState(null);
@@ -14,7 +14,7 @@ const usePostEndpoint = ({ endpointUrl }) => {
       }
       setResult(result.data);
     },
-    [error]
+    [error],
   );
 
   const onError = useCallback(
@@ -25,7 +25,7 @@ const usePostEndpoint = ({ endpointUrl }) => {
       }
       setError(error?.responseBody?.error ?? error?.responseBody ?? error);
     },
-    [result]
+    [result],
   );
 
   const post = useCallback(
@@ -34,20 +34,20 @@ const usePostEndpoint = ({ endpointUrl }) => {
 
       let path = endpointUrl;
       if (data.uuid) {
-        path += "/" + data.uuid;
+        path += '/' + data.uuid;
       }
 
       return openmrsFetch(path, {
-        method: "POST",
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: data,
       })
         .then(onFormPosted)
         .catch(onError);
     },
-    [endpointUrl, onError, onFormPosted]
+    [endpointUrl, onError, onFormPosted],
   );
 
   const reset = () => {

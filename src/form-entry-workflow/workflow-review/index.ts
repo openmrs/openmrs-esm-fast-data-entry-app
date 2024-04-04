@@ -1,3 +1,3 @@
-import WorkflowReview from "./WorkflowReview";
+import WorkflowReview from './WorkflowReview';
 
 export default WorkflowReview;

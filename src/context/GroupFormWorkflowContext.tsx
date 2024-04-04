@@ -1,8 +1,8 @@
-import React, { useEffect, useMemo, useReducer } from "react";
-import reducer from "./GroupFormWorkflowReducer";
-import { useParams } from "react-router-dom";
-import { type Type, useSession } from "@openmrs/esm-framework";
-import useGetSystemSetting from "../hooks/useGetSystemSetting";
+import React, { useEffect, useMemo, useReducer } from 'react';
+import reducer from './GroupFormWorkflowReducer';
+import { useParams } from 'react-router-dom';
+import { type Type, useSession } from '@openmrs/esm-framework';
+import useGetSystemSetting from '../hooks/useGetSystemSetting';
 interface ParamTypes {
   formUuid?: string;
 }
@@ -75,10 +75,8 @@ const GroupFormWorkflowContext = React.createContext({
 const GroupFormWorkflowProvider = ({ children }) => {
   const { user } = useSession();
   const { formUuid } = useParams() as ParamTypes;
-  const activeFormUuid = formUuid.split("&")[0];
-  const systemSetting = useGetSystemSetting(
-    "@openmrs/esm-fast-data-entry-app.groupSessionVisitTypeUuid"
-  );
+  const activeFormUuid = formUuid.split('&')[0];
+  const systemSetting = useGetSystemSetting('@openmrs/esm-fast-data-entry-app.groupSessionVisitTypeUuid');
   const groupVisitTypeUuid = systemSetting?.result?.data?.results?.[0]?.value;
   const [state, dispatch] = useReducer(reducer, {
     ...initialWorkflowState,
@@ -89,37 +87,32 @@ const GroupFormWorkflowProvider = ({ children }) => {
     () => ({
       initializeWorkflowState: ({ activeFormUuid }) =>
         dispatch({
-          type: "INITIALIZE_WORKFLOW_STATE",
+          type: 'INITIALIZE_WORKFLOW_STATE',
           activeFormUuid,
           userUuid: user.uuid,
         }),
-      setGroup: (group) => dispatch({ type: "SET_GROUP", group }),
-      unsetGroup: () => dispatch({ type: "UNSET_GROUP" }),
-      setSessionMeta: (meta) => dispatch({ type: "SET_SESSION_META", meta }),
-      addPatientUuid: (patientUuid) =>
-        dispatch({ type: "ADD_PATIENT_UUID", patientUuid }),
-      removePatientUuid: (patientUuid) =>
-        dispatch({ type: "REMOVE_PATIENT_UUID", patientUuid }),
-      openPatientSearch: () => dispatch({ type: "OPEN_PATIENT_SEARCH" }),
+      setGroup: (group) => dispatch({ type: 'SET_GROUP', group }),
+      unsetGroup: () => dispatch({ type: 'UNSET_GROUP' }),
+      setSessionMeta: (meta) => dispatch({ type: 'SET_SESSION_META', meta }),
+      addPatientUuid: (patientUuid) => dispatch({ type: 'ADD_PATIENT_UUID', patientUuid }),
+      removePatientUuid: (patientUuid) => dispatch({ type: 'REMOVE_PATIENT_UUID', patientUuid }),
+      openPatientSearch: () => dispatch({ type: 'OPEN_PATIENT_SEARCH' }),
       saveEncounter: (encounterUuid) =>
         dispatch({
-          type: "SAVE_ENCOUNTER",
+          type: 'SAVE_ENCOUNTER',
           encounterUuid,
         }),
-      validateForNext: () => dispatch({ type: "VALIDATE_FOR_NEXT" }),
-      validateForComplete: () => dispatch({ type: "VALIDATE_FOR_COMPLETE" }),
-      updateVisitUuid: (visitUuid) =>
-        dispatch({ type: "UPDATE_VISIT_UUID", visitUuid }),
-      submitForNext: (nextPatientUuid) =>
-        dispatch({ type: "SUBMIT_FOR_NEXT", nextPatientUuid }),
-      submitForComplete: () => dispatch({ type: "SUBMIT_FOR_COMPLETE" }),
-      editEncounter: (patientUuid) =>
-        dispatch({ type: "EDIT_ENCOUNTER", patientUuid }),
-      goToReview: () => dispatch({ type: "GO_TO_REVIEW" }),
-      destroySession: () => dispatch({ type: "DESTROY_SESSION" }),
-      closeSession: () => dispatch({ type: "CLOSE_SESSION" }),
+      validateForNext: () => dispatch({ type: 'VALIDATE_FOR_NEXT' }),
+      validateForComplete: () => dispatch({ type: 'VALIDATE_FOR_COMPLETE' }),
+      updateVisitUuid: (visitUuid) => dispatch({ type: 'UPDATE_VISIT_UUID', visitUuid }),
+      submitForNext: (nextPatientUuid) => dispatch({ type: 'SUBMIT_FOR_NEXT', nextPatientUuid }),
+      submitForComplete: () => dispatch({ type: 'SUBMIT_FOR_COMPLETE' }),
+      editEncounter: (patientUuid) => dispatch({ type: 'EDIT_ENCOUNTER', patientUuid }),
+      goToReview: () => dispatch({ type: 'GO_TO_REVIEW' }),
+      destroySession: () => dispatch({ type: 'DESTROY_SESSION' }),
+      closeSession: () => dispatch({ type: 'CLOSE_SESSION' }),
     }),
-    [user]
+    [user],
   );
 
   // if formUuid isn't a part of state yet, grab it from the url params
@@ -136,39 +129,21 @@ const GroupFormWorkflowProvider = ({ children }) => {
         groupVisitTypeUuid,
         ...state,
         ...actions,
-        workflowState:
-          state.forms?.[state.activeFormUuid]?.workflowState ??
-          initialWorkflowState.workflowState,
+        workflowState: state.forms?.[state.activeFormUuid]?.workflowState ?? initialWorkflowState.workflowState,
         activeSessionUuid:
-          state.forms?.[state.activeFormUuid]?.activeSessionUuid ??
-          initialWorkflowState.activeSessionUuid,
+          state.forms?.[state.activeFormUuid]?.activeSessionUuid ?? initialWorkflowState.activeSessionUuid,
         activePatientUuid:
-          state.forms?.[state.activeFormUuid]?.activePatientUuid ??
-          initialWorkflowState.activePatientUuid,
+          state.forms?.[state.activeFormUuid]?.activePatientUuid ?? initialWorkflowState.activePatientUuid,
         activeEncounterUuid:
-          state.forms?.[state.activeFormUuid]?.activeEncounterUuid ??
-          initialWorkflowState.activeEncounterUuid,
-        activeVisitUuid:
-          state.forms?.[state.activeFormUuid]?.activeVisitUuid ??
-          initialWorkflowState.activeVisitUuid,
-        patientUuids:
-          state.forms?.[state.activeFormUuid]?.patientUuids ??
-          initialWorkflowState.patientUuids,
-        encounters:
-          state.forms?.[state.activeFormUuid]?.encounters ??
-          initialWorkflowState.encounters,
-        activeGroupUuid:
-          state.forms?.[state.activeFormUuid]?.groupUuid ??
-          initialWorkflowState.activeGroupUuid,
-        activeGroupName:
-          state.forms?.[state.activeFormUuid]?.groupName ??
-          initialWorkflowState.activeGroupName,
+          state.forms?.[state.activeFormUuid]?.activeEncounterUuid ?? initialWorkflowState.activeEncounterUuid,
+        activeVisitUuid: state.forms?.[state.activeFormUuid]?.activeVisitUuid ?? initialWorkflowState.activeVisitUuid,
+        patientUuids: state.forms?.[state.activeFormUuid]?.patientUuids ?? initialWorkflowState.patientUuids,
+        encounters: state.forms?.[state.activeFormUuid]?.encounters ?? initialWorkflowState.encounters,
+        activeGroupUuid: state.forms?.[state.activeFormUuid]?.groupUuid ?? initialWorkflowState.activeGroupUuid,
+        activeGroupName: state.forms?.[state.activeFormUuid]?.groupName ?? initialWorkflowState.activeGroupName,
         activeGroupMembers:
-          state.forms?.[state.activeFormUuid]?.groupMembers ??
-          initialWorkflowState.activeGroupMembers,
-        activeSessionMeta:
-          state.forms?.[state.activeFormUuid]?.sessionMeta ??
-          initialWorkflowState.activeSessionMeta,
+          state.forms?.[state.activeFormUuid]?.groupMembers ?? initialWorkflowState.activeGroupMembers,
+        activeSessionMeta: state.forms?.[state.activeFormUuid]?.sessionMeta ?? initialWorkflowState.activeSessionMeta,
       }}
     >
       {children}

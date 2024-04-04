@@ -1,3 +1,3 @@
-import FormReviewCard from "./FormReviewCard";
+import FormReviewCard from './FormReviewCard';
 
 export default FormReviewCard;

@@ -1,16 +1,8 @@
-import { useCallback, useState } from "react";
-import { useTranslation } from "react-i18next";
-import {
-  showNotification,
-  showToast,
-  openmrsFetch,
-  restBaseUrl,
-} from "@openmrs/esm-framework";
+import { useCallback, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { showNotification, showToast, openmrsFetch, restBaseUrl } from '@openmrs/esm-framework';
 
-const useStartVisit = ({
-  showSuccessNotification = true,
-  showErrorNotification = true,
-}) => {
+const useStartVisit = ({ showSuccessNotification = true, showErrorNotification = true }) => {
   const { t } = useTranslation();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [success, setSuccess] = useState(null);
@@ -24,16 +16,13 @@ const useStartVisit = ({
       if (showSuccessNotification) {
         showToast({
           critical: true,
-          kind: "success",
-          description: t(
-            "visitStartedSuccessfully",
-            `${result?.data?.visitType?.display} started successfully`
-          ),
-          title: t("visitStarted", "Visit started"),
+          kind: 'success',
+          description: t('visitStartedSuccessfully', `${result?.data?.visitType?.display} started successfully`),
+          title: t('visitStarted', 'Visit started'),
         });
       }
     },
-    [t, showSuccessNotification]
+    [t, showSuccessNotification],
   );
 
   const onError = useCallback(
@@ -43,14 +32,14 @@ const useStartVisit = ({
       setError(error);
       if (showErrorNotification) {
         showNotification({
-          title: t("startVisitError", "Error starting visit"),
-          kind: "error",
+          title: t('startVisitError', 'Error starting visit'),
+          kind: 'error',
           critical: true,
           description: error?.message,
         });
       }
     },
-    [t, showErrorNotification]
+    [t, showErrorNotification],
   );
 
   const saveVisit = useCallback(
@@ -63,21 +52,21 @@ const useStartVisit = ({
         location: data.location,
       };
       openmrsFetch(`${restBaseUrl}/visit`, {
-        method: "POST",
+        method: 'POST',
         body: payload,
-        headers: { "Content-Type": "application/json" },
+        headers: { 'Content-Type': 'application/json' },
       })
         .then(onSave)
         .catch(onError);
     },
-    [onError, onSave]
+    [onError, onSave],
   );
 
   const updateEncounter = useCallback((data) => {
     openmrsFetch(`${restBaseUrl}/encounter/` + data.uuid, {
-      method: "POST",
+      method: 'POST',
       body: { visit: data.visit },
-      headers: { "Content-Type": "application/json" },
+      headers: { 'Content-Type': 'application/json' },
     });
   }, []);
 

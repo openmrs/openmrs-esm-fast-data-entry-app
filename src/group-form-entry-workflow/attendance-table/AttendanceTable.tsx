@@ -1,5 +1,5 @@
-import React, { useCallback, useContext, useMemo, useState } from "react";
-import { Edit } from "@carbon/react/icons";
+import React, { useCallback, useContext, useMemo, useState } from 'react';
+import { Edit } from '@carbon/react/icons';
 
 import {
   Checkbox,
@@ -11,15 +11,13 @@ import {
   TableBody,
   TableCell,
   Button,
-} from "@carbon/react";
-import { useTranslation } from "react-i18next";
-import GroupFormWorkflowContext from "../../context/GroupFormWorkflowContext";
-import AddGroupModal from "../../add-group-modal/AddGroupModal";
+} from '@carbon/react';
+import { useTranslation } from 'react-i18next';
+import GroupFormWorkflowContext from '../../context/GroupFormWorkflowContext';
+import AddGroupModal from '../../add-group-modal/AddGroupModal';
 
 const PatientRow = ({ patient }) => {
-  const { patientUuids, addPatientUuid, removePatientUuid } = useContext(
-    GroupFormWorkflowContext
-  );
+  const { patientUuids, addPatientUuid, removePatientUuid } = useContext(GroupFormWorkflowContext);
   const givenName = patient?.name?.[0]?.given?.[0];
   const familyName = patient?.name?.[0]?.family;
   const identifier = patient?.identifier?.[0]?.value;
@@ -50,11 +48,7 @@ const PatientRow = ({ patient }) => {
 
   return (
     <TableRow>
-      <TableCell>
-        {patient.display ||
-          patient.displayName ||
-          [givenName, familyName].join(" ")}
-      </TableCell>
+      <TableCell>{patient.display || patient.displayName || [givenName, familyName].join(' ')}</TableCell>
       <TableCell>{identifier}</TableCell>
       <TableCell>
         <Checkbox
@@ -71,17 +65,11 @@ const PatientRow = ({ patient }) => {
 
 const AttendanceTable = ({ patients }) => {
   const { t } = useTranslation();
-  const { activeGroupUuid, activeGroupName, activeGroupMembers } = useContext(
-    GroupFormWorkflowContext
-  );
+  const { activeGroupUuid, activeGroupName, activeGroupMembers } = useContext(GroupFormWorkflowContext);
 
   const [isOpen, setOpen] = useState(false);
 
-  const headers = [
-    t("name", "Name"),
-    t("identifier", "Patient ID"),
-    t("patientIsPresent", "Patient is present"),
-  ];
+  const headers = [t('name', 'Name'), t('identifier', 'Patient ID'), t('patientIsPresent', 'Patient is present')];
 
   const onPostCancel = useCallback(() => {
     setOpen(false);
@@ -99,14 +87,14 @@ const AttendanceTable = ({ patients }) => {
   }, [activeGroupMembers, patients]);
 
   if (!activeGroupUuid) {
-    return <div>{t("selectGroupFirst", "Please select a group first")}</div>;
+    return <div>{t('selectGroupFirst', 'Please select a group first')}</div>;
   }
 
   return (
     <div>
       <span style={{ flexGrow: 1 }} />
       <Button kind="ghost" onClick={() => setOpen(true)}>
-        {t("editGroup", "Edit Group")}&nbsp;
+        {t('editGroup', 'Edit Group')}&nbsp;
         <Edit size={20} />
       </Button>
       <AddGroupModal
@@ -130,9 +118,7 @@ const AttendanceTable = ({ patients }) => {
         </TableHead>
         <TableBody>
           {activeGroupMembers.map((patientUuid, index) => {
-            const patient = patients.find(
-              (patient) => patient.id === patientUuid
-            );
+            const patient = patients.find((patient) => patient.id === patientUuid);
             return <PatientRow patient={patient} key={index} />;
           })}
         </TableBody>

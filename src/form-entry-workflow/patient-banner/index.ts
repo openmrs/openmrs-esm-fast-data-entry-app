@@ -1,3 +1,3 @@
-import PatientBanner from "./PatientBanner";
+import PatientBanner from './PatientBanner';
 
 export default PatientBanner;

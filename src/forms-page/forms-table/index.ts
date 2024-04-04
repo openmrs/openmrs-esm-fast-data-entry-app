@@ -1,3 +1,3 @@
-import FormsTable from "./FormsTable";
+import FormsTable from './FormsTable';
 
 export default FormsTable;

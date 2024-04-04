@@ -1,3 +1,3 @@
-import FormsPage from "./FormsPage";
+import FormsPage from './FormsPage';
 
 export default FormsPage;

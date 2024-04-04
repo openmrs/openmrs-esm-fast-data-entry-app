@@ -1,3 +1,3 @@
-import GroupDisplayHeader from "./GroupDisplayHeader";
+import GroupDisplayHeader from './GroupDisplayHeader';
 
 export default GroupDisplayHeader;

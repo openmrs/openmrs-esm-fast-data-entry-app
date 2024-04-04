@@ -1,19 +1,19 @@
-import React, { useEffect, useReducer, useRef } from "react";
-import { SkeletonIcon, SkeletonText } from "@carbon/react";
-import { Events } from "@carbon/react/icons";
-import styles from "./compact-group-result.scss";
-import { useTranslation } from "react-i18next";
-import useKeyPress from "../../hooks/useKeyPress";
+import React, { useEffect, useReducer, useRef } from 'react';
+import { SkeletonIcon, SkeletonText } from '@carbon/react';
+import { Events } from '@carbon/react/icons';
+import styles from './compact-group-result.scss';
+import { useTranslation } from 'react-i18next';
+import useKeyPress from '../../hooks/useKeyPress';
 
 const reducer = (state, action) => {
   switch (action.type) {
-    case "arrowUp":
+    case 'arrowUp':
       return { selectedIndex: Math.max(state.selectedIndex - 1, 0) };
-    case "arrowDown":
+    case 'arrowDown':
       return {
         selectedIndex: Math.min(state.selectedIndex + 1, action.listLength - 1),
       };
-    case "select":
+    case 'select':
       return { selectedIndex: action.payload };
     default:
       return state;
@@ -21,19 +21,11 @@ const reducer = (state, action) => {
 };
 
 const scrollingOptions = {
-  behavior: "smooth",
-  block: "nearest",
+  behavior: 'smooth',
+  block: 'nearest',
 };
 
-const ResultItem = ({
-  index,
-  selectGroupAction,
-  group,
-  dispatch,
-  state,
-  totalGroups,
-  lastRef,
-}) => {
+const ResultItem = ({ index, selectGroupAction, group, dispatch, state, totalGroups, lastRef }) => {
   const ref = useRef(null);
   const { t } = useTranslation();
 
@@ -48,12 +40,10 @@ const ResultItem = ({
   return (
     <div
       onClick={() => {
-        dispatch({ type: "select", payload: index });
+        dispatch({ type: 'select', payload: index });
         selectGroupAction(group);
       }}
-      className={`${styles.patientSearchResult} ${
-        index === state.selectedIndex && styles.patientSearchResultSelected
-      }`}
+      className={`${styles.patientSearchResult} ${index === state.selectedIndex && styles.patientSearchResultSelected}`}
       role="button"
       aria-pressed={index === state.selectedIndex}
       tabIndex={0}
@@ -65,7 +55,7 @@ const ResultItem = ({
       <div>
         <h2 className={styles.patientName}>{group.name}</h2>
         <p className={styles.demographics}>
-          {group.cohortMembers?.length ?? 0} {t("members", "members")}
+          {group.cohortMembers?.length ?? 0} {t('members', 'members')}
           <span className={styles.middot}>&middot;</span> {group.description}
         </p>
       </div>
@@ -74,21 +64,21 @@ const ResultItem = ({
 };
 
 const CompactGroupResults = ({ groups, selectGroupAction, lastRef }) => {
-  const arrowUpPressed = useKeyPress("ArrowUp");
-  const arrowDownPressed = useKeyPress("ArrowDown");
-  const enterPressed = useKeyPress("Enter");
+  const arrowUpPressed = useKeyPress('ArrowUp');
+  const arrowDownPressed = useKeyPress('ArrowDown');
+  const enterPressed = useKeyPress('Enter');
 
   const [state, dispatch] = useReducer(reducer, { selectedIndex: 0 });
 
   useEffect(() => {
     if (arrowUpPressed) {
-      dispatch({ type: "arrowUp" });
+      dispatch({ type: 'arrowUp' });
     }
   }, [arrowUpPressed]);
 
   useEffect(() => {
     if (arrowDownPressed) {
-      dispatch({ type: "arrowDown", listLength: groups.length });
+      dispatch({ type: 'arrowDown', listLength: groups.length });
     }
   }, [arrowDownPressed, groups.length]);
 
@@ -117,8 +107,8 @@ export const SearchResultSkeleton = () => {
       <div className={styles.patientAvatar} role="img">
         <SkeletonIcon
           style={{
-            height: "3rem",
-            width: "3rem",
+            height: '3rem',
+            width: '3rem',
           }}
         />
       </div>
@@ -127,9 +117,8 @@ export const SearchResultSkeleton = () => {
           <SkeletonText />
         </h2>
         <span className={styles.demographics}>
-          <SkeletonIcon /> <span className={styles.middot}>&middot;</span>{" "}
-          <SkeletonIcon /> <span className={styles.middot}>&middot;</span>{" "}
-          <SkeletonIcon />
+          <SkeletonIcon /> <span className={styles.middot}>&middot;</span> <SkeletonIcon />{' '}
+          <span className={styles.middot}>&middot;</span> <SkeletonIcon />
         </span>
       </div>
     </div>
