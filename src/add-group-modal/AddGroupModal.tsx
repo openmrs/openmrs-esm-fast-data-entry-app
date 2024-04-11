@@ -18,6 +18,7 @@ import { TrashCan } from "@carbon/react/icons";
 import { useTranslation } from "react-i18next";
 import {
   ExtensionSlot,
+  fetchCurrentPatient,
   showToast,
   useConfig,
   usePatient,
@@ -116,7 +117,7 @@ const NewGroupForm = (props) => {
             <PatientRow
               patient={patient}
               removePatient={removePatient}
-              key={index}
+              key={patient.uuid}
             />
           ))}
         </ul>
