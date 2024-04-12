@@ -20,6 +20,7 @@ import {
   ExtensionSlot,
   fetchCurrentPatient,
   showToast,
+  useConfig,
   usePatient,
 } from "@openmrs/esm-framework";
 import styles from "./styles.scss";
@@ -130,7 +131,7 @@ const NewGroupForm = (props) => {
       </FormLabel>
       <div className={styles.searchBar}>
         <MemExtension
-          name="patient-search-bar-slot"
+          extensionSlotName="patient-search-bar-slot"
           state={{
             selectPatientAction: updatePatientList,
             buttonProps: {
@@ -158,6 +159,7 @@ const AddGroupModal = ({
   const [name, setName] = useState(groupName);
   const [patientList, setPatientList] = useState(patients || []);
   const { post, result, error } = usePostCohort();
+  const config = useConfig();
 
   const removePatient = useCallback(
     (patientUuid: string) =>
@@ -224,6 +226,7 @@ const AddGroupModal = ({
       post({
         uuid: cohortUuid,
         name: name,
+        cohortType: config?.groupSessionConcepts?.cohortTypeId,
         cohortMembers: patientList.map((p) => ({ patient: p.uuid })),
       });
       if (onPostSubmit) {
