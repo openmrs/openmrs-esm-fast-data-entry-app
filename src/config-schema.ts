@@ -82,8 +82,8 @@ export const configSchema = {
     },
     cohortTypeId: {
       _type: Type.UUID,
-      _description: "UUID of cohort type",
-      _default: "eee9970e-7ca0-4e8c-a280-c33e9d5f6a04",
+      _description: 'UUID of cohort type',
+      _default: 'eee9970e-7ca0-4e8c-a280-c33e9d5f6a04',
     },
     cohortId: {
       _type: Type.UUID,
