@@ -1,3 +1,3 @@
-import GroupFormEntryWorkflow from "./GroupFormEntryWorkflow";
+import GroupFormEntryWorkflow from './GroupFormEntryWorkflow';
 
 export default GroupFormEntryWorkflow;

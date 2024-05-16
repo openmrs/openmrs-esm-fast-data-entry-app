@@ -1,16 +1,14 @@
-import React from "react";
-import { TextInput, Select, SelectItem } from "@carbon/react";
-import { type FieldValues, type UseFormRegister } from "react-hook-form";
-import { type SpecificQuestion } from "../../types";
+import React from 'react';
+import { TextInput, Select, SelectItem } from '@carbon/react';
+import { type FieldValues, type UseFormRegister } from 'react-hook-form';
+import { type SpecificQuestion } from '../../types';
 
 interface ConfigurableQuestionsSectionProps {
   specificQuestions: Array<SpecificQuestion>;
   register?: UseFormRegister<FieldValues>;
 }
 
-const ConfigurableQuestionsSection: React.FC<
-  ConfigurableQuestionsSectionProps
-> = ({ register, specificQuestions }) => {
+const ConfigurableQuestionsSection: React.FC<ConfigurableQuestionsSectionProps> = ({ register, specificQuestions }) => {
   return (
     <>
       {specificQuestions?.map((specificQuestion) => (
@@ -23,11 +21,7 @@ const ConfigurableQuestionsSection: React.FC<
             >
               <SelectItem value="" text="" />
               {specificQuestion.answers.map((answer) => (
-                <SelectItem
-                  key={answer.value}
-                  value={answer.value}
-                  text={answer.display}
-                />
+                <SelectItem key={answer.value} value={answer.value} text={answer.display} />
               ))}
             </Select>
           ) : (

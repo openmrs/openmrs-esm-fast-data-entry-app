@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState } from 'react';
 
 const useFormState = (formUuid) => {
   const [state, setState] = useState(null);
@@ -10,10 +10,10 @@ const useFormState = (formUuid) => {
       }
     };
 
-    window.addEventListener("ampath-form-state", handler);
+    window.addEventListener('ampath-form-state', handler);
 
     return () => {
-      window.removeEventListener("ampath-form-state", handler);
+      window.removeEventListener('ampath-form-state', handler);
     };
   }, [formUuid]);
 

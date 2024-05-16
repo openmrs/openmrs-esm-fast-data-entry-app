@@ -1,7 +1,7 @@
-import React, { useContext, useEffect, useState } from "react";
-import { detach, ExtensionSlot } from "@openmrs/esm-framework";
-import useGetPatient from "./hooks/useGetPatient";
-import GroupFormWorkflowContext from "./context/GroupFormWorkflowContext";
+import React, { useContext, useEffect, useState } from 'react';
+import { detach, ExtensionSlot } from '@openmrs/esm-framework';
+import useGetPatient from './hooks/useGetPatient';
+import GroupFormWorkflowContext from './context/GroupFormWorkflowContext';
 
 export interface Order {
   uuid: string;
@@ -131,7 +131,7 @@ const FormBootstrap = ({
   const { activeSessionMeta } = useContext(GroupFormWorkflowContext);
 
   useEffect(() => {
-    return () => detach("form-widget-slot", "form-widget-slot");
+    return () => detach('form-widget-slot', 'form-widget-slot');
   });
 
   // FIXME This should not be necessary
@@ -150,13 +150,13 @@ const FormBootstrap = ({
         <ExtensionSlot
           name="form-widget-slot"
           state={{
-            view: "form",
+            view: 'form',
             formUuid,
-            visitUuid: visitUuid ?? "",
-            visitTypeUuid: visitTypeUuid ?? "",
+            visitUuid: visitUuid ?? '',
+            visitTypeUuid: visitTypeUuid ?? '',
             patientUuid,
             patient,
-            encounterUuid: encounterUuid ?? "",
+            encounterUuid: encounterUuid ?? '',
             closeWorkspace: () => undefined,
             handlePostResponse: (encounter) => {
               handlePostResponse(encounter);

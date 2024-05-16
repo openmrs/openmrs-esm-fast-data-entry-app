@@ -1,5 +1,5 @@
-import { fetchCurrentPatient } from "@openmrs/esm-framework";
-import { useEffect, useState } from "react";
+import { fetchCurrentPatient } from '@openmrs/esm-framework';
+import { useEffect, useState } from 'react';
 
 const useGetPatients = (patientUuids) => {
   const [patients, setPatients] = useState([]);
@@ -17,13 +17,11 @@ const useGetPatients = (patientUuids) => {
   const getPatients = async (uuids) => {
     try {
       setIsLoading(true);
-      const results = await Promise.all(
-        uuids.map(async (uuid) => await fetchCurrentPatient(uuid))
-      );
+      const results = await Promise.all(uuids.map(async (uuid) => await fetchCurrentPatient(uuid)));
       setPatients(results);
       setIsLoading(false);
     } catch (error) {
-      console.error("Error fetching patients:", error);
+      console.error('Error fetching patients:', error);
       setIsLoading(false);
     }
   };

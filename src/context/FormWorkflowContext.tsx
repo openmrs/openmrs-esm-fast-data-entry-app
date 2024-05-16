@@ -1,8 +1,8 @@
-import React, { useEffect, useMemo, useReducer } from "react";
-import reducer from "./FormWorkflowReducer";
-import { useParams, useLocation } from "react-router-dom";
-import useGetSystemSetting from "../hooks/useGetSystemSetting";
-import { useSession } from "@openmrs/esm-framework";
+import React, { useEffect, useMemo, useReducer } from 'react';
+import reducer from './FormWorkflowReducer';
+import { useParams, useLocation } from 'react-router-dom';
+import useGetSystemSetting from '../hooks/useGetSystemSetting';
+import { useSession } from '@openmrs/esm-framework';
 interface ParamTypes {
   formUuid?: string;
 }
@@ -44,46 +44,41 @@ const FormWorkflowContext = React.createContext({
 const FormWorkflowProvider = ({ children }) => {
   const { user } = useSession();
   const { formUuid } = useParams() as ParamTypes;
-  const activeFormUuid = formUuid.split("&")[0];
+  const activeFormUuid = formUuid.split('&')[0];
   const { search } = useLocation();
-  const newPatientUuid = new URLSearchParams(search).get("patientUuid");
+  const newPatientUuid = new URLSearchParams(search).get('patientUuid');
   const [state, dispatch] = useReducer(reducer, {
     ...initialWorkflowState,
     ...initialActions,
   });
-  const systemSetting = useGetSystemSetting(
-    "@openmrs/esm-fast-data-entry-app.groupSessionVisitTypeUuid"
-  );
-  const singleSessionVisitTypeUuid =
-    systemSetting?.result?.data?.results?.[0]?.value;
+  const systemSetting = useGetSystemSetting('@openmrs/esm-fast-data-entry-app.groupSessionVisitTypeUuid');
+  const singleSessionVisitTypeUuid = systemSetting?.result?.data?.results?.[0]?.value;
 
   const actions = useMemo(
     () => ({
       initializeWorkflowState: ({ activeFormUuid, newPatientUuid }) =>
         dispatch({
-          type: "INITIALIZE_WORKFLOW_STATE",
+          type: 'INITIALIZE_WORKFLOW_STATE',
           activeFormUuid,
           newPatientUuid,
           userUuid: user.uuid,
         }),
-      addPatient: (patientUuid) =>
-        dispatch({ type: "ADD_PATIENT", patientUuid }),
-      openPatientSearch: () => dispatch({ type: "OPEN_PATIENT_SEARCH" }),
+      addPatient: (patientUuid) => dispatch({ type: 'ADD_PATIENT', patientUuid }),
+      openPatientSearch: () => dispatch({ type: 'OPEN_PATIENT_SEARCH' }),
       saveEncounter: (encounterUuid) =>
         dispatch({
-          type: "SAVE_ENCOUNTER",
+          type: 'SAVE_ENCOUNTER',
           encounterUuid,
         }),
-      submitForNext: () => dispatch({ type: "SUBMIT_FOR_NEXT" }),
-      submitForReview: () => dispatch({ type: "SUBMIT_FOR_REVIEW" }),
-      submitForComplete: () => dispatch({ type: "SUBMIT_FOR_COMPLETE" }),
-      editEncounter: (patientUuid) =>
-        dispatch({ type: "EDIT_ENCOUNTER", patientUuid }),
-      goToReview: () => dispatch({ type: "GO_TO_REVIEW" }),
-      destroySession: () => dispatch({ type: "DESTROY_SESSION" }),
-      closeSession: () => dispatch({ type: "CLOSE_SESSION" }),
+      submitForNext: () => dispatch({ type: 'SUBMIT_FOR_NEXT' }),
+      submitForReview: () => dispatch({ type: 'SUBMIT_FOR_REVIEW' }),
+      submitForComplete: () => dispatch({ type: 'SUBMIT_FOR_COMPLETE' }),
+      editEncounter: (patientUuid) => dispatch({ type: 'EDIT_ENCOUNTER', patientUuid }),
+      goToReview: () => dispatch({ type: 'GO_TO_REVIEW' }),
+      destroySession: () => dispatch({ type: 'DESTROY_SESSION' }),
+      closeSession: () => dispatch({ type: 'CLOSE_SESSION' }),
     }),
-    [user]
+    [user],
   );
 
   // if formUuid isn't a part of state yet, grab it from the url params
@@ -99,21 +94,13 @@ const FormWorkflowProvider = ({ children }) => {
       value={{
         ...state,
         ...actions,
-        workflowState:
-          state.forms?.[state.activeFormUuid]?.workflowState ??
-          initialWorkflowState.workflowState,
+        workflowState: state.forms?.[state.activeFormUuid]?.workflowState ?? initialWorkflowState.workflowState,
         activePatientUuid:
-          state.forms?.[state.activeFormUuid]?.activePatientUuid ??
-          initialWorkflowState.activePatientUuid,
+          state.forms?.[state.activeFormUuid]?.activePatientUuid ?? initialWorkflowState.activePatientUuid,
         activeEncounterUuid:
-          state.forms?.[state.activeFormUuid]?.activeEncounterUuid ??
-          initialWorkflowState.activeEncounterUuid,
-        patientUuids:
-          state.forms?.[state.activeFormUuid]?.patientUuids ??
-          initialWorkflowState.patientUuids,
-        encounters:
-          state.forms?.[state.activeFormUuid]?.encounters ??
-          initialWorkflowState.encounters,
+          state.forms?.[state.activeFormUuid]?.activeEncounterUuid ?? initialWorkflowState.activeEncounterUuid,
+        patientUuids: state.forms?.[state.activeFormUuid]?.patientUuids ?? initialWorkflowState.patientUuids,
+        encounters: state.forms?.[state.activeFormUuid]?.encounters ?? initialWorkflowState.encounters,
         singleSessionVisitTypeUuid,
       }}
     >

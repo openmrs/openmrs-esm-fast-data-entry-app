@@ -1,19 +1,13 @@
-import React, { useContext } from "react";
-import { Button } from "@carbon/react";
-import { Events, Close } from "@carbon/react/icons";
-import styles from "./styles.scss";
-import { useTranslation } from "react-i18next";
-import GroupFormWorkflowContext from "../../context/GroupFormWorkflowContext";
+import React, { useContext } from 'react';
+import { Button } from '@carbon/react';
+import { Events, Close } from '@carbon/react/icons';
+import styles from './styles.scss';
+import { useTranslation } from 'react-i18next';
+import GroupFormWorkflowContext from '../../context/GroupFormWorkflowContext';
 
 const GroupDisplayHeader = () => {
-  const {
-    activeGroupName,
-    activeGroupUuid,
-    patientUuids,
-    activeSessionMeta,
-    unsetGroup,
-    destroySession,
-  } = useContext(GroupFormWorkflowContext);
+  const { activeGroupName, activeGroupUuid, patientUuids, activeSessionMeta, unsetGroup, destroySession } =
+    useContext(GroupFormWorkflowContext);
   const { t } = useTranslation();
 
   if (!activeGroupUuid) {
@@ -31,29 +25,27 @@ const GroupDisplayHeader = () => {
         </div>
         <div className={styles.groupInfoRow}>
           <span>
-            {patientUuids.length} {t("members", "members")}
+            {patientUuids.length} {t('members', 'members')}
           </span>
         </div>
       </div>
       {activeSessionMeta?.sessionNotes && (
         <div className={styles.groupMeataContent}>
           <div className={`${styles.groupInfoRow} ${styles.sessionNotesLabel}`}>
-            {t("sessionNotes", "Session Notes")}
+            {t('sessionNotes', 'Session Notes')}
           </div>
-          <div className={styles.groupInfoRow}>
-            {activeSessionMeta.sessionNotes}
-          </div>
+          <div className={styles.groupInfoRow}>{activeSessionMeta.sessionNotes}</div>
         </div>
       )}
       <span style={{ flexGrow: 1 }} />
       <span>
         <Button kind="ghost" onClick={() => unsetGroup()}>
-          {t("changeGroup", "Choose a different group")} <Close size={20} />
+          {t('changeGroup', 'Choose a different group')} <Close size={20} />
         </Button>
       </span>
       <span>
         <Button kind="ghost" onClick={() => destroySession()}>
-          {t("cancel", "Cancel")} <Close size={20} />
+          {t('cancel', 'Cancel')} <Close size={20} />
         </Button>
       </span>
     </div>

@@ -1,13 +1,8 @@
-import {
-  openmrsFetch,
-  userHasAccess,
-  useSession,
-  restBaseUrl,
-} from "@openmrs/esm-framework";
-import useSWR from "swr";
+import { openmrsFetch, userHasAccess, useSession, restBaseUrl } from '@openmrs/esm-framework';
+import useSWR from 'swr';
 
 const customFormRepresentation =
-  "(uuid,name,display,encounterType:(uuid,name,viewPrivilege,editPrivilege),version,published,retired,resources:(uuid,name,dataType,valueReference))";
+  '(uuid,name,display,encounterType:(uuid,name,viewPrivilege,editPrivilege),version,published,retired,resources:(uuid,name,dataType,valueReference))';
 
 const formEncounterUrl = `${restBaseUrl}/form?v=custom:${customFormRepresentation}`;
 const formEncounterUrlPoc = `${restBaseUrl}/form?v=custom:${customFormRepresentation}&q=poc`;
@@ -25,7 +20,7 @@ export function useGetAllForms(cachedOfflineFormsOnly = false) {
           // forms should be published
           form.published &&
           // forms should not be component forms
-          !/component/i.test(form.name)
+          !/component/i.test(form.name),
         // user should have privileges to edit forms
       ) ?? [];
 
@@ -33,11 +28,7 @@ export function useGetAllForms(cachedOfflineFormsOnly = false) {
   });
 
   return {
-    forms: data?.filter((form) =>
-      Boolean(
-        userHasAccess(form.encounterType?.editPrivilege?.display, session?.user)
-      )
-    ),
+    forms: data?.filter((form) => Boolean(userHasAccess(form.encounterType?.editPrivilege?.display, session?.user))),
     isLoading: !error && !data,
     error,
   };

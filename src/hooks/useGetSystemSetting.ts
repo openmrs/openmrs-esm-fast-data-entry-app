@@ -1,5 +1,5 @@
-import { useCallback, useEffect, useState } from "react";
-import { openmrsFetch, restBaseUrl } from "@openmrs/esm-framework";
+import { useCallback, useEffect, useState } from 'react';
+import { openmrsFetch, restBaseUrl } from '@openmrs/esm-framework';
 
 const useGetSystemSetting = (settingId) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -19,9 +19,7 @@ const useGetSystemSetting = (settingId) => {
   }, []);
 
   const getSetting = useCallback(() => {
-    openmrsFetch(`${restBaseUrl}/systemsetting?q=${settingId}&v=default`)
-      .then(onResult)
-      .catch(onError);
+    openmrsFetch(`${restBaseUrl}/systemsetting?q=${settingId}&v=default`).then(onResult).catch(onError);
   }, [onError, onResult, settingId]);
 
   useEffect(() => {

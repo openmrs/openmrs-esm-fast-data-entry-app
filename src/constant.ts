@@ -1,5 +1,5 @@
 export const routes = {
-  allForms: "all-forms",
+  allForms: 'all-forms',
 };
 
 export const spaBase = window.spaBase;

@@ -1,5 +1,5 @@
-import { openmrsFetch, restBaseUrl } from "@openmrs/esm-framework";
-import useSWR from "swr";
+import { openmrsFetch, restBaseUrl } from '@openmrs/esm-framework';
+import useSWR from 'swr';
 
 const encounterUrl = `${restBaseUrl}/encounter/`;
 

@@ -1,20 +1,18 @@
-import { ExtensionSlot, useSession } from "@openmrs/esm-framework";
-import { Button } from "@carbon/react";
-import React, { useCallback, useContext, useEffect, useState } from "react";
-import FormBootstrap from "../FormBootstrap";
-import PatientCard from "../patient-card/PatientCard";
-import styles from "./styles.scss";
-import PatientSearchHeader from "./patient-search-header";
-import { useTranslation } from "react-i18next";
-import { v4 as uuid } from "uuid";
-import FormWorkflowContext, {
-  FormWorkflowProvider,
-} from "../context/FormWorkflowContext";
-import WorkflowReview from "./workflow-review";
-import PatientBanner from "./patient-banner";
-import CompleteModal from "../CompleteModal";
-import CancelModal from "../CancelModal";
-import useStartVisit from "../hooks/useStartVisit";
+import { ExtensionSlot, useSession } from '@openmrs/esm-framework';
+import { Button } from '@carbon/react';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
+import FormBootstrap from '../FormBootstrap';
+import PatientCard from '../patient-card/PatientCard';
+import styles from './styles.scss';
+import PatientSearchHeader from './patient-search-header';
+import { useTranslation } from 'react-i18next';
+import { v4 as uuid } from 'uuid';
+import FormWorkflowContext, { FormWorkflowProvider } from '../context/FormWorkflowContext';
+import WorkflowReview from './workflow-review';
+import PatientBanner from './patient-banner';
+import CompleteModal from '../CompleteModal';
+import CancelModal from '../CancelModal';
+import useStartVisit from '../hooks/useStartVisit';
 
 const WorkflowNavigationButtons = () => {
   const context = useContext(FormWorkflowContext);
@@ -30,28 +28,16 @@ const WorkflowNavigationButtons = () => {
       <div className={styles.rightPanelActionButtons}>
         <Button
           kind="secondary"
-          onClick={
-            workflowState === "NEW_PATIENT"
-              ? () => destroySession()
-              : () => setCompleteModalOpen(true)
-          }
+          onClick={workflowState === 'NEW_PATIENT' ? () => destroySession() : () => setCompleteModalOpen(true)}
         >
-          {t("saveAndComplete", "Save & Complete")}
+          {t('saveAndComplete', 'Save & Complete')}
         </Button>
         <Button kind="tertiary" onClick={() => setCancelModalOpen(true)}>
-          {t("cancel", "Cancel")}
+          {t('cancel', 'Cancel')}
         </Button>
       </div>
-      <CancelModal
-        open={cancelModalOpen}
-        setOpen={setCancelModalOpen}
-        context={context}
-      />
-      <CompleteModal
-        open={completeModalOpen}
-        setOpen={setCompleteModalOpen}
-        context={context}
-      />
+      <CancelModal open={cancelModalOpen} setOpen={setCancelModalOpen} context={context} />
+      <CompleteModal open={completeModalOpen} setOpen={setCompleteModalOpen} context={context} />
     </>
   );
 };
@@ -101,9 +87,7 @@ const FormWorkspace = () => {
   const handleEncounterCreate = useCallback(
     (payload) => {
       payload.location = sessionLocation?.uuid;
-      payload.encounterDatetime = payload.encounterDatetime
-        ? payload.encounterDatetime
-        : new Date().toISOString();
+      payload.encounterDatetime = payload.encounterDatetime ? payload.encounterDatetime : new Date().toISOString();
       // Create a visit with the same date as the encounter being saved
       const visitStartDatetime = new Date(payload.encounterDatetime);
       const visitStopDatetime = new Date(payload.encounterDatetime);
@@ -124,15 +108,13 @@ const FormWorkspace = () => {
 
       payload.visit = visitInfo;
     },
-    [activePatientUuid, singleSessionVisitTypeUuid, sessionLocation]
+    [activePatientUuid, singleSessionVisitTypeUuid, sessionLocation],
   );
 
   return (
     <div className={styles.workspace}>
       {!patientUuids.length && (
-        <div className={styles.selectPatientMessage}>
-          {t("selectPatientFirst", "Please select a patient first")}
-        </div>
+        <div className={styles.selectPatientMessage}>{t('selectPatientFirst', 'Please select a patient first')}</div>
       )}
       {!!patientUuids.length && (
         <div className={styles.formMainContent}>
@@ -148,7 +130,7 @@ const FormWorkspace = () => {
             />
           </div>
           <div className={styles.rightPanel}>
-            <h4>{t("formsFilled", "Forms filled")}</h4>
+            <h4>{t('formsFilled', 'Forms filled')}</h4>
             <div className={styles.patientCardsSection}>
               {patientUuids.map((patientUuid) => (
                 <PatientCard
@@ -177,8 +159,8 @@ const FormEntryWorkflow = () => {
       <div className={styles.breadcrumbsContainer}>
         <ExtensionSlot extensionSlotName="breadcrumbs-slot" />
       </div>
-      {workflowState === "REVIEW" && <WorkflowReview />}
-      {workflowState !== "REVIEW" && (
+      {workflowState === 'REVIEW' && <WorkflowReview />}
+      {workflowState !== 'REVIEW' && (
         <>
           <PatientSearchHeader />
           <PatientBanner />
