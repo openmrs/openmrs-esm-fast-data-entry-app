@@ -9,7 +9,7 @@ import { AttendanceTable } from './attendance-table';
 import GroupFormWorkflowContext from '../context/GroupFormWorkflowContext';
 import useGetPatients from '../hooks/useGetPatients';
 import ConfigurableQuestionsSection from './configurable-questions/ConfigurableQuestionsSection';
-import useSpecificQuestions from '../hooks/useForm';
+import useSpecificQuestions from '../hooks/useSpecificQuestions';
 
 interface ParamTypes {
   formUuid?: string;

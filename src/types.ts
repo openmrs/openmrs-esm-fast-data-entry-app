@@ -7,6 +7,8 @@ export interface SpecificQuestion {
   question: {
     id: string;
     display: string;
+    defaultAnswer?: string;
+    disabled?: boolean;
   };
   answers: Array<{
     value: string;
@@ -17,4 +19,6 @@ export interface SpecificQuestion {
 export interface SpecificQuestionConfig {
   forms: Array<string>;
   questionId: string;
+  defaultAnswer?: string;
+  disabled?: boolean;
 }

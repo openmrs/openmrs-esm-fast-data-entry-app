@@ -2,7 +2,7 @@ import useGetAllForms from './useGetAllForms';
 import useGetPatient from './useGetPatient';
 import useFormState from './useFormState';
 import useGetEncounter from './useGetEncounter';
-import useForm from './useForm';
+import useSpecificQuestions from './useSpecificQuestions';
 
-export { useGetAllForms, useGetPatient, useFormState, useGetEncounter, useForm };
+export { useGetAllForms, useGetPatient, useFormState, useGetEncounter, useSpecificQuestions };
 export * from './usePostEndpoint';
