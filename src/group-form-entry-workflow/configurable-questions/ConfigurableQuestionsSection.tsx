@@ -18,6 +18,8 @@ const ConfigurableQuestionsSection: React.FC<ConfigurableQuestionsSectionProps> 
               {...register(specificQuestion.question.id, { required: false })}
               id={specificQuestion.question.id}
               labelText={specificQuestion.question.display}
+              readOnly={!!specificQuestion.question.disabled}
+              defaultValue={specificQuestion.question.defaultAnswer}
             >
               <SelectItem value="" text="" />
               {specificQuestion.answers.map((answer) => (
@@ -30,6 +32,8 @@ const ConfigurableQuestionsSection: React.FC<ConfigurableQuestionsSectionProps> 
               {...register(specificQuestion.question.id, { required: false })}
               type="text"
               labelText={specificQuestion.question.display}
+              readOnly={!!specificQuestion.question.disabled}
+              defaultValue={specificQuestion.question.defaultAnswer}
             />
           )}
         </div>
