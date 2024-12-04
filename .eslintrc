@@ -12,7 +12,7 @@
     "project": true,
     "tsconfigRootDir": "__dirname"
   },
-  "plugins": ["@typescript-eslint"],
+  "plugins": ["@typescript-eslint", "import", "react-hooks"],
   "root": true,
   "rules": {
     // turned off to keep the diff small for now
@@ -43,6 +43,7 @@
         "default": "generic"
       }
     ],
+    "import/no-duplicates": "error",
     "no-console": ["error", { "allow": ["warn", "error"] }],
     "no-restricted-imports": [
       "error",
@@ -69,6 +70,8 @@
           }
         ]
       }
-    ]
+    ],
+    "react-hooks/exhaustive-deps": "warn",
+    "react-hooks/rules-of-hooks": "error"
   }
 }

@@ -3,6 +3,7 @@ import reducer from './GroupFormWorkflowReducer';
 import { useParams } from 'react-router-dom';
 import { type Type, useSession } from '@openmrs/esm-framework';
 import useGetSystemSetting from '../hooks/useGetSystemSetting';
+
 interface ParamTypes {
   formUuid?: string;
 }
@@ -12,6 +13,7 @@ export interface GroupType {
   name: string;
   members: Array<Type.Object>;
 }
+
 export interface MetaType {
   sessionName: string;
   sessionDate: string;
