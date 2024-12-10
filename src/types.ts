@@ -19,6 +19,7 @@ export interface SpecificQuestion {
 export interface SpecificQuestionConfig {
   forms: Array<string>;
   questionId: string;
+  answers?: Array<string>;
   defaultAnswer?: string;
   disabled?: boolean;
 }

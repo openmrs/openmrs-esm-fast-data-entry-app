@@ -48,6 +48,16 @@ function getQuestions(specificQuestions: Array<SpecificQuestionConfig>, formSche
         .map((question) => {
           const specificQuestion = specificQuestionsMap.get(question.id) || {};
 
+          const answers =
+            (specificQuestion as SpecificQuestionConfig).answers?.map((a) => ({
+              value: a,
+              display: conceptLabels[a]?.display,
+            })) ||
+            (question.questionOptions.answers ?? []).map((answer) => ({
+              value: answer.concept,
+              display: answer.label ?? conceptLabels[answer.concept]?.display,
+            }));
+
           return {
             question: {
               display: question.label ?? conceptLabels[question.questionOptions.concept]?.display,
@@ -55,10 +65,7 @@ function getQuestions(specificQuestions: Array<SpecificQuestionConfig>, formSche
               disabled: (specificQuestion as SpecificQuestionConfig).disabled,
               defaultAnswer: (specificQuestion as SpecificQuestionConfig).defaultAnswer,
             },
-            answers: (question.questionOptions.answers ?? []).map((answer) => ({
-              value: answer.concept,
-              display: answer.label ?? conceptLabels[answer.concept]?.display,
-            })),
+            answers,
           };
         }),
     ),
