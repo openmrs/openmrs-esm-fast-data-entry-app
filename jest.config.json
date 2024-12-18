@@ -9,7 +9,8 @@
     "@openmrs/esm-framework": "@openmrs/esm-framework/mock",
     "^lodash-es/(.*)$": "lodash/$1",
     "^uuid$": "<rootDir>/node_modules/uuid/dist/index.js",
-    "^dexie$": "<rootDir>/node_modules/dexie"
+    "^dexie$": "<rootDir>/node_modules/dexie",
+    "lodash-es": "lodash"
   },
   "setupFilesAfterEnv": [
     "<rootDir>/src/setup-tests.ts"
