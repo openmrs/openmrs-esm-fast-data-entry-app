@@ -75,3 +75,7 @@ dist/
 !.yarn/versions
 
 .turbo
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
