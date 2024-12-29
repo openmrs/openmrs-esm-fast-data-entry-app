@@ -1,22 +1,31 @@
 
 {
+  "clearMocks": true,
+  "collectCoverageFrom": [
+    "**/src/**/*.component.tsx",
+    "!**/node_modules/**",
+    "!**/src/declarations.d.ts",
+    "!**/e2e/**"
+  ],
   "transform": {
-    "^.+\\.tsx?$": "@swc/jest"
+    "^.+\\.tsx?$": ["@swc/jest"]
   },
   "transformIgnorePatterns": ["/node_modules/(?!@openmrs)"],
   "moduleNameMapper": {
-    "\\.(s?css)$": "identity-obj-proxy",
     "@openmrs/esm-framework": "@openmrs/esm-framework/mock",
+    "\\.(s?css)$": "identity-obj-proxy",
     "^lodash-es/(.*)$": "lodash/$1",
-    "^uuid$": "<rootDir>/node_modules/uuid/dist/index.js",
+    "^lodash-es$": "lodash",
     "^dexie$": "<rootDir>/node_modules/dexie",
-    "lodash-es": "lodash"
+    "^react-i18next$": "<rootDir>/__mocks__/react-i18next.js"
   },
-  "setupFilesAfterEnv": [
-    "<rootDir>/src/setup-tests.ts"
-  ],
+  "setupFilesAfterEnv": ["<rootDir>/src/setup-tests.ts"],
   "testEnvironment": "jsdom",
   "testEnvironmentOptions": {
     "url": "http://localhost/"
-  }
+  },
+  "testPathIgnorePatterns": [
+    "/node_modules/",
+    "/e2e/"
+  ]
 }
