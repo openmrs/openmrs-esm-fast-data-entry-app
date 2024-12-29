@@ -98,6 +98,7 @@
     "dotenv": "^16.4.7",
     "i18next": "^21.10.0",
     "i18next-parser": "^6.6.0",
+    "playwright": "^1.49.1",
     "react-hook-form": "^7.34.2",
     "turbo": "^2.3.3",
     "uuid": "^9.0.1"
