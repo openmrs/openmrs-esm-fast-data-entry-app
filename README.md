@@ -56,3 +56,11 @@ yarn start --importmap "https://spa-modules.nyc3.digitaloceanspaces.com/import-m
 ```
 
 To see more options run `npx openmrs --help`
+
+## To run end-to-end tests, run:
+
+```bash
+yarn test-e2e
+```
+
+Read the [e2e testing guide](https://openmrs.atlassian.net/wiki/spaces/docs/pages/150962731/Testing+Frontend+Modules+O3) to learn more about End-to-End tests in this project.
