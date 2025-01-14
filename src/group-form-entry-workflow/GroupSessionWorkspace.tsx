@@ -97,7 +97,7 @@ const GroupSessionWorkspace = () => {
       const visitUuid = activeVisitUuid ? activeVisitUuid : uuid();
       if (!activeVisitUuid) {
         Object.entries(groupSessionConcepts).forEach(([field, uuid]) => {
-          if (activeSessionMeta?.[field] != null) {
+          if (activeSessionMeta?.[field] != null && !payload.obs.some((obsItem) => obsItem.concept === uuid)) {
             payload.obs.push({
               concept: uuid,
               value: activeSessionMeta[field],
