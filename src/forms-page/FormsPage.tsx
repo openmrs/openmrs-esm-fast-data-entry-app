@@ -69,7 +69,9 @@ const FormsPage = () => {
     let rows = [];
     if (category && cleanRows && cleanRows.length) {
       const uuids = category.forms?.map((form) => form.formUUID);
-      rows = cleanRows.filter((row) => uuids.includes(row.uuid));
+      rows = cleanRows
+        .filter((row) => uuids.includes(row.uuid))
+        .sort((a, b) => uuids.indexOf(a.uuid) - uuids.indexOf(b.uuid));
     }
     return { ...{ name, rows } };
   });
