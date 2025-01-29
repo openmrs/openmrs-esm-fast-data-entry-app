@@ -4,6 +4,6 @@ export class FastDataEntryPage {
   constructor(readonly page: Page) {}
 
   async goto() {
-    await this.page.goto(`forms`);
+    await this.page.goto('forms');
   }
 }
