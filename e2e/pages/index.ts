@@ -1,1 +1,1 @@
-export * from './app-loads';
+export * from './sample-test';
