@@ -103,5 +103,5 @@
     "turbo": "^2.3.3",
     "uuid": "^9.0.1"
   },
-  "packageManager": "yarn@4.2.2"
+  "packageManager": "yarn@4.6.0"
 }
