@@ -17,7 +17,7 @@ const CompleteModal = ({ open, setOpen, context, validateFirst = false }) => {
   };
 
   return (
-    <ComposedModal open={open}>
+    <ComposedModal open={open} preventCloseOnClickOutside={true} onClose={onCancel}>
       <ModalHeader>{t('areYouSure', 'Are you sure?')}</ModalHeader>
       <ModalBody>{t('saveExplanation', 'Do you want to save the current form and exit the workflow?')}</ModalBody>
       <ModalFooter>
