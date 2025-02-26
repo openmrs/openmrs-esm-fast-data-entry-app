@@ -144,6 +144,7 @@ const FormBootstrap = ({
     });
   };
 
+  console.log("This is formBootstrap");
   return (
     <div>
       {showForm && formUuid && patientUuid && patient && (
@@ -157,7 +158,6 @@ const FormBootstrap = ({
             patientUuid,
             patient,
             encounterUuid: encounterUuid ?? '',
-            promptBeforeClosing:()=>undefined,
             closeWorkspace: () => undefined,
             handlePostResponse: (encounter) => {
               handlePostResponse(encounter);
