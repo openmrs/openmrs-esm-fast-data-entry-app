@@ -144,7 +144,6 @@ const FormBootstrap = ({
     });
   };
 
-  console.log("This is formBootstrap");
   return (
     <div>
       {showForm && formUuid && patientUuid && patient && (
