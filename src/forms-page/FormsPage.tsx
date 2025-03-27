@@ -67,11 +67,11 @@ const FormsPage = () => {
   const categoryRows = formCategoriesToShow.map((name) => {
     const category = formCategories.find((category) => category.name === name);
     let rows = [];
-    if (category && cleanRows && cleanRows.length) {
-      const uuids = category.forms?.map((form) => form.formUUID);
-      rows = cleanRows
-        .filter((row) => uuids.includes(row.uuid))
-        .sort((a, b) => uuids.indexOf(a.uuid) - uuids.indexOf(b.uuid));
+    if (category) {
+      rows = (category?.forms || []).map((form) => ({
+        uuid: form?.formUUID,
+        display: form?.name,
+      }));
     }
     return { ...{ name, rows } };
   });
