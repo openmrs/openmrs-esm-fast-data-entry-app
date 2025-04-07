@@ -175,7 +175,7 @@ const AddGroupModal = ({
         uuid: cohortUuid,
         name: name,
         cohortType: config?.groupSessionConcepts?.cohortTypeId,
-        cohortMembers: patientList.map((p) => ({ patient: p.uuid })),
+        cohortMembers: patientList.map((p) => ({ patient: p.uuid, startDate: new Date().toISOString() })),
       });
       if (onPostSubmit) {
         onPostSubmit();
