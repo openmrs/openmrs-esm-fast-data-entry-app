@@ -26,6 +26,11 @@ export const configSchema = {
             _type: Type.String,
             _description: 'Name of form',
           },
+          disableGroupSession: {
+            _type: Type.Boolean,
+            _description: 'Disable group sessions for this form',
+            _default: false,
+          },
         },
       },
     },
@@ -36,6 +41,7 @@ export const configSchema = {
           {
             formUUID: '0cefb866-110c-4f16-af58-560932a1db1f',
             name: 'Adult Triage',
+            disableGroupSession: false,
           },
         ],
       },
@@ -45,6 +51,7 @@ export const configSchema = {
           {
             formUUID: '9f26aad4-244a-46ca-be49-1196df1a8c9a',
             name: 'POC Sample Form 1',
+            disableGroupSession: false,
           },
         ],
       },
@@ -126,6 +133,7 @@ export const configSchema = {
 export type Form = {
   formUUID: Type.UUID;
   name: Type.String;
+  disableGroupSession: Type.Boolean;
 };
 
 export type Category = {

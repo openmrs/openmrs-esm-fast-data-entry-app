@@ -45,7 +45,7 @@ const FormsTable = ({ rows, error, isLoading, activeForms, activeGroupForms }) =
         {activeForms.includes(row.uuid) ? t('resumeSession', 'Resume Session') : t('fillForm', 'Fill Form')}
       </Link>
     ),
-    actions2: (
+    actions2: !row.disableGroupSession && (
       <Link to={`groupform/${row.uuid}`}>
         {activeGroupForms.includes(row.uuid)
           ? t('resumeGroupSession', 'Resume Group Session')
