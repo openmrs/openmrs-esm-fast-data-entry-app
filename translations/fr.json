@@ -71,5 +71,7 @@
   "startGroupSession": "Démarrer la session de groupe",
   "trySearchWithPatientUniqueID": "Essayez de rechercher la description de la cohorte",
   "unknown": "Inconnu",
-  "unknownPostError": "Une erreur inconnue s'est produite lors de la sauvegarde des données"
+  "unknownPostError": "Une erreur inconnue s'est produite lors de la sauvegarde des données",
+  "confirmPatientSelection": "Confirmer la sélection du patient",
+  "patientLocationMismatch": "L'emplacement HSU sélectionné ({{hsuLocation}}) ne correspond pas à l'emplacement de la session actuelle ({{sessionLocation}}). Voulez-vous vraiment continuer ?"
 }

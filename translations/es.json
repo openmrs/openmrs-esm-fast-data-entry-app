@@ -71,5 +71,7 @@
   "startGroupSession": "Iniciar Sesión de Grupo",
   "trySearchWithPatientUniqueID": "Intente buscar con la descripción del grupo",
   "unknown": "Desconocido",
-  "unknownPostError": "Ocurrió un error desconocido al guardar los datos"
+  "unknownPostError": "Ocurrió un error desconocido al guardar los datos",
+  "confirmPatientSelection": "Confirmar la selección del paciente",
+  "patientLocationMismatch": "La ubicación de HSU seleccionada ({{hsuLocation}}) no coincide con la ubicación de la sesión actual ({{sessionLocation}}). ¿Está seguro de que desea continuar?"
 }

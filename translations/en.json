@@ -71,5 +71,7 @@
   "startGroupSession": "Start Group Session",
   "trySearchWithPatientUniqueID": "Try searching with the cohort's description",
   "unknown": "Unknown",
-  "unknownPostError": "An unknown error occurred while saving data"
+  "unknownPostError": "An unknown error occurred while saving data",
+  "confirmPatientSelection": "Confirm patient selection",
+  "patientLocationMismatch": "The selected HSU location ({{hsuLocation}}) does not match the current session location ({{sessionLocation}}). Are you sure you want to proceed?"
 }
