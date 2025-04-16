@@ -9,6 +9,8 @@
   "chooseGroupError": "Por favor, elige un grupo.",
   "clearSearch": "Limpiar",
   "complete": "Completar",
+  "confirmPatientSelection": "Confirmar la selección del paciente",
+  "continue": "Continue",
   "createGroup": "Crear Grupo",
   "createNewGroup": "Crear Nuevo Grupo",
   "createNewPatient": "Crear nuevo paciente",
@@ -41,6 +43,7 @@
   "or": "o",
   "orLabelName": "Nombre de Etiqueta OR",
   "patientIsPresent": "Paciente está presente",
+  "patientLocationMismatch": "La ubicación de HSU seleccionada ({{hsuLocation}}) no coincide con la ubicación de la sesión actual ({{sessionLocation}}). ¿Está seguro de que desea continuar?",
   "patientsInGroup": "Pacientes en el grupo",
   "postError": "Error de POST",
   "practitionerName": "Nombre del Practicante",
@@ -71,7 +74,5 @@
   "startGroupSession": "Iniciar Sesión de Grupo",
   "trySearchWithPatientUniqueID": "Intente buscar con la descripción del grupo",
   "unknown": "Desconocido",
-  "unknownPostError": "Ocurrió un error desconocido al guardar los datos",
-  "confirmPatientSelection": "Confirmar la selección del paciente",
-  "patientLocationMismatch": "La ubicación de HSU seleccionada ({{hsuLocation}}) no coincide con la ubicación de la sesión actual ({{sessionLocation}}). ¿Está seguro de que desea continuar?"
+  "unknownPostError": "Ocurrió un error desconocido al guardar los datos"
 }

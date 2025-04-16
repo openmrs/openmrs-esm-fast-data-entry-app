@@ -9,6 +9,8 @@
   "chooseGroupError": "Veuillez sélectionner un groupe",
   "clearSearch": "Clair",
   "complete": "Terminer",
+  "confirmPatientSelection": "Confirmer la sélection du patient",
+  "continue": "Continue",
   "createGroup": "Créer un groupe",
   "createNewGroup": "Créer un nouveau groupe",
   "createNewPatient": "Créer un nouveau patient",
@@ -41,6 +43,7 @@
   "or": "ou",
   "orLabelName": "OU nom de l'étiquette",
   "patientIsPresent": "Le patient est présent",
+  "patientLocationMismatch": "L'emplacement HSU sélectionné ({{hsuLocation}}) ne correspond pas à l'emplacement de la session actuelle ({{sessionLocation}}). Voulez-vous vraiment continuer\u00a0?",
   "patientsInGroup": "Patients dans le groupe",
   "postError": "Erreur de POST",
   "practitionerName": "Nom du praticien",
@@ -71,7 +74,5 @@
   "startGroupSession": "Démarrer la session de groupe",
   "trySearchWithPatientUniqueID": "Essayez de rechercher la description de la cohorte",
   "unknown": "Inconnu",
-  "unknownPostError": "Une erreur inconnue s'est produite lors de la sauvegarde des données",
-  "confirmPatientSelection": "Confirmer la sélection du patient",
-  "patientLocationMismatch": "L'emplacement HSU sélectionné ({{hsuLocation}}) ne correspond pas à l'emplacement de la session actuelle ({{sessionLocation}}). Voulez-vous vraiment continuer ?"
+  "unknownPostError": "Une erreur inconnue s'est produite lors de la sauvegarde des données"
 }
