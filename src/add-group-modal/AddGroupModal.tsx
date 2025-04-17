@@ -160,6 +160,25 @@ const AddGroupModal = ({
     [name, patientList.length],
   );
 
+  const addSelectedPatientToList = useCallback(() => {
+    function getPatientName(patient) {
+      return [patient?.name?.[0]?.given, patient?.name?.[0]?.family].join(' ');
+    }
+    if (!patientList.find((p) => p.uuid === selectedPatientUuid)) {
+      fetchCurrentPatient(selectedPatientUuid).then((result) => {
+        const newPatient = { uuid: selectedPatientUuid, ...result };
+        setPatientList(
+          [...patientList, newPatient].sort((a, b) =>
+            getPatientName(a).localeCompare(getPatientName(b), undefined, {
+              sensitivity: 'base',
+            }),
+          ),
+        );
+      });
+    }
+    setErrors((errors) => ({ ...errors, patientList: null }));
+  }, [selectedPatientUuid, patientList, setPatientList]);
+
   const updatePatientList = (patientUuid) => {
     setSelectedPatientUuid(patientUuid);
   };
@@ -172,7 +191,13 @@ const AddGroupModal = ({
     } else {
       addSelectedPatientToList();
     }
-  }, [selectedPatientUuid, sessionLocation, hsuIdentifier]);
+  }, [
+    selectedPatientUuid,
+    sessionLocation,
+    hsuIdentifier,
+    addSelectedPatientToList,
+    config.patientLocationMismatchCheck,
+  ]);
 
   const handleSubmit = () => {
     if (validate()) {
@@ -220,25 +245,6 @@ const AddGroupModal = ({
       }
     }
   }, [error, t]);
-
-  const addSelectedPatientToList = useCallback(() => {
-    function getPatientName(patient) {
-      return [patient?.name?.[0]?.given, patient?.name?.[0]?.family].join(' ');
-    }
-    if (!patientList.find((p) => p.uuid === selectedPatientUuid)) {
-      fetchCurrentPatient(selectedPatientUuid).then((result) => {
-        const newPatient = { uuid: selectedPatientUuid, ...result };
-        setPatientList(
-          [...patientList, newPatient].sort((a, b) =>
-            getPatientName(a).localeCompare(getPatientName(b), undefined, {
-              sensitivity: 'base',
-            }),
-          ),
-        );
-      });
-    }
-    setErrors((errors) => ({ ...errors, patientList: null }));
-  }, [selectedPatientUuid, patientList, setPatientList]);
 
   const onPatientLocationMismatchModalCancel = () => {
     setSelectedPatientUuid(null);

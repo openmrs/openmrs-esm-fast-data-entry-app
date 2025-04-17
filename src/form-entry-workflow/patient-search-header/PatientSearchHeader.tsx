@@ -15,18 +15,17 @@ const PatientSearchHeader = () => {
   const { hsuIdentifier } = useHsuIdIdentifier(selectedPatientUuid);
   const { sessionLocation } = useSession();
   const config = useConfig();
+  const { addPatient, workflowState, activeFormUuid } = useContext(FormWorkflowContext);
 
   const onPatientMismatchedLocationModalConfirm = useCallback(() => {
     addPatient(selectedPatientUuid);
     setSelectedPatientUuid(null);
-  }, [selectedPatientUuid]);
+  }, [addPatient, selectedPatientUuid]);
 
   const onPatientMismatchedLocationModalCancel = useCallback(() => {
     setPatientLocationMismatchModalOpen(false);
     setSelectedPatientUuid(null);
   }, []);
-
-  const { addPatient, workflowState, activeFormUuid } = useContext(FormWorkflowContext);
 
   const handleSelectPatient = useCallback((patientUuid) => {
     setSelectedPatientUuid(patientUuid);
@@ -40,7 +39,7 @@ const PatientSearchHeader = () => {
     } else {
       addPatient(selectedPatientUuid);
     }
-  }, [selectedPatientUuid, sessionLocation, hsuIdentifier]);
+  }, [selectedPatientUuid, sessionLocation, hsuIdentifier, addPatient, config.patientLocationMismatchCheck]);
 
   const { t } = useTranslation();
 
