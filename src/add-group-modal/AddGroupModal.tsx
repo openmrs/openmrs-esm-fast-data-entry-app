@@ -167,7 +167,7 @@ const AddGroupModal = ({
   useEffect(() => {
     if (!selectedPatientUuid || !hsuIdentifier) return;
 
-    if (hsuIdentifier && sessionLocation.uuid != hsuIdentifier.location.uuid) {
+    if (config.patientLocationMismatchCheck && hsuIdentifier && sessionLocation.uuid != hsuIdentifier.location.uuid) {
       setPatientLocationMismatchModalOpen(true);
     } else {
       addSelectedPatientToList();

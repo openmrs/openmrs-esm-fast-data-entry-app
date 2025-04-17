@@ -1,19 +1,20 @@
 import { Add, Close } from '@carbon/react/icons';
-import { ExtensionSlot, interpolateUrl, navigate, useSession } from '@openmrs/esm-framework';
+import { ExtensionSlot, interpolateUrl, navigate, useConfig, useSession } from '@openmrs/esm-framework';
 import { Button } from '@carbon/react';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import FormWorkflowContext from '../../context/FormWorkflowContext';
 import styles from './styles.scss';
 import { useTranslation } from 'react-i18next';
-import PatientMismatchedLocationModal from './PatienMismatchedLocationModal';
 import { useHsuIdIdentifier } from '../../hooks/location-tag.resource';
+import PatientLocationMismatchModal from './PatienMismatchedLocationModal';
 
 const PatientSearchHeader = () => {
   const [patientLocationMismatchModalOpen, setPatientLocationMismatchModalOpen] = useState(false);
   const [selectedPatientUuid, setSelectedPatientUuid] = useState();
   const { hsuIdentifier } = useHsuIdIdentifier(selectedPatientUuid);
   const { sessionLocation } = useSession();
+  const config = useConfig();
 
   const onPatientMismatchedLocationModalConfirm = useCallback(() => {
     addPatient(selectedPatientUuid);
@@ -34,7 +35,7 @@ const PatientSearchHeader = () => {
   useEffect(() => {
     if (!selectedPatientUuid || !hsuIdentifier) return;
 
-    if (hsuIdentifier && sessionLocation.uuid != hsuIdentifier.location.uuid) {
+    if (config.patientLocationMismatchCheck && hsuIdentifier && sessionLocation.uuid != hsuIdentifier.location.uuid) {
       setPatientLocationMismatchModalOpen(true);
     } else {
       addPatient(selectedPatientUuid);
@@ -78,7 +79,7 @@ const PatientSearchHeader = () => {
           </Link>
         </span>
       </div>
-      <PatientMismatchedLocationModal
+      <PatientLocationMismatchModal
         open={patientLocationMismatchModalOpen}
         setOpen={setPatientLocationMismatchModalOpen}
         onConfirm={onPatientMismatchedLocationModalConfirm}

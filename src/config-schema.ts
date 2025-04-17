@@ -128,6 +128,12 @@ export const configSchema = {
     },
     _default: [],
   },
+  patientLocationMismatchCheck: {
+    _type: Type.Boolean,
+    _description:
+      'Whether to prompt for confirmation if the selected patient is not at the same location as the current session.',
+    _default: false,
+  },
 };
 
 export type Form = {
@@ -144,4 +150,5 @@ export type Category = {
 export type Config = {
   formCategories: Array<Category>;
   formCategoriesToShow: Array<string>;
+  patientLocationMismatchCheck: Type.Boolean;
 };

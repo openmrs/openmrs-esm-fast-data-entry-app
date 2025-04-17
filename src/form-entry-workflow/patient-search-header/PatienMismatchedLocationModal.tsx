@@ -2,7 +2,7 @@ import { Button, ComposedModal, ModalBody, ModalFooter, ModalHeader } from '@car
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 
-const PatientMismatchedLocationModal = ({ open, setOpen, onConfirm, onCancel, sessionLocation, hsuLocation }) => {
+const PatientLocationMismatchModal = ({ open, setOpen, onConfirm, onCancel, sessionLocation, hsuLocation }) => {
   const { t } = useTranslation();
 
   const hsuDisplay = hsuLocation?.display || t('unknown', 'Unknown');
@@ -43,4 +43,4 @@ const PatientMismatchedLocationModal = ({ open, setOpen, onConfirm, onCancel, se
   );
 };
 
-export default PatientMismatchedLocationModal;
+export default PatientLocationMismatchModal;

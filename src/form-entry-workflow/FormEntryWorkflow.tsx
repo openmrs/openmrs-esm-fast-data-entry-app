@@ -73,7 +73,7 @@ const FormWorkspace = () => {
 
   useEffect(() => {
     if (encounter && visit) {
-      // Update encounter so that it belongs to the created visit
+      // Update the encounter so that it belongs to the created visit
       updateEncounter({ uuid: encounter.uuid, visit: visit.uuid });
     }
   }, [encounter, visit, updateEncounter]);
