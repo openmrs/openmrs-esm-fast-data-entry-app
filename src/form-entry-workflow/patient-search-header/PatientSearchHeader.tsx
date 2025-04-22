@@ -38,6 +38,7 @@ const PatientSearchHeader = () => {
       setPatientLocationMismatchModalOpen(true);
     } else {
       addPatient(selectedPatientUuid);
+      setSelectedPatientUuid(null);
     }
   }, [selectedPatientUuid, sessionLocation, hsuIdentifier, addPatient, config.patientLocationMismatchCheck]);
 
