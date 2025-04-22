@@ -177,6 +177,7 @@ const AddGroupModal = ({
       });
     }
     setErrors((errors) => ({ ...errors, patientList: null }));
+    setSelectedPatientUuid(null);
   }, [selectedPatientUuid, patientList, setPatientList]);
 
   const updatePatientList = (patientUuid) => {
@@ -186,7 +187,7 @@ const AddGroupModal = ({
   useEffect(() => {
     if (!selectedPatientUuid || !hsuIdentifier) return;
 
-    if (config.patientLocationMismatchCheck && hsuIdentifier && sessionLocation.uuid != hsuIdentifier.location.uuid) {
+    if (config.patientLocationMismatchCheck && sessionLocation.uuid != hsuIdentifier.location.uuid) {
       setPatientLocationMismatchModalOpen(true);
     } else {
       addSelectedPatientToList();
