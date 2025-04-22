@@ -19,7 +19,7 @@ const PatientLocationMismatchModal = ({ open, setOpen, onConfirm, onCancel, sess
   };
 
   return (
-    <ComposedModal open={open}>
+    <ComposedModal open={open} onClose={handleCancel}>
       <ModalHeader>{t('confirmPatientSelection', 'Confirm patient selection')}</ModalHeader>
       <ModalBody>
         {t(
