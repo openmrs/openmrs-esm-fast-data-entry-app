@@ -40,7 +40,7 @@
     "url": "https://github.com/openmrs/openmrs-esm-fast-data-entry-app/issues"
   },
   "peerDependencies": {
-    "@carbon/react": "1.71.0",
+    "@carbon/react": "1.x",
     "@openmrs/esm-framework": "*",
     "lodash-es": "4.x",
     "react": "18.x",

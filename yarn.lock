@@ -3665,7 +3665,7 @@ __metadata:
     webpack: "npm:^5.88.2"
     webpack-cli: "npm:^5.1.4"
   peerDependencies:
-    "@carbon/react": 1.71.0
+    "@carbon/react": 1.x
     "@openmrs/esm-framework": "*"
     lodash-es: 4.x
     react: 18.x
