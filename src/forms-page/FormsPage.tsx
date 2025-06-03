@@ -1,13 +1,12 @@
+import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { useConfig, useSession } from '@openmrs/esm-framework';
 import { Tab, Tabs, TabList, TabPanels, TabPanel } from '@carbon/react';
-import React from 'react';
-import { type Config } from '../config-schema';
+import { fdeWorkflowStorageName, fdeWorkflowStorageVersion } from '../context/FormWorkflowReducer';
+import { fdeGroupWorkflowStorageName, fdeGroupWorkflowStorageVersion } from '../context/GroupFormWorkflowReducer';
 import { useGetAllForms } from '../hooks';
 import FormsTable from './forms-table';
 import styles from './styles.scss';
-import { useTranslation } from 'react-i18next';
-import { fdeWorkflowStorageName, fdeWorkflowStorageVersion } from '../context/FormWorkflowReducer';
-import { fdeGroupWorkflowStorageName, fdeGroupWorkflowStorageVersion } from '../context/GroupFormWorkflowReducer';
 
 // helper function useful for debugging
 // given a list of forms, it will organize into permissions
@@ -93,11 +92,11 @@ const FormsPage = () => {
       <h3 className={styles.pageTitle}>{t('fastDataEntry', 'Fast Data Entry')}</h3>
       <Tabs>
         <TabList>
-          <Tab label={t('allForms', 'All Forms')}>
+          <Tab aria-label={t('allForms', 'All Forms')}>
             {`${t('allForms', 'All Forms')} (${cleanRows ? cleanRows?.length : '??'})`}
           </Tab>
           {categoryRows?.map((category, index) => (
-            <Tab label={category.name} key={index}>
+            <Tab aria-label={category.name} key={index}>
               {`${category.name} (${category.rows.length})`}
             </Tab>
           ))}

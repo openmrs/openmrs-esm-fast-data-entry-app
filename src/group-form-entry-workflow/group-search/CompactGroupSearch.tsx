@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { debounce } from 'lodash-es';
+import { Button, Search } from '@carbon/react';
+import GroupSearch from './GroupSearch';
 import { type GroupType } from '../../context/GroupFormWorkflowContext';
 import styles from './compact-group-search.scss';
-import GroupSearch from './GroupSearch';
-import { Button, Search } from '@carbon/react';
-import { useTranslation } from 'react-i18next';
-import debounce from 'lodash-es/debounce';
 
 interface CompactGroupSearchProps {
   selectGroupAction?: (group: GroupType) => void;
@@ -38,7 +38,6 @@ const CompactGroupSearch: React.FC<CompactGroupSearchProps> = ({ selectGroupActi
     <div className={styles.patientSearchBar}>
       <div className={styles.searchArea}>
         <Search
-          autoFocus
           className={styles.patientSearchInput}
           closeButtonLabelText={t('clearSearch', 'Clear')}
           labelText=""

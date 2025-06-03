@@ -1,6 +1,9 @@
-import { ErrorState } from '@openmrs/esm-framework';
+import React, { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router-dom';
 import {
   DataTable,
+  type DataTableHeader,
   DataTableSkeleton,
   Table,
   TableBody,
@@ -13,30 +16,37 @@ import {
   TableToolbarContent,
   TableToolbarSearch,
 } from '@carbon/react';
-import React from 'react';
-import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
+import { ErrorState } from '@openmrs/esm-framework';
 import EmptyState from '../../empty-state/EmptyState';
 import styles from './styles.scss';
+
+interface TableHeader {
+  key: string;
+  header: string;
+  isSortable?: boolean;
+}
 
 const FormsTable = ({ rows, error, isLoading, activeForms, activeGroupForms }) => {
   const { t } = useTranslation();
 
-  const tableHeaders = [
-    {
-      key: 'display',
-      header: t('formName', 'Form Name'),
-      isSortable: true,
-    },
-    {
-      key: 'actions',
-      header: t('actions', 'Actions'),
-    },
-    {
-      key: 'actions2',
-      header: '',
-    },
-  ];
+  const tableHeaders = useMemo(
+    () => [
+      {
+        key: 'display',
+        header: t('formName', 'Form Name'),
+        isSortable: true,
+      },
+      {
+        key: 'actions',
+        header: t('actions', 'Actions'),
+      },
+      {
+        key: 'actions2',
+        header: '',
+      },
+    ],
+    [t],
+  );
 
   const augmentedRows = rows?.map((row) => ({
     ...row,
@@ -84,7 +94,7 @@ const FormsTable = ({ rows, error, isLoading, activeForms, activeGroupForms }) =
             <Table {...getTableProps()}>
               <TableHead>
                 <TableRow>
-                  {headers.map((header) => (
+                  {headers.map((header: DataTableHeader & TableHeader) => (
                     <TableHeader
                       {...getHeaderProps({
                         header,

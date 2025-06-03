@@ -8,7 +8,7 @@
     "!**/e2e/**"
   ],
   "transform": {
-    "^.+\\.tsx?$": ["@swc/jest"]
+    "^.+\\.m?[jt]sx?$": ["@swc/jest"]
   },
   "transformIgnorePatterns": ["/node_modules/(?!@openmrs)"],
   "moduleNameMapper": {

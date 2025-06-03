@@ -40,7 +40,7 @@ const PatientRow = ({ patient }) => {
           <SkeletonText />
         </TableCell>
         <TableCell>
-          <Checkbox diabled />
+          <Checkbox id={`${identifier}-attendance-checkbox`} labelText={patient.id} disabled />
         </TableCell>
       </TableRow>
     );
