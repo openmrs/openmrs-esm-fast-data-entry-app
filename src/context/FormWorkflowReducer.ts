@@ -196,7 +196,7 @@ const reducer = (state, action) => {
           },
         },
       };
-    case 'SUBMIT_FOR_COMPLETE':
+    case 'SUBMIT_FOR_COMPLETE': {
       // this state should not be persisted
       window.dispatchEvent(
         new CustomEvent('ampath-form-action', {
@@ -204,6 +204,28 @@ const reducer = (state, action) => {
             formUuid: state.activeFormUuid,
             patientUuid: state.forms[state.activeFormUuid].activePatientUuid,
             action: 'onSubmit',
+          },
+        }),
+      );
+
+      window.dispatchEvent(new CustomEvent('triger-form-engine-submit'));
+
+      const afterSubmission = () => {
+        const { [state.activeFormUuid]: activeForm, ...formRest } = state.forms;
+        const newState = {
+          ...state,
+          forms: formRest,
+          activeFormUuid: null,
+        };
+        // state persisted here because this runs after successful form submission
+        persistData(newState);
+        navigate({ to: '${openmrsSpaBase}/forms' });
+      };
+
+      window.dispatchEvent(
+        new CustomEvent('form-submission-complete', {
+          detail: {
+            action: afterSubmission,
           },
         }),
       );
@@ -217,6 +239,7 @@ const reducer = (state, action) => {
           },
         },
       };
+    }
     case 'GO_TO_REVIEW': {
       const newState = {
         ...state,
