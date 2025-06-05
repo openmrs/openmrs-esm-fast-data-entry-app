@@ -14,8 +14,7 @@ import CompleteModal from '../CompleteModal';
 import CancelModal from '../CancelModal';
 import useStartVisit from '../hooks/useStartVisit';
 
-const WorkflowNavigationButtons = () => {
-  const context = useContext(FormWorkflowContext);
+const WorkflowNavigationButtons = ({ context }) => {
   const { workflowState, destroySession } = context;
   const [cancelModalOpen, setCancelModalOpen] = useState(false);
   const [completeModalOpen, setCompleteModalOpen] = useState(false);
@@ -43,16 +42,17 @@ const WorkflowNavigationButtons = () => {
 };
 
 const FormWorkspace = () => {
-  const {
-    patientUuids,
-    activePatientUuid,
-    activeEncounterUuid,
-    saveEncounter,
-    activeFormUuid,
-    editEncounter,
-    encounters,
-    singleSessionVisitTypeUuid,
-  } = useContext(FormWorkflowContext);
+  const context = useContext(FormWorkflowContext),
+    {
+      patientUuids,
+      activePatientUuid,
+      activeEncounterUuid,
+      saveEncounter,
+      activeFormUuid,
+      editEncounter,
+      encounters,
+      singleSessionVisitTypeUuid,
+    } = context;
   const { t } = useTranslation();
 
   const [encounter, setEncounter] = useState(null);
@@ -144,7 +144,7 @@ const FormWorkspace = () => {
                 />
               ))}
             </div>
-            <WorkflowNavigationButtons />
+            <WorkflowNavigationButtons context={context} />
           </div>
         </div>
       )}

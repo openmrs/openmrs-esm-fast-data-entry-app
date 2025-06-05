@@ -169,6 +169,7 @@ const FormBootstrap = ({
               ...activeSessionMeta,
               encDate: activeSessionMeta.sessionDate,
             },
+            isSubmissionTriggeredExternally: true,
           }}
         />
       )}
