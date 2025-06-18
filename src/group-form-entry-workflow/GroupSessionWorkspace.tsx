@@ -18,7 +18,9 @@ const WorkflowNavigationButtons = () => {
   const store = useStore(formStore);
   const formState = store[activeFormUuid];
   const navigationDisabled =
-    (formState !== 'ready' || workflowState !== 'EDIT_FORM') && formState !== 'readyWithValidationErrors';
+    formState === undefined || formState === null
+      ? false
+      : (formState !== 'ready' || workflowState !== 'EDIT_FORM') && formState !== 'readyWithValidationErrors';
   const [cancelModalOpen, setCancelModalOpen] = useState(false);
   const [completeModalOpen, setCompleteModalOpen] = useState(false);
   const { t } = useTranslation();
