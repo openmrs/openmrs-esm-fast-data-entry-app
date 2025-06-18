@@ -2,6 +2,7 @@ import React, { useCallback, useContext, useMemo, useState } from 'react';
 import { Edit } from '@carbon/react/icons';
 
 import {
+  CheckboxSkeleton,
   Checkbox,
   SkeletonText,
   Table,
@@ -40,7 +41,7 @@ const PatientRow = ({ patient }) => {
           <SkeletonText />
         </TableCell>
         <TableCell>
-          <Checkbox id={`${identifier}-attendance-checkbox`} labelText={patient.id} disabled />
+          <CheckboxSkeleton />
         </TableCell>
       </TableRow>
     );

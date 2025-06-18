@@ -273,14 +273,16 @@ const reducer = (state, action) => {
 
     case 'SUBMIT_FOR_NEXT':
       // this state should not be persisted
-      window.dispatchEvent(
-        new CustomEvent('ampath-form-action', {
-          detail: {
-            formUuid: state.activeFormUuid,
-            patientUuid: state.forms[state.activeFormUuid].activePatientUuid,
-            action: 'onSubmit',
-          },
-        }),
+      ['ampath-form-action', 'rfe-form-submit-action'].forEach((event) =>
+        window.dispatchEvent(
+          new CustomEvent(event, {
+            detail: {
+              formUuid: state.activeFormUuid,
+              patientUuid: state.forms[state.activeFormUuid].activePatientUuid,
+              action: 'onSubmit',
+            },
+          }),
+        ),
       );
       return {
         ...state,
@@ -338,14 +340,16 @@ const reducer = (state, action) => {
       };
     case 'SUBMIT_FOR_COMPLETE':
       // this state should not be persisted
-      window.dispatchEvent(
-        new CustomEvent('ampath-form-action', {
-          detail: {
-            formUuid: state.activeFormUuid,
-            patientUuid: state.forms[state.activeFormUuid].activePatientUuid,
-            action: 'onSubmit',
-          },
-        }),
+      ['ampath-form-action', 'rfe-form-submit-action'].forEach((event) =>
+        window.dispatchEvent(
+          new CustomEvent(event, {
+            detail: {
+              formUuid: state.activeFormUuid,
+              patientUuid: state.forms[state.activeFormUuid].activePatientUuid,
+              action: 'onSubmit',
+            },
+          }),
+        ),
       );
       return {
         ...state,
