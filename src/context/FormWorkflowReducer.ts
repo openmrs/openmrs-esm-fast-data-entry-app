@@ -204,7 +204,7 @@ const reducer = (state, action) => {
             detail: {
               formUuid: state.activeFormUuid,
               patientUuid: state.forms[state.activeFormUuid].activePatientUuid,
-              action: 'onSubmit',
+              ...(event === 'ampath-form-action' && { action: 'onSubmit' }),
             },
           }),
         ),
