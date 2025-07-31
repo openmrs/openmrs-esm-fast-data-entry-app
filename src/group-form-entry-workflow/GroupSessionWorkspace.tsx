@@ -1,6 +1,6 @@
 import { getGlobalStore, useConfig, useSession, useStore } from '@openmrs/esm-framework';
 import { Button } from '@carbon/react';
-import React, { useCallback, useContext, useEffect, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import PatientCard from '../patient-card/PatientCard';
 import styles from './styles.scss';
 import { useTranslation } from 'react-i18next';
@@ -17,11 +17,17 @@ const WorkflowNavigationButtons = () => {
   const { activeFormUuid, submitForNext, patientUuids, activePatientUuid, workflowState } = context;
   const store = useStore(formStore);
   const formState = store[activeFormUuid];
-  const navigationDisabled =
-    (formState !== 'ready' || workflowState !== 'EDIT_FORM') && formState !== 'readyWithValidationErrors';
+
   const [cancelModalOpen, setCancelModalOpen] = useState(false);
   const [completeModalOpen, setCompleteModalOpen] = useState(false);
   const { t } = useTranslation();
+
+  const navigationDisabled = useMemo(() => {
+    if (!formState) {
+      return false;
+    }
+    return (formState !== 'ready' || workflowState !== 'EDIT_FORM') && formState !== 'readyWithValidationErrors';
+  }, [formState, workflowState]);
 
   const isLastPatient = activePatientUuid === patientUuids[patientUuids.length - 1];
 

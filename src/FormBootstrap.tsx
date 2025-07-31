@@ -141,7 +141,7 @@ const FormBootstrap = ({
     setShowForm(false);
     setTimeout(() => {
       setShowForm(true);
-    });
+    }, 1);
   };
 
   return (
@@ -169,6 +169,7 @@ const FormBootstrap = ({
               ...activeSessionMeta,
               encDate: activeSessionMeta.sessionDate,
             },
+            hideControls: true,
           }}
         />
       )}
