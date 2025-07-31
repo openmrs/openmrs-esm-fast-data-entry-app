@@ -157,6 +157,7 @@ const FormBootstrap = ({
             patientUuid,
             patient,
             encounterUuid: encounterUuid ?? '',
+            promptBeforeClosing:()=>undefined,
             closeWorkspace: () => undefined,
             handlePostResponse: (encounter) => {
               handlePostResponse(encounter);
