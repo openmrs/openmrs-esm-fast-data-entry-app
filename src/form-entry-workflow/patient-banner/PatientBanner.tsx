@@ -1,6 +1,6 @@
 import { age, ExtensionSlot } from '@openmrs/esm-framework';
 import { SkeletonPlaceholder, SkeletonText } from '@carbon/react';
-import React, { useContext } from 'react';
+import React, { useContext, useMemo } from 'react';
 import styles from './styles.scss';
 import { useTranslation } from 'react-i18next';
 import useGetPatient from '../../hooks/useGetPatient';
@@ -38,7 +38,7 @@ const PatientBanner = () => {
   const { t } = useTranslation();
   const patientName = `${patient?.name?.[0].given?.join(' ')} ${patient?.name?.[0]?.family}`;
 
-  const patientPhotoSlotState = React.useMemo(
+  const patientPhotoSlotState = useMemo(
     () => ({ patientUuid: patient?.id, patientName, size: 'small' }),
     [patient?.id, patientName],
   );
@@ -51,7 +51,7 @@ const PatientBanner = () => {
 
   return (
     <div className={styles.container}>
-      <ExtensionSlot extensionSlotName="patient-photo-slot" state={patientPhotoSlotState} />
+      <ExtensionSlot name="patient-photo-slot" state={patientPhotoSlotState} />
       <div className={styles.patientInfoContent}>
         <div className={styles.patientInfoRow}>
           <span className={styles.patientName}>{patientName}</span>

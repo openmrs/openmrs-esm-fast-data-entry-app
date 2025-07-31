@@ -16,8 +16,6 @@ import { usePostCohort } from '../hooks';
 import PatientLocationMismatchModal from '../form-entry-workflow/patient-search-header/PatienMismatchedLocationModal';
 import { useHsuIdIdentifier } from '../hooks/location-tag.resource';
 
-const MemExtension = React.memo(ExtensionSlot);
-
 const PatientRow = ({ patient, removePatient }) => {
   const { t } = useTranslation();
   const { patient: patientInfo, error, isLoading } = usePatient(patient?.uuid);
@@ -56,6 +54,16 @@ const NewGroupForm = (props) => {
   const { name, setName, patientList, updatePatientList, errors, validate, removePatient } = props;
   const { t } = useTranslation();
 
+  const extensionSlotState = useMemo(
+    () => ({
+      selectPatientAction: updatePatientList,
+      buttonProps: {
+        kind: 'secondary',
+      },
+    }),
+    [updatePatientList],
+  );
+
   return (
     <div
       style={{
@@ -92,15 +100,7 @@ const NewGroupForm = (props) => {
 
       <FormLabel>{t('searchForPatientsToAddToGroup', 'Search for patients to add to group')}</FormLabel>
       <div className={styles.searchBar}>
-        <MemExtension
-          extensionSlotName="patient-search-bar-slot"
-          state={{
-            selectPatientAction: updatePatientList,
-            buttonProps: {
-              kind: 'secondary',
-            },
-          }}
-        />
+        <ExtensionSlot name="patient-search-bar-slot" state={extensionSlotState} />
       </div>
     </div>
   );

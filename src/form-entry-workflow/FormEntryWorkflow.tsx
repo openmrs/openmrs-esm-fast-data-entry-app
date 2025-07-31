@@ -157,7 +157,7 @@ const FormEntryWorkflow = () => {
   return (
     <>
       <div className={styles.breadcrumbsContainer}>
-        <ExtensionSlot extensionSlotName="breadcrumbs-slot" />
+        <ExtensionSlot name="breadcrumbs-slot" />
       </div>
       {workflowState === 'REVIEW' && <WorkflowReview />}
       {workflowState !== 'REVIEW' && (
