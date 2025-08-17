@@ -186,6 +186,7 @@ const GroupSessionWorkspace = () => {
               handlePostResponse,
               handleEncounterCreate,
             }}
+            hidePatientBanner={false}
           />
         </div>
         <div className={styles.rightPanel}>

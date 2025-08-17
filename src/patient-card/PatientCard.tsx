@@ -1,4 +1,4 @@
-import { CheckmarkOutline, WarningAlt } from '@carbon/react/icons';
+import { CheckmarkOutline, DocumentBlank } from '@carbon/react/icons';
 import { SkeletonText } from '@carbon/react';
 import React from 'react';
 import useGetPatient from '../hooks/useGetPatient';
@@ -45,7 +45,7 @@ const PatientCard = ({ patientUuid, activePatientUuid, editEncounter, encounters
         {patientUuid in encounters ? (
           <CheckmarkOutline size={16} className={styles.statusSuccess} />
         ) : (
-          <WarningAlt size={16} className={styles.statusWarning} />
+          <DocumentBlank size={16} className={styles.statusWarning} />
         )}
       </div>
     </CardContainer>
