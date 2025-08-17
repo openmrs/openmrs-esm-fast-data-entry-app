@@ -52,7 +52,7 @@ const PatientBanner = () => {
   return <Banner patient={patient} hideActionsOverflow />;
 };
 
-const Banner: React.FC<{ patient: any; hideActionsOverflow?: any }> = ({ patient, hideActionsOverflow }) => {
+const Banner = ({ patient, hideActionsOverflow }) => {
   return (
     <div className={styles.patientBannerContainer}>
       <ExtensionSlot
