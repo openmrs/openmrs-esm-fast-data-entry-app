@@ -34,28 +34,7 @@ export const configSchema = {
         },
       },
     },
-    _default: [
-      {
-        name: 'ICRC Forms',
-        forms: [
-          {
-            formUUID: '0cefb866-110c-4f16-af58-560932a1db1f',
-            name: 'Adult Triage',
-            disableGroupSession: false,
-          },
-        ],
-      },
-      {
-        name: 'Distress Scales',
-        forms: [
-          {
-            formUUID: '9f26aad4-244a-46ca-be49-1196df1a8c9a',
-            name: 'POC Sample Form 1',
-            disableGroupSession: false,
-          },
-        ],
-      },
-    ],
+    _default: [],
   },
   formCategoriesToShow: {
     _type: Type.Array,
@@ -64,7 +43,7 @@ export const configSchema = {
       _type: Type.String,
       _description: 'Name of category',
     },
-    _default: ['ICRC Forms', 'Distress Scales'],
+    _default: [],
   },
   groupSessionConcepts: {
     sessionName: {
