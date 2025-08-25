@@ -127,6 +127,7 @@ const FormWorkspace = () => {
                 handlePostResponse,
                 handleEncounterCreate,
               }}
+              hidePatientBanner={true}
             />
           </div>
           <div className={styles.rightPanel}>

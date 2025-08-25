@@ -49,23 +49,20 @@ const PatientBanner = () => {
     return <SkeletonPatientInfo />;
   }
 
+  return <Banner patient={patient} hideActionsOverflow />;
+};
+
+const Banner = ({ patient, hideActionsOverflow }) => {
   return (
-    <div className={styles.container}>
-      <ExtensionSlot name="patient-photo-slot" state={patientPhotoSlotState} />
-      <div className={styles.patientInfoContent}>
-        <div className={styles.patientInfoRow}>
-          <span className={styles.patientName}>{patientName}</span>
-        </div>
-        <div className={styles.patientInfoRow}>
-          <span>{(patient.gender ?? t('unknown', 'Unknown')).replace(/^\w/, (c) => c.toUpperCase())}</span>
-          <span>&middot;</span>
-          <span>{age(patient.birthDate)}</span>
-          <span>&middot;</span>
-          <span>
-            {patient.identifier.length ? patient.identifier.map((identifier) => identifier.value).join(', ') : '--'}
-          </span>
-        </div>
-      </div>
+    <div className={styles.patientBannerContainer}>
+      <ExtensionSlot
+        name="patient-header-slot"
+        state={{
+          patient,
+          patientUuid: patient.id,
+          hideActionsOverflow,
+        }}
+      />
     </div>
   );
 };
