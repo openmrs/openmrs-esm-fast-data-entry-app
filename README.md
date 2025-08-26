@@ -48,7 +48,7 @@ These are configured in the `specificQuestions` schema. The schema allows you to
 * Identify **which forms** the question applies to.
 * Point to the **question ID** within the form schema.
 * Optionally define a **default answer**.
-* Optionally limit the set of **answer choices** (for multi-select fields).
+* Optionally limit the set of **answer choices** (for coded inputs).
 
 #### Example Schema
 
@@ -102,7 +102,7 @@ These are configured in the `specificQuestions` schema. The schema allows you to
 * **`forms`**: Array of form UUIDs. The pre-fill rule applies only to these forms.
 * **`questionId`**: The field identifier in the form schema to pre-fill. Must exist in the published form schema.
 * **`defaultAnswer`** *(optional)*: A concept UUID or value to use as the default answer.
-* **`answers`** *(optional, multi-select only)*: Array of concept UUIDs to restrict the available answer options.
+* **`answers`** *(optional, for coded inputs)*: Array of concept UUIDs to restrict the available answer options.
 
 #### Use Cases
 
@@ -135,7 +135,10 @@ Since all forms in OpenMRS are submitted via a form engine, **FDE** relies on on
 - [Form Engine App](https://github.com/openmrs/openmrs-esm-patient-chart/tree/main/packages/esm-form-engine-app)  
 - [Form Entry App](https://github.com/openmrs/openmrs-esm-patient-chart/tree/main/packages/esm-form-entry-app)  
 
-⚠️ **Important**: Only one wrapper can be active in a distribution. A distribution must choose either the **React-based** or **Angular-based** engine, depending on its architecture.  
+⚠️ **Important**: The Fast Data Entry (FDE) feature is supported **only by JSON schema–based form engines** 
+(e.g., the React Form Engine or the Angular Form Engine).  
+A distribution can activate **only one wrapper module** at a time.  
+
 👉 For example, the **O3 Reference Application** uses the **React Form Engine**
 
 #### Adopting a Form Engine with FDE
