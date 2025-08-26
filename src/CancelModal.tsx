@@ -16,7 +16,7 @@ const CancelModal = ({ open, setOpen, context }) => {
   };
 
   return (
-    <ComposedModal open={open}>
+    <ComposedModal open={open} preventCloseOnClickOutside={true} onClose={onCancel}>
       <ModalHeader>{t('areYouSure', 'Are you sure?')}</ModalHeader>
       <ModalBody>
         {t(
