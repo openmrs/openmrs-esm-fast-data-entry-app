@@ -43,7 +43,7 @@
   "or": "o",
   "orLabelName": "Nome etichetta OR",
   "patientIsPresent": "Il paziente è presente",
-  "patientLocationMismatch": "The selected HSU location ({{hsuLocation}}) does not match the current session location ({{sessionLocation}}). Are you sure you want to proceed?",
+  "patientLocationMismatch": "La sede HSU selezionata ({{hsuLocation}}) non corrisponde alla sede della sessione corrente ({{sessionLocation}}). Sei sicuro di voler procedere?",
   "patientsInGroup": "Pazienti nel gruppo",
   "postError": "Errore POST",
   "practitionerName": "Nome del medico",
