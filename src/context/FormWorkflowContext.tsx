@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import React, { useEffect, useMemo, useReducer, useRef } from 'react';
 import reducer from './FormWorkflowReducer';
 import { useParams, useLocation } from 'react-router-dom';
@@ -24,7 +25,6 @@ const initialActions = {
 export const initialWorkflowState = {
   activeFormUuid: null,
   forms: {},
-
   workflowState: null,
   activePatientUuid: null,
   activeEncounterUuid: null,
@@ -56,11 +56,10 @@ const FormWorkflowProvider = ({ children }) => {
 
   const singleSessionVisitTypeUuid = systemSetting?.result?.data?.results?.[0]?.value ?? null;
 
-  /**
-   * Refs for diagnostic logging (no behavior changes)
-   */
+  // Diagnostic refs
   const lastSeenPatientUuidRef = useRef<string | null>(null);
-  const hasLoggedPatientLossRef = useRef(false);
+  const hasLoggedLossRef = useRef(false);
+  const hasLoggedRecoveryRef = useRef(false);
 
   const actions = useMemo(
     () => ({
@@ -73,11 +72,7 @@ const FormWorkflowProvider = ({ children }) => {
         }),
       addPatient: (patientUuid) => dispatch({ type: 'ADD_PATIENT', patientUuid }),
       openPatientSearch: () => dispatch({ type: 'OPEN_PATIENT_SEARCH' }),
-      saveEncounter: (encounterUuid) =>
-        dispatch({
-          type: 'SAVE_ENCOUNTER',
-          encounterUuid,
-        }),
+      saveEncounter: (encounterUuid) => dispatch({ type: 'SAVE_ENCOUNTER', encounterUuid }),
       submitForNext: () => dispatch({ type: 'SUBMIT_FOR_NEXT' }),
       submitForReview: () => dispatch({ type: 'SUBMIT_FOR_REVIEW' }),
       submitForComplete: () => dispatch({ type: 'SUBMIT_FOR_COMPLETE' }),
@@ -89,40 +84,22 @@ const FormWorkflowProvider = ({ children }) => {
     [user],
   );
 
-  /**
-   * ENTRY POINT — workflow initialization
-   */
+  // Initialization
   useEffect(() => {
-    // eslint-disable-next-line no-console
-    console.debug('[FDE TRACE] Workflow initialization check', {
+    console.debug('[FDE TRACE] Checking workflow initialization', {
       workflowState: state?.workflowState,
       activeFormUuid,
-      newPatientUuid,
+      patientUuidFromUrl: newPatientUuid,
     });
 
     if (state?.workflowState === null && activeFormUuid) {
-      actions.initializeWorkflowState({
-        activeFormUuid,
-        newPatientUuid,
-      });
+      actions.initializeWorkflowState({ activeFormUuid, newPatientUuid });
     }
   }, [activeFormUuid, newPatientUuid, state?.workflowState, actions]);
 
-  /**
-   * DIAGNOSTIC ONLY:
-   * Detect when a patient is created but not retained in workflow state
-   * Logs ONCE per workflow to avoid noise
-   */
+  // Diagnostic: patient context loss & recovery
   useEffect(() => {
     const currentPatient = state.forms?.[state.activeFormUuid]?.activePatientUuid ?? null;
-
-    // eslint-disable-next-line no-console
-    console.debug('[FDE DIAGNOSTIC] Patient context snapshot', {
-      activeFormUuid: state.activeFormUuid,
-      patientUuidFromUrl: newPatientUuid,
-      patientUuidInWorkflow: currentPatient,
-      workflowState: state?.workflowState,
-    });
 
     if (newPatientUuid) {
       lastSeenPatientUuidRef.current = newPatientUuid;
@@ -133,14 +110,24 @@ const FormWorkflowProvider = ({ children }) => {
       !currentPatient &&
       state?.workflowState === null &&
       activeFormUuid &&
-      !hasLoggedPatientLossRef.current
+      !hasLoggedLossRef.current
     ) {
-      hasLoggedPatientLossRef.current = true;
+      hasLoggedLossRef.current = true;
 
-      // eslint-disable-next-line no-console
-      console.warn('[FDE WARNING] Patient created but not present in workflow state', {
+      console.warn('[FDE WARNING] Workflow lost patient context after registration', {
         patientUuid: lastSeenPatientUuidRef.current,
         activeFormUuid,
+        workflowState: state?.workflowState,
+      });
+    }
+
+    if (lastSeenPatientUuidRef.current && currentPatient && hasLoggedLossRef.current && !hasLoggedRecoveryRef.current) {
+      hasLoggedRecoveryRef.current = true;
+
+      console.info('[FDE INFO] Workflow patient context recovered', {
+        patientUuid: currentPatient,
+        activeFormUuid,
+        workflowState: state?.workflowState,
       });
     }
   }, [state.activeFormUuid, state.forms, state.workflowState, activeFormUuid, newPatientUuid]);
@@ -150,19 +137,13 @@ const FormWorkflowProvider = ({ children }) => {
       value={{
         ...state,
         ...actions,
-
         workflowState: state.forms?.[state.activeFormUuid]?.workflowState ?? initialWorkflowState.workflowState,
-
         activePatientUuid:
           state.forms?.[state.activeFormUuid]?.activePatientUuid ?? initialWorkflowState.activePatientUuid,
-
         activeEncounterUuid:
           state.forms?.[state.activeFormUuid]?.activeEncounterUuid ?? initialWorkflowState.activeEncounterUuid,
-
         patientUuids: state.forms?.[state.activeFormUuid]?.patientUuids ?? initialWorkflowState.patientUuids,
-
         encounters: state.forms?.[state.activeFormUuid]?.encounters ?? initialWorkflowState.encounters,
-
         singleSessionVisitTypeUuid,
       }}
     >
