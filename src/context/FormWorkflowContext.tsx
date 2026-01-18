@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useReducer } from 'react';
+import React, { useEffect, useMemo, useReducer, useRef } from 'react';
 import reducer from './FormWorkflowReducer';
 import { useParams, useLocation } from 'react-router-dom';
 import useGetSystemSetting from '../hooks/useGetSystemSetting';
@@ -40,26 +40,12 @@ const FormWorkflowContext = React.createContext({
 });
 
 const FormWorkflowProvider = ({ children }) => {
-  /* ──────────────────────────────
-   * TRACE: provider render
-   * ────────────────────────────── */
-  // eslint-disable-next-line no-console
-  console.debug('[FDE TRACE] FormWorkflowProvider render');
-
   const { user } = useSession();
   const { formUuid } = useParams() as ParamTypes;
   const activeFormUuid = formUuid?.split('&')[0] ?? null;
 
   const { search } = useLocation();
   const newPatientUuid = new URLSearchParams(search).get('patientUuid');
-
-  // eslint-disable-next-line no-console
-  console.debug('[FDE TRACE] URL + session info', {
-    rawFormUuid: formUuid,
-    activeFormUuid,
-    newPatientUuid,
-    userUuid: user?.uuid,
-  });
 
   const [state, dispatch] = useReducer(reducer, {
     ...initialWorkflowState,
@@ -70,78 +56,63 @@ const FormWorkflowProvider = ({ children }) => {
 
   const singleSessionVisitTypeUuid = systemSetting?.result?.data?.results?.[0]?.value ?? null;
 
+  /**
+   * Refs for diagnostic logging (no behavior changes)
+   */
+  const lastSeenPatientUuidRef = useRef<string | null>(null);
+  const hasLoggedPatientLossRef = useRef(false);
+
   const actions = useMemo(
     () => ({
-      initializeWorkflowState: ({ activeFormUuid, newPatientUuid }) => {
-        // eslint-disable-next-line no-console
-        console.debug('[FDE ACTION] INITIALIZE_WORKFLOW_STATE', {
-          activeFormUuid,
-          newPatientUuid,
-          userUuid: user?.uuid,
-        });
-
+      initializeWorkflowState: ({ activeFormUuid, newPatientUuid }) =>
         dispatch({
           type: 'INITIALIZE_WORKFLOW_STATE',
           activeFormUuid,
           newPatientUuid,
-          userUuid: user?.uuid,
-        });
-      },
-
+          userUuid: user.uuid,
+        }),
       addPatient: (patientUuid) => dispatch({ type: 'ADD_PATIENT', patientUuid }),
-
       openPatientSearch: () => dispatch({ type: 'OPEN_PATIENT_SEARCH' }),
-
-      saveEncounter: (encounterUuid) => {
-        // eslint-disable-next-line no-console
-        console.debug('[FDE ACTION] SAVE_ENCOUNTER', { encounterUuid });
-
+      saveEncounter: (encounterUuid) =>
         dispatch({
           type: 'SAVE_ENCOUNTER',
           encounterUuid,
-        });
-      },
-
+        }),
       submitForNext: () => dispatch({ type: 'SUBMIT_FOR_NEXT' }),
-
       submitForReview: () => dispatch({ type: 'SUBMIT_FOR_REVIEW' }),
-
       submitForComplete: () => dispatch({ type: 'SUBMIT_FOR_COMPLETE' }),
-
       editEncounter: (patientUuid) => dispatch({ type: 'EDIT_ENCOUNTER', patientUuid }),
-
       goToReview: () => dispatch({ type: 'GO_TO_REVIEW' }),
-
       destroySession: () => dispatch({ type: 'DESTROY_SESSION' }),
-
       closeSession: () => dispatch({ type: 'CLOSE_SESSION' }),
     }),
     [user],
   );
 
-  /* ──────────────────────────────
-   * EFFECT: workflow initialization
-   * ────────────────────────────── */
+  /**
+   * ENTRY POINT — workflow initialization
+   */
   useEffect(() => {
     // eslint-disable-next-line no-console
-    console.debug('[FDE EFFECT] Workflow init check', {
-      workflowState: state.workflowState,
+    console.debug('[FDE TRACE] Workflow initialization check', {
+      workflowState: state?.workflowState,
       activeFormUuid,
       newPatientUuid,
-      formsKeys: Object.keys(state.forms ?? {}),
     });
 
-    if (state.workflowState === null && activeFormUuid) {
+    if (state?.workflowState === null && activeFormUuid) {
       actions.initializeWorkflowState({
         activeFormUuid,
         newPatientUuid,
       });
     }
-  }, [activeFormUuid, newPatientUuid, state.workflowState, state.forms, actions]);
+  }, [activeFormUuid, newPatientUuid, state?.workflowState, actions]);
 
-  /* ──────────────────────────────
-   * EFFECT: patient context diagnostics
-   * ────────────────────────────── */
+  /**
+   * DIAGNOSTIC ONLY:
+   * Detect when a patient is created but not retained in workflow state
+   * Logs ONCE per workflow to avoid noise
+   */
   useEffect(() => {
     const currentPatient = state.forms?.[state.activeFormUuid]?.activePatientUuid ?? null;
 
@@ -150,18 +121,29 @@ const FormWorkflowProvider = ({ children }) => {
       activeFormUuid: state.activeFormUuid,
       patientUuidFromUrl: newPatientUuid,
       patientUuidInWorkflow: currentPatient,
-      workflowState: state.forms?.[state.activeFormUuid]?.workflowState ?? null,
-      fullFormState: state.forms?.[state.activeFormUuid],
+      workflowState: state?.workflowState,
     });
 
-    if (newPatientUuid && !currentPatient) {
+    if (newPatientUuid) {
+      lastSeenPatientUuidRef.current = newPatientUuid;
+    }
+
+    if (
+      lastSeenPatientUuidRef.current &&
+      !currentPatient &&
+      state?.workflowState === null &&
+      activeFormUuid &&
+      !hasLoggedPatientLossRef.current
+    ) {
+      hasLoggedPatientLossRef.current = true;
+
       // eslint-disable-next-line no-console
       console.warn('[FDE WARNING] Patient created but not present in workflow state', {
-        newPatientUuid,
-        activeFormUuid: state.activeFormUuid,
+        patientUuid: lastSeenPatientUuidRef.current,
+        activeFormUuid,
       });
     }
-  }, [state.forms, state.activeFormUuid, newPatientUuid]);
+  }, [state.activeFormUuid, state.forms, state.workflowState, activeFormUuid, newPatientUuid]);
 
   return (
     <FormWorkflowContext.Provider
