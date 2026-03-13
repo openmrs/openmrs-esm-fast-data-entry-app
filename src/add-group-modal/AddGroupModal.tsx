@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import {
   ExtensionSlot,
   fetchCurrentPatient,
-  showToast,
+  showSnackbar,
   useConfig,
   usePatient,
   useSession,
@@ -188,7 +188,23 @@ const AddGroupModal = ({
   useEffect(() => {
     if (!selectedPatientUuid || !hsuIdentifier) return;
 
-    if (config.patientLocationMismatchCheck && sessionLocation.uuid != hsuIdentifier.location.uuid) {
+    const locationMismatch = sessionLocation.uuid != hsuIdentifier.location.uuid;
+
+    if (locationMismatch && config.enforcePatientListLocationMatch) {
+      showSnackbar({
+        kind: 'error',
+        title: t('locationMismatch', 'Location Mismatch'),
+        subtitle: t(
+          'patientLocationMismatchEnforced',
+          'Cannot add patient from {{hsuLocation}} to a session at {{sessionLocation}}',
+          {
+            hsuLocation: hsuIdentifier.location?.display,
+            sessionLocation: sessionLocation?.display,
+          },
+        ),
+      });
+      setSelectedPatientUuid(null);
+    } else if (config.patientLocationMismatchCheck && locationMismatch) {
       setPatientLocationMismatchModalOpen(true);
     } else {
       addSelectedPatientToList();
@@ -199,6 +215,8 @@ const AddGroupModal = ({
     hsuIdentifier,
     addSelectedPatientToList,
     config.patientLocationMismatchCheck,
+    config.enforcePatientListLocationMatch,
+    t,
   ]);
 
   const handleSubmit = () => {
@@ -236,10 +254,10 @@ const AddGroupModal = ({
 
   useEffect(() => {
     if (error) {
-      showToast({
+      showSnackbar({
         kind: 'error',
         title: t('postError', 'POST Error'),
-        description: error.message ?? t('unknownPostError', 'An unknown error occurred while saving data'),
+        subtitle: error.message ?? t('unknownPostError', 'An unknown error occurred while saving data'),
       });
       if (error.fieldErrors) {
         setErrors(

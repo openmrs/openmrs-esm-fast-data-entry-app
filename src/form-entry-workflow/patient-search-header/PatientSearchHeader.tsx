@@ -1,5 +1,5 @@
 import { Add, Close } from '@carbon/react/icons';
-import { ExtensionSlot, interpolateUrl, navigate, useConfig, useSession } from '@openmrs/esm-framework';
+import { ExtensionSlot, interpolateUrl, navigate, useConfig, useSession, showSnackbar } from '@openmrs/esm-framework';
 import { Button } from '@carbon/react';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
@@ -16,6 +16,7 @@ const PatientSearchHeader = () => {
   const { sessionLocation } = useSession();
   const config = useConfig();
   const { addPatient, workflowState, activeFormUuid } = useContext(FormWorkflowContext);
+  const { t } = useTranslation();
 
   const onPatientMismatchedLocationModalConfirm = useCallback(() => {
     addPatient(selectedPatientUuid);
@@ -34,15 +35,37 @@ const PatientSearchHeader = () => {
   useEffect(() => {
     if (!selectedPatientUuid || !hsuIdentifier) return;
 
-    if (config.patientLocationMismatchCheck && hsuIdentifier && sessionLocation.uuid != hsuIdentifier.location.uuid) {
+    const locationMismatch = sessionLocation.uuid != hsuIdentifier.location.uuid;
+
+    if (config.enforcePatientListLocationMatch && locationMismatch) {
+      showSnackbar({
+        kind: 'error',
+        title: t('locationMismatch', 'Location Mismatch'),
+        subtitle: t(
+          'patientLocationMismatchEnforced',
+          'Cannot add patient from {{hsuLocation}} to a session at {{sessionLocation}}',
+          {
+            hsuLocation: hsuIdentifier.location?.display,
+            sessionLocation: sessionLocation?.display,
+          },
+        ),
+      });
+      setSelectedPatientUuid(null);
+    } else if (config.patientLocationMismatchCheck && locationMismatch) {
       setPatientLocationMismatchModalOpen(true);
     } else {
       addPatient(selectedPatientUuid);
       setSelectedPatientUuid(null);
     }
-  }, [selectedPatientUuid, sessionLocation, hsuIdentifier, addPatient, config.patientLocationMismatchCheck]);
-
-  const { t } = useTranslation();
+  }, [
+    selectedPatientUuid,
+    sessionLocation,
+    hsuIdentifier,
+    addPatient,
+    config.patientLocationMismatchCheck,
+    config.enforcePatientListLocationMatch,
+    t,
+  ]);
 
   if (workflowState !== 'NEW_PATIENT') return null;
 

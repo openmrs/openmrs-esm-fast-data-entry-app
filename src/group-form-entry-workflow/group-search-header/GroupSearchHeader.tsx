@@ -1,6 +1,7 @@
 import { Close, Add } from '@carbon/react/icons';
 import { Button } from '@carbon/react';
 import React, { useCallback, useContext, useState } from 'react';
+import { useConfig, useSession, showSnackbar } from '@openmrs/esm-framework';
 import GroupFormWorkflowContext from '../../context/GroupFormWorkflowContext';
 import styles from './styles.scss';
 import { useTranslation } from 'react-i18next';
@@ -9,16 +10,40 @@ import AddGroupModal from '../../add-group-modal/AddGroupModal';
 
 const GroupSearchHeader = () => {
   const { t } = useTranslation();
+  const config = useConfig();
+  const { sessionLocation } = useSession();
   const { activeGroupUuid, setGroup, destroySession } = useContext(GroupFormWorkflowContext);
   const [isOpen, setOpen] = useState(false);
-  const handleSelectGroup = (group) => {
-    group.cohortMembers.sort((a, b) => {
-      const aName = a?.patient?.person?.names?.[0]?.display;
-      const bName = b?.patient?.person?.names?.[0]?.display;
-      return aName.localeCompare(bName, undefined, { sensitivity: 'base' });
-    });
-    setGroup(group);
-  };
+
+  const handleSelectGroup = useCallback(
+    (group) => {
+      if (config.enforcePatientListLocationMatch && group.location && sessionLocation.uuid !== group.location.uuid) {
+        showSnackbar({
+          kind: 'error',
+          title: t('locationMismatch', 'Location Mismatch'),
+          subtitle: t(
+            'groupLocationMismatchEnforced',
+            'Cannot select group from {{groupLocation}} for a session at {{sessionLocation}}',
+            {
+              groupLocation: group.location?.display,
+              sessionLocation: sessionLocation?.display,
+            },
+          ),
+        });
+        return;
+      }
+
+      if (group.cohortMembers) {
+        group.cohortMembers.sort((a, b) => {
+          const aName = a?.patient?.person?.names?.[0]?.display;
+          const bName = b?.patient?.person?.names?.[0]?.display;
+          return aName.localeCompare(bName, undefined, { sensitivity: 'base' });
+        });
+      }
+      setGroup(group);
+    },
+    [config.enforcePatientListLocationMatch, sessionLocation, setGroup, t],
+  );
 
   const handleCancel = useCallback(() => {
     setOpen(false);
