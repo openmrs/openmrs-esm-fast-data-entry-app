@@ -12,6 +12,20 @@ export interface GroupType {
   id: string;
   name: string;
   members: Array<Type.Object>;
+  location?: {
+    uuid: string;
+    display?: string;
+  };
+  cohortMembers?: Array<{
+    patient: {
+      uuid?: string;
+      person?: {
+        names?: Array<{
+          display?: string;
+        }>;
+      };
+    };
+  }>;
 }
 
 export interface MetaType {

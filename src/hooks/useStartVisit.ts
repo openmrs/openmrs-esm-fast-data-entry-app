@@ -1,6 +1,6 @@
 import { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { showNotification, showToast, openmrsFetch, restBaseUrl } from '@openmrs/esm-framework';
+import { showNotification, showSnackbar, openmrsFetch, restBaseUrl } from '@openmrs/esm-framework';
 
 const useStartVisit = ({ showSuccessNotification = true, showErrorNotification = true }) => {
   const { t } = useTranslation();
@@ -14,10 +14,9 @@ const useStartVisit = ({ showSuccessNotification = true, showErrorNotification =
       setError(false);
       setSuccess(result);
       if (showSuccessNotification) {
-        showToast({
-          critical: true,
+        showSnackbar({
           kind: 'success',
-          description: t('visitStartedSuccessfully', `${result?.data?.visitType?.display} started successfully`),
+          subtitle: t('visitStartedSuccessfully', `${result?.data?.visitType?.display} started successfully`),
           title: t('visitStarted', 'Visit started'),
         });
       }

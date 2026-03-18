@@ -1,19 +1,6 @@
 import useSWR from 'swr';
 import { openmrsFetch } from '@openmrs/esm-framework';
-
-export interface Identifier {
-  uuid: string;
-  identifier: string;
-  display: string;
-  identifierType: {
-    uuid: string;
-    display: string;
-  };
-  location: {
-    uuid: string;
-    display: string;
-  };
-}
+import { type Identifier } from '../types';
 
 export function useHsuIdIdentifier(patientUuid: string) {
   const hsuIdType = '05a29f94-c0ed-11e2-94be-8c13b969e334';

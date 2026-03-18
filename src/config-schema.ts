@@ -113,6 +113,11 @@ export const configSchema = {
       'Whether to prompt for confirmation if the selected patient is not at the same location as the current session.',
     _default: false,
   },
+  enforcePatientListLocationMatch: {
+    _type: Type.Boolean,
+    _description: 'If true, prevents adding patients from a different location than the current session.',
+    _default: false,
+  },
 };
 
 export type Form = {
@@ -130,4 +135,5 @@ export type Config = {
   formCategories: Array<Category>;
   formCategoriesToShow: Array<string>;
   patientLocationMismatchCheck: Type.Boolean;
+  enforcePatientListLocationMatch: Type.Boolean;
 };
