@@ -35,7 +35,7 @@ const PatientSearchHeader = () => {
   useEffect(() => {
     if (!selectedPatientUuid || !hsuIdentifier) return;
 
-    const locationMismatch = sessionLocation.uuid != hsuIdentifier.location.uuid;
+    const locationMismatch = sessionLocation.uuid !== hsuIdentifier.location.uuid;
 
     if (config.enforcePatientListLocationMatch && locationMismatch) {
       showSnackbar({
