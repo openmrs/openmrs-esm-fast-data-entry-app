@@ -1,13 +1,12 @@
+import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { useConfig, useSession } from '@openmrs/esm-framework';
 import { Tab, Tabs, TabList, TabPanels, TabPanel } from '@carbon/react';
-import React from 'react';
-import { type Config } from '../config-schema';
+import { fdeWorkflowStorageName, fdeWorkflowStorageVersion } from '../context/FormWorkflowReducer';
+import { fdeGroupWorkflowStorageName, fdeGroupWorkflowStorageVersion } from '../context/GroupFormWorkflowReducer';
 import { useGetAllForms } from '../hooks';
 import FormsTable from './forms-table';
 import styles from './styles.scss';
-import { useTranslation } from 'react-i18next';
-import { fdeWorkflowStorageName, fdeWorkflowStorageVersion } from '../context/FormWorkflowReducer';
-import { fdeGroupWorkflowStorageName, fdeGroupWorkflowStorageVersion } from '../context/GroupFormWorkflowReducer';
 
 // helper function useful for debugging
 // given a list of forms, it will organize into permissions
@@ -24,17 +23,29 @@ export const getFormPermissions = (forms) => {
   return output;
 };
 
-// Function adds `id` field to rows so they will be accepted by DataTable
-// "display" is prefered for display name if present, otherwise fall back on "name'"
-const prepareRowsForTable = (rawFormData) => {
-  if (rawFormData) {
-    return rawFormData?.map((form) => ({
-      ...form,
-      id: form.uuid,
-      display: form.display || form.name,
-    }));
-  }
-  return null;
+/**
+ * Prepares the raw form data to be used in a DataTable.
+ * Adds an `id` field based on the `uuid` property of the form.
+ * Sets the `display` field based on the `display` property if present, otherwise falls back to the `name` field.
+ * Also attaches the `disableGroupSession` flag from form categories config, if available.
+ *
+ * @param {Array} rawFormData
+ * @param {Array} formCategories
+ * @returns {Array}
+ */
+const prepareRowsForTable = (rawFormData = [], formCategories = []) => {
+  const formCategoryMap = new Map(
+    formCategories.flatMap(({ forms }) =>
+      forms.map(({ formUUID, disableGroupSession }) => [formUUID, disableGroupSession]),
+    ),
+  );
+
+  return rawFormData.map((form) => ({
+    ...form,
+    id: form.uuid,
+    display: form.display || form.name,
+    disableGroupSession: formCategoryMap.get(form.uuid),
+  }));
 };
 
 const FormsPage = () => {
@@ -42,7 +53,7 @@ const FormsPage = () => {
   const { t } = useTranslation();
   const { formCategories, formCategoriesToShow } = config;
   const { forms, isLoading, error } = useGetAllForms();
-  const cleanRows = prepareRowsForTable(forms);
+  const cleanRows = prepareRowsForTable(forms, formCategories);
   const { user } = useSession();
   const savedFormsData = localStorage.getItem(fdeWorkflowStorageName + ':' + user?.uuid);
   const savedGroupFormsData = localStorage.getItem(fdeGroupWorkflowStorageName + ':' + user?.uuid);
@@ -81,12 +92,12 @@ const FormsPage = () => {
       <h3 className={styles.pageTitle}>{t('fastDataEntry', 'Fast Data Entry')}</h3>
       <Tabs>
         <TabList>
-          <Tab label={t('allForms', 'All Forms')}>
+          <Tab aria-label={t('allForms', 'All Forms')}>
             {`${t('allForms', 'All Forms')} (${cleanRows ? cleanRows?.length : '??'})`}
           </Tab>
           {categoryRows?.map((category, index) => (
-            <Tab label={category.name} key={index}>
-              {`${category.name} (${category.rows.length})`}
+            <Tab aria-label={category.name} key={index}>
+              {`${t(category.name, category.name)} (${category.rows.length})`}
             </Tab>
           ))}
         </TabList>

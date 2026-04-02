@@ -73,7 +73,7 @@ const FormWorkspace = () => {
 
   useEffect(() => {
     if (encounter && visit) {
-      // Update encounter so that it belongs to the created visit
+      // Update the encounter so that it belongs to the created visit
       updateEncounter({ uuid: encounter.uuid, visit: visit.uuid });
     }
   }, [encounter, visit, updateEncounter]);
@@ -127,6 +127,7 @@ const FormWorkspace = () => {
                 handlePostResponse,
                 handleEncounterCreate,
               }}
+              hidePatientBanner={true}
             />
           </div>
           <div className={styles.rightPanel}>
@@ -157,7 +158,7 @@ const FormEntryWorkflow = () => {
   return (
     <>
       <div className={styles.breadcrumbsContainer}>
-        <ExtensionSlot extensionSlotName="breadcrumbs-slot" />
+        <ExtensionSlot name="breadcrumbs-slot" />
       </div>
       {workflowState === 'REVIEW' && <WorkflowReview />}
       {workflowState !== 'REVIEW' && (

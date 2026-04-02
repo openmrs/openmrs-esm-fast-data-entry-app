@@ -105,12 +105,7 @@ export const SearchResultSkeleton = () => {
   return (
     <div className={styles.patientSearchResult}>
       <div className={styles.patientAvatar} role="img">
-        <SkeletonIcon
-          style={{
-            height: '3rem',
-            width: '3rem',
-          }}
-        />
+        <SkeletonIcon className={styles.skeletonIcon} />
       </div>
       <div>
         <h2 className={styles.patientName}>

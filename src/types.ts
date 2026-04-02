@@ -23,3 +23,17 @@ export interface SpecificQuestionConfig {
   defaultAnswer?: string;
   disabled?: boolean;
 }
+
+export interface Identifier {
+  uuid: string;
+  identifier: string;
+  display: string;
+  identifierType: {
+    uuid: string;
+    display: string;
+  };
+  location: {
+    uuid: string;
+    display: string;
+  };
+}

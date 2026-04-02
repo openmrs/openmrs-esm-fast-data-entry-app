@@ -115,6 +115,7 @@ interface FormParams {
   handlePostResponse?: (Encounter) => void;
   handleEncounterCreate?: (Object) => void;
   handleOnValidate?: (boolean) => void;
+  hidePatientBanner?: boolean;
 }
 
 const FormBootstrap = ({
@@ -126,6 +127,7 @@ const FormBootstrap = ({
   handlePostResponse,
   handleEncounterCreate,
   handleOnValidate,
+  hidePatientBanner,
 }: FormParams) => {
   const patient = useGetPatient(patientUuid);
   const { activeSessionMeta } = useContext(GroupFormWorkflowContext);
@@ -141,7 +143,7 @@ const FormBootstrap = ({
     setShowForm(false);
     setTimeout(() => {
       setShowForm(true);
-    });
+    }, 1);
   };
 
   return (
@@ -169,6 +171,8 @@ const FormBootstrap = ({
               ...activeSessionMeta,
               encDate: activeSessionMeta.sessionDate,
             },
+            hideControls: true,
+            hidePatientBanner: hidePatientBanner,
           }}
         />
       )}

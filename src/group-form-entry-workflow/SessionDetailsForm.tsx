@@ -53,7 +53,7 @@ const SessionDetailsForm = () => {
                     type="text"
                     labelText={t('sessionName', 'Session Name')}
                     {...register('sessionName', { required: true })}
-                    invalid={errors.sessionName}
+                    invalid={Boolean(errors.sessionName)}
                     invalidText={t('requiredField', 'This field is required')}
                   />
                   <TextInput
@@ -61,7 +61,7 @@ const SessionDetailsForm = () => {
                     type="text"
                     labelText={t('practitionerName', 'Practitioner Name')}
                     {...register('practitionerName', { required: true })}
-                    invalid={errors.practitionerName}
+                    invalid={Boolean(errors.practitionerName)}
                     invalidText={t('requiredField', 'This field is required')}
                   />
                   <Controller
@@ -69,13 +69,13 @@ const SessionDetailsForm = () => {
                     control={control}
                     rules={{ required: true }}
                     render={({ field }) => (
-                      <DatePicker datePickerType="single" size="md" maxDate={new Date()} {...field}>
+                      <DatePicker datePickerType="single" maxDate={new Date()} {...field}>
                         <DatePickerInput
                           id="session-date"
                           labelText={t('sessionDate', 'Session Date')}
                           placeholder="mm/dd/yyyy"
                           size="md"
-                          invalid={errors.sessionDate}
+                          invalid={Boolean(errors.sessionDate)}
                           invalidText={t('requiredField', 'This field is required')}
                         />
                       </DatePicker>
@@ -86,7 +86,7 @@ const SessionDetailsForm = () => {
                     type="text"
                     labelText={t('sessionNotes', 'Session Notes')}
                     {...register('sessionNotes', { required: true })}
-                    invalid={errors.sessionNotes}
+                    invalid={Boolean(errors.sessionNotes)}
                     invalidText={t('requiredField', 'This field is required')}
                   />
                 </div>
