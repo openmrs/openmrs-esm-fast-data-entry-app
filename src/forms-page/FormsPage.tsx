@@ -97,7 +97,7 @@ const FormsPage = () => {
           </Tab>
           {categoryRows?.map((category, index) => (
             <Tab aria-label={category.name} key={index}>
-              {`${category.name} (${category.rows.length})`}
+              {`${t(category.name, category.name)} (${category.rows.length})`}
             </Tab>
           ))}
         </TabList>
