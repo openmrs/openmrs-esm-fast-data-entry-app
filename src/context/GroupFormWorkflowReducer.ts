@@ -212,7 +212,31 @@ const reducer = (state, action) => {
         };
         persistData(newState);
         return newState;
-      } else return state;
+      } else if (thisForm.workflowState === 'CLOSE_SESSION') {
+        const encounters = {
+          ...thisForm.encounters,
+          [thisForm.activePatientUuid]: action.encounterUuid,
+        };
+        const newState = {
+          ...state,
+          forms: {
+            ...state.forms,
+            [state.activeFormUuid]: {
+              ...thisForm,
+              encounters,
+              activePatientUuid: thisForm.activePatientUuid,
+              activeEncounterUuid: encounters[thisForm.activePatientUuid] || null,
+              activeVisitUuid: thisForm.visits[thisForm.activePatientUuid] || null,
+              activeSessionUuid: thisForm.activeSessionUuid,
+              workflowState: 'EDIT_FORM',
+            },
+          },
+        };
+        persistData(newState);
+        // eslint-disable-next-line
+        navigate({ to: '${openmrsSpaBase}/forms' });
+      }
+      return state;
     }
     case 'EDIT_ENCOUNTER': {
       const newState = {
@@ -388,14 +412,25 @@ const reducer = (state, action) => {
       return { ...newState, formDestroyed: true };
     }
     case 'CLOSE_SESSION': {
-      const newState = {
+      window.dispatchEvent(
+        new CustomEvent('ampath-form-action', {
+          detail: {
+            formUuid: state.activeFormUuid,
+            patientUuid: state.forms[state.activeFormUuid].activePatientUuid,
+            action: 'onSubmit',
+          },
+        }),
+      );
+      return {
         ...state,
-        activeFormUuid: null,
+        forms: {
+          ...state.forms,
+          [state.activeFormUuid]: {
+            ...state.forms[state.activeFormUuid],
+            workflowState: 'CLOSE_SESSION',
+          },
+        },
       };
-      persistData(newState);
-      //eslint-disable-next-line
-      navigate({ to: '${openmrsSpaBase}/forms' });
-      return newState;
     }
     default:
       return state;
