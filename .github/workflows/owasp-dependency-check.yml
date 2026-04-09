@@ -2,7 +2,7 @@ name: OWASP Dependency Check
 
 on:
   push:
-    branches: [ main]
+    branches: [ main ]
   pull_request:
     branches: [ main ]
   workflow_dispatch:
