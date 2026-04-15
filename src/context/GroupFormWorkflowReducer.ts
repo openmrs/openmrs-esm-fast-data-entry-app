@@ -365,7 +365,7 @@ const reducer = (state, action) => {
           [state.activeFormUuid]: {
             ...state.forms[state.activeFormUuid],
             activeEncounterUuid: null,
-            activVisitUuid: null,
+            activeVisitUuid: null,
             activePatientUuid: null,
             activeSessionUuid: null,
             workflowState: 'REVIEW',
