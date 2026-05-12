@@ -6,15 +6,16 @@ import {
   type Session,
   PatientIdentifierType,
 } from '@openmrs/esm-framework';
+import { vi, describe, it, expect, test, beforeEach, type MockedFunction } from 'vitest';
 import { useHsuIdIdentifier } from '../hooks/location-tag.resource';
 
-jest.mock('@openmrs/esm-framework');
-jest.mock('../hooks/location-tag.resource');
+vi.mock('@openmrs/esm-framework');
+vi.mock('../hooks/location-tag.resource');
 
-const mockShowSnackbar = showSnackbar as jest.MockedFunction<typeof showSnackbar>;
-const mockUseConfig = useConfig as jest.MockedFunction<typeof useConfig>;
-const mockUseSession = useSession as jest.MockedFunction<typeof useSession>;
-const mockUseHsuIdIdentifier = useHsuIdIdentifier as jest.MockedFunction<typeof useHsuIdIdentifier>;
+const mockShowSnackbar = showSnackbar as MockedFunction<typeof showSnackbar>;
+const mockUseConfig = useConfig as MockedFunction<typeof useConfig>;
+const mockUseSession = useSession as MockedFunction<typeof useSession>;
+const mockUseHsuIdIdentifier = useHsuIdIdentifier as MockedFunction<typeof useHsuIdIdentifier>;
 
 describe('AddGroupModal - enforcePatientListLocationMatch', () => {
   const mockSessionLocation = {
@@ -28,7 +29,7 @@ describe('AddGroupModal - enforcePatientListLocationMatch', () => {
   };
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('should show error snackbar when enforcePatientListLocationMatch is enabled and location mismatch occurs', () => {
@@ -48,7 +49,7 @@ describe('AddGroupModal - enforcePatientListLocationMatch', () => {
       },
     } as unknown as ReturnType<typeof useHsuIdIdentifier>);
 
-    const config = mockUseConfig();
+    const config = mockUseConfig() as ConfigSchema;
     const session = mockUseSession();
     const hsuData = mockUseHsuIdIdentifier('patient-uuid');
 
@@ -88,7 +89,7 @@ describe('AddGroupModal - enforcePatientListLocationMatch', () => {
       },
     } as unknown as ReturnType<typeof useHsuIdIdentifier>);
 
-    const config = mockUseConfig();
+    const config = mockUseConfig() as ConfigSchema;
     const session = mockUseSession();
     const hsuData = mockUseHsuIdIdentifier('patient-uuid');
 
@@ -122,7 +123,7 @@ describe('AddGroupModal - enforcePatientListLocationMatch', () => {
       },
     } as unknown as ReturnType<typeof useHsuIdIdentifier>);
 
-    const config = mockUseConfig();
+    const config = mockUseConfig() as ConfigSchema;
     const session = mockUseSession();
     const hsuData = mockUseHsuIdIdentifier('patient-uuid');
 
@@ -160,7 +161,7 @@ describe('AddGroupModal - enforcePatientListLocationMatch', () => {
       },
     } as unknown as ReturnType<typeof useHsuIdIdentifier>);
 
-    const config = mockUseConfig();
+    const config = mockUseConfig() as ConfigSchema;
     const session = mockUseSession();
     const hsuData = mockUseHsuIdIdentifier('patient-uuid');
 
@@ -187,7 +188,7 @@ describe('AddGroupModal - enforcePatientListLocationMatch', () => {
       patientLocationMismatchCheck: true,
     } as ConfigSchema);
 
-    const config = mockUseConfig();
+    const config = mockUseConfig() as ConfigSchema;
 
     const shouldShowError = config.enforcePatientListLocationMatch === true;
     const shouldShowModal = !config.enforcePatientListLocationMatch && config.patientLocationMismatchCheck;

@@ -1,4 +1,5 @@
 import React from 'react';
+import { vi, describe, it, expect, beforeEach, type Mock } from 'vitest';
 import { act, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { getGlobalStore, useConfig, useSession, useStore } from '@openmrs/esm-framework';
@@ -6,23 +7,23 @@ import FormBootstrap from '../FormBootstrap';
 import GroupFormWorkflowContext from '../context/GroupFormWorkflowContext';
 import GroupSessionWorkspace from './GroupSessionWorkspace';
 
-jest.mock('@openmrs/esm-framework', () => ({
-  getGlobalStore: jest.fn(),
-  useConfig: jest.fn(),
-  useSession: jest.fn(),
-  useStore: jest.fn(),
+vi.mock('@openmrs/esm-framework', () => ({
+  getGlobalStore: vi.fn(),
+  useConfig: vi.fn(),
+  useSession: vi.fn(),
+  useStore: vi.fn(),
 }));
 
-jest.mock('uuid', () => ({
-  v4: jest.fn(() => 'generated-visit-uuid'),
+vi.mock('uuid', () => ({
+  v4: vi.fn(() => 'generated-visit-uuid'),
 }));
 
-jest.mock('../FormBootstrap', () => ({
+vi.mock('../FormBootstrap', () => ({
   __esModule: true,
-  default: jest.fn(() => <div data-testid="form-bootstrap" />),
+  default: vi.fn(() => <div data-testid="form-bootstrap" />),
 }));
 
-jest.mock('../patient-card/PatientCard', () => ({
+vi.mock('../patient-card/PatientCard', () => ({
   __esModule: true,
   default: ({ patientUuid, editEncounter }) => (
     <button data-testid={`patient-card-${patientUuid}`} onClick={() => editEncounter(patientUuid)}>
@@ -31,21 +32,21 @@ jest.mock('../patient-card/PatientCard', () => ({
   ),
 }));
 
-jest.mock('../CancelModal', () => ({
+vi.mock('../CancelModal', () => ({
   __esModule: true,
   default: () => null,
 }));
 
-jest.mock('../CompleteModal', () => ({
+vi.mock('../CompleteModal', () => ({
   __esModule: true,
   default: () => null,
 }));
 
-const mockGetGlobalStore = jest.mocked(getGlobalStore);
-const mockUseConfig = jest.mocked(useConfig);
-const mockUseSession = jest.mocked(useSession);
-const mockUseStore = jest.mocked(useStore);
-const mockFormBootstrap = FormBootstrap as jest.Mock;
+const mockGetGlobalStore = vi.mocked(getGlobalStore);
+const mockUseConfig = vi.mocked(useConfig);
+const mockUseSession = vi.mocked(useSession);
+const mockUseStore = vi.mocked(useStore);
+const mockFormBootstrap = FormBootstrap as Mock;
 
 const renderWorkspace = (contextOverrides = {}) => {
   const defaultContext = {
@@ -66,9 +67,9 @@ const renderWorkspace = (contextOverrides = {}) => {
     },
     groupVisitTypeUuid: 'visit-type-1',
     encounters: {},
-    saveEncounter: jest.fn(),
-    updateVisitUuid: jest.fn(),
-    submitForNext: jest.fn(),
+    saveEncounter: vi.fn(),
+    updateVisitUuid: vi.fn(),
+    submitForNext: vi.fn(),
   };
 
   return render(
@@ -104,7 +105,7 @@ describe('GroupSessionWorkspace', () => {
   });
 
   it('builds encounter payloads with group-session metadata when no visit exists yet', () => {
-    const updateVisitUuid = jest.fn();
+    const updateVisitUuid = vi.fn();
     renderWorkspace({ updateVisitUuid });
 
     const [formBootstrapProps] = mockFormBootstrap.mock.calls[0];
@@ -169,8 +170,8 @@ describe('GroupSessionWorkspace', () => {
 
   it('wires patient switching and save actions through the workflow callbacks', async () => {
     const user = userEvent.setup();
-    const saveEncounter = jest.fn();
-    const submitForNext = jest.fn();
+    const saveEncounter = vi.fn();
+    const submitForNext = vi.fn();
     renderWorkspace({ saveEncounter, submitForNext });
 
     const [formBootstrapProps] = mockFormBootstrap.mock.calls[0];
