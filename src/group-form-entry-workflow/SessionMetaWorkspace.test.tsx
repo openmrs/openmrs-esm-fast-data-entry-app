@@ -1,16 +1,17 @@
 import React, { useEffect } from 'react';
+import { vi, describe, it, expect } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { useFormContext } from 'react-hook-form';
 import GroupFormWorkflowContext from '../context/GroupFormWorkflowContext';
 import SessionMetaWorkspace from './SessionMetaWorkspace';
 
-jest.mock('../CancelModal', () => ({
+vi.mock('../CancelModal', () => ({
   __esModule: true,
   default: () => null,
 }));
 
-jest.mock('./SessionDetailsForm', () => ({
+vi.mock('./SessionDetailsForm', () => ({
   __esModule: true,
   default: function MockSessionDetailsForm() {
     const { register, setValue } = useFormContext();
@@ -40,7 +41,7 @@ const renderSessionMetaWorkspace = (contextOverrides = {}) =>
           workflowState: 'NEW_GROUP_SESSION',
           patientUuids: ['patient-a'],
           activeGroupUuid: 'group-1',
-          setSessionMeta: jest.fn(),
+          setSessionMeta: vi.fn(),
           ...contextOverrides,
         } as never
       }
@@ -52,7 +53,7 @@ const renderSessionMetaWorkspace = (contextOverrides = {}) =>
 describe('SessionMetaWorkspace', () => {
   it('submits the session metadata with the normalized session date', async () => {
     const user = userEvent.setup();
-    const setSessionMeta = jest.fn();
+    const setSessionMeta = vi.fn();
     renderSessionMetaWorkspace({ setSessionMeta });
 
     await user.click(screen.getByRole('button', { name: 'Create New Session' }));
@@ -72,7 +73,7 @@ describe('SessionMetaWorkspace', () => {
 
   it('shows the group selection error when submitted without a chosen group', async () => {
     const user = userEvent.setup();
-    const setSessionMeta = jest.fn();
+    const setSessionMeta = vi.fn();
     renderSessionMetaWorkspace({
       activeGroupUuid: null,
       setSessionMeta,
