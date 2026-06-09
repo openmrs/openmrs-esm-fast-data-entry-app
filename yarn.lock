@@ -3435,7 +3435,7 @@ __metadata:
     vitest: "npm:^4.1.2"
   peerDependencies:
     "@carbon/react": 1.x
-    "@openmrs/esm-framework": 9.x
+    "@openmrs/esm-framework": 10.x
     lodash-es: 4.x
     react: 18.x
     react-dom: 18.x
