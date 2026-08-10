@@ -74,4 +74,4 @@ This will render the following UI
 ![Configure Other Forms](config-other-forms.png)
 
 
-For more information on using the OpenMRS configuration system see [this page](https://o3-dev.docs.openmrs.org/#/main/config)
+For more information on using the OpenMRS configuration system see [this page](https://o3-docs.openmrs.org/en-US/docs/configuration-system/)

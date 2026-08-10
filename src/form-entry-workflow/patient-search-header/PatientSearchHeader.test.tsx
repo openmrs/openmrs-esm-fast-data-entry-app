@@ -1,25 +1,25 @@
 import React from 'react';
+import { vi, describe, it, expect, beforeEach, afterEach, type MockedFunction } from 'vitest';
 import { render, screen, fireEvent, cleanup, waitFor } from '@testing-library/react';
-import '@testing-library/jest-dom';
 import PatientSearchHeader from './PatientSearchHeader';
 import FormWorkflowContext from '../../context/FormWorkflowContext';
 import { showSnackbar, useConfig, useSession, type ConfigSchema, type Session } from '@openmrs/esm-framework';
 import { useHsuIdIdentifier } from '../../hooks/location-tag.resource';
 
-jest.mock('@openmrs/esm-framework', () => ({
+vi.mock('@openmrs/esm-framework', () => ({
   ExtensionSlot: ({ state }) => (
     <button data-testid="mock-search-select" onClick={() => state.selectPatientAction('patient-123')}>
       Select Patient
     </button>
   ),
-  interpolateUrl: jest.fn((url) => url),
-  navigate: jest.fn(),
-  showSnackbar: jest.fn(),
-  useConfig: jest.fn(),
-  useSession: jest.fn(),
+  interpolateUrl: vi.fn((url) => url),
+  navigate: vi.fn(),
+  showSnackbar: vi.fn(),
+  useConfig: vi.fn(),
+  useSession: vi.fn(),
 }));
 
-jest.mock('react-i18next', () => ({
+vi.mock('react-i18next', () => ({
   useTranslation: () => ({
     t: (key: string, defaultValue: string, interpolation: { hsuLocation?: string; sessionLocation?: string }) => {
       if (interpolation?.hsuLocation) {
@@ -30,22 +30,22 @@ jest.mock('react-i18next', () => ({
   }),
 }));
 
-jest.mock('../../hooks/location-tag.resource', () => ({
-  useHsuIdIdentifier: jest.fn(),
+vi.mock('../../hooks/location-tag.resource', () => ({
+  useHsuIdIdentifier: vi.fn(),
 }));
 
-jest.mock('react-router-dom', () => ({
+vi.mock('react-router-dom', () => ({
   Link: ({ children }) => <div>{children}</div>,
 }));
 
-const mockShowSnackbar = showSnackbar as jest.MockedFunction<typeof showSnackbar>;
-const mockUseConfig = useConfig as jest.MockedFunction<typeof useConfig>;
-const mockUseSession = useSession as jest.MockedFunction<typeof useSession>;
-const mockUseHsuIdIdentifier = useHsuIdIdentifier as jest.MockedFunction<typeof useHsuIdIdentifier>;
+const mockShowSnackbar = showSnackbar as MockedFunction<typeof showSnackbar>;
+const mockUseConfig = useConfig as MockedFunction<typeof useConfig>;
+const mockUseSession = useSession as MockedFunction<typeof useSession>;
+const mockUseHsuIdIdentifier = useHsuIdIdentifier as MockedFunction<typeof useHsuIdIdentifier>;
 
 describe('PatientSearchHeader - Enforcement Feature', () => {
   const mockContext = {
-    addPatient: jest.fn(),
+    addPatient: vi.fn(),
     workflowState: 'NEW_PATIENT',
     activeFormUuid: 'form-123',
   };
@@ -60,7 +60,7 @@ describe('PatientSearchHeader - Enforcement Feature', () => {
   });
 
   afterEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
     cleanup();
   });
 
