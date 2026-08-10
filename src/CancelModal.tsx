@@ -9,10 +9,12 @@ const CancelModal = ({ open, setOpen, context }) => {
 
   const onDiscard = async () => {
     await context.destroySession();
+    setOpen(false);
   };
 
   const onSaveAndClose = async () => {
     await context.closeSession();
+    setOpen(false);
   };
 
   return (
