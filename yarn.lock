@@ -3434,6 +3434,7 @@ __metadata:
     uuid: "npm:^9.0.1"
     vitest: "npm:^4.1.2"
   peerDependencies:
+    "@carbon/icons-react": 11.x
     "@carbon/react": 1.x
     "@openmrs/esm-framework": 10.x
     lodash-es: 4.x
