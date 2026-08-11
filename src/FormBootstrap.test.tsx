@@ -47,7 +47,7 @@ describe('FormBootstrap', () => {
     mockUseGetPatient.mockReturnValue({
       id: 'patient-1',
       name: [{ given: ['Ada'], family: 'Lovelace' }],
-    } as fhir.Patient);
+    });
   });
 
   afterEach(() => {

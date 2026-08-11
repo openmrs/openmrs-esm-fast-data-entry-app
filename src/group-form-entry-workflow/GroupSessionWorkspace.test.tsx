@@ -101,7 +101,7 @@ describe('GroupSessionWorkspace', () => {
         cohortName: 'concept-cohort-name',
         sessionUuid: 'concept-session-uuid',
       },
-    } as never);
+    });
   });
 
   it('builds encounter payloads with group-session metadata when no visit exists yet', () => {
