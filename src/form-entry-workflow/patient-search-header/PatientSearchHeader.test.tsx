@@ -1,6 +1,6 @@
 import React from 'react';
 import { vi, describe, it, expect, beforeEach, afterEach, type MockedFunction } from 'vitest';
-import { render, screen, fireEvent, cleanup, waitFor } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import PatientSearchHeader from './PatientSearchHeader';
 import FormWorkflowContext from '../../context/FormWorkflowContext';
 import { showSnackbar, useConfig, useSession, type ConfigSchema, type Session } from '@openmrs/esm-framework';
@@ -61,14 +61,13 @@ describe('PatientSearchHeader - Enforcement Feature', () => {
 
   afterEach(() => {
     vi.clearAllMocks();
-    cleanup();
   });
 
   it('triggers an error Snackbar when enforcePatientListLocationMatch is enabled and locations mismatch', async () => {
     mockUseConfig.mockReturnValue({
       enforcePatientListLocationMatch: true,
       patientLocationMismatchCheck: false,
-    } as ConfigSchema);
+    });
 
     mockUseHsuIdIdentifier.mockReturnValue({
       hsuIdentifier: mismatchedHsuLocation,
@@ -99,7 +98,7 @@ describe('PatientSearchHeader - Enforcement Feature', () => {
   it('does NOT trigger snackbar and adds patient if locations match even if enforcement is on', async () => {
     mockUseConfig.mockReturnValue({
       enforcePatientListLocationMatch: true,
-    } as ConfigSchema);
+    });
 
     mockUseHsuIdIdentifier.mockReturnValue({
       hsuIdentifier: { location: { uuid: 'loc-session', display: 'General Hospital' } },

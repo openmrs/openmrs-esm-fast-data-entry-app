@@ -182,7 +182,6 @@ const reducer = (state, action) => {
           activeFormUuid: null,
         };
         persistData(newState);
-        // eslint-disable-next-line
         navigate({ to: '${openmrsSpaBase}/forms' });
         return newState;
       } else if (thisForm.workflowState === 'SUBMIT_FOR_NEXT') {
@@ -383,7 +382,6 @@ const reducer = (state, action) => {
         activeFormUuid: null,
       };
       persistData(newState);
-      //eslint-disable-next-line
       navigate({ to: '${openmrsSpaBase}/forms' });
       return { ...newState, formDestroyed: true };
     }
@@ -393,7 +391,6 @@ const reducer = (state, action) => {
         activeFormUuid: null,
       };
       persistData(newState);
-      //eslint-disable-next-line
       navigate({ to: '${openmrsSpaBase}/forms' });
       return newState;
     }

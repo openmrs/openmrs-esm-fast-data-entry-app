@@ -52,7 +52,7 @@ describe('GroupSearchHeader', () => {
     } as never);
     mockUseConfig.mockReturnValue({
       enforcePatientListLocationMatch: true,
-    } as never);
+    });
   });
 
   it('blocks group selection when location enforcement is enabled and locations mismatch', async () => {

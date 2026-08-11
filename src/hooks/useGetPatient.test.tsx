@@ -60,14 +60,14 @@ describe('useGetPatient', () => {
     rerender(<TestHarness patientUuid="patient-b" />);
 
     await act(async () => {
-      patientBRequest.resolve({ id: 'patient-b', name: 'Patient B' } as unknown as fhir.Patient);
+      patientBRequest.resolve({ id: 'patient-b', name: 'Patient B' } as unknown);
       await patientBRequest.promise;
     });
 
     expect(screen.getByTestId('patient-name')).toHaveTextContent('Patient B');
 
     await act(async () => {
-      patientARequest.resolve({ id: 'patient-a', name: 'Patient A' } as unknown as fhir.Patient);
+      patientARequest.resolve({ id: 'patient-a', name: 'Patient A' } as unknown);
       await patientARequest.promise;
     });
 
@@ -100,7 +100,7 @@ describe('useGetPatient', () => {
   });
 
   it('clears the patient and skips fetching when patientUuid is removed', async () => {
-    mockFetchCurrentPatient.mockResolvedValue({ id: 'patient-a', name: 'Patient A' } as unknown as fhir.Patient);
+    mockFetchCurrentPatient.mockResolvedValue({ id: 'patient-a', name: 'Patient A' } as unknown);
 
     const { rerender } = render(<TestHarness patientUuid="patient-a" />);
 

@@ -36,7 +36,7 @@ describe('AddGroupModal - enforcePatientListLocationMatch', () => {
     mockUseConfig.mockReturnValue({
       enforcePatientListLocationMatch: true,
       patientLocationMismatchCheck: false,
-    } as ConfigSchema);
+    });
 
     mockUseSession.mockReturnValue({
       sessionLocation: mockSessionLocation,
@@ -76,7 +76,7 @@ describe('AddGroupModal - enforcePatientListLocationMatch', () => {
     mockUseConfig.mockReturnValue({
       enforcePatientListLocationMatch: false,
       patientLocationMismatchCheck: false,
-    } as ConfigSchema);
+    });
 
     mockUseSession.mockReturnValue({
       sessionLocation: mockSessionLocation,
@@ -110,7 +110,7 @@ describe('AddGroupModal - enforcePatientListLocationMatch', () => {
     mockUseConfig.mockReturnValue({
       enforcePatientListLocationMatch: true,
       patientLocationMismatchCheck: false,
-    } as ConfigSchema);
+    });
 
     mockUseSession.mockReturnValue({
       sessionLocation: mockSessionLocation,
@@ -143,7 +143,7 @@ describe('AddGroupModal - enforcePatientListLocationMatch', () => {
   it('should display patient and session location names in error message', () => {
     mockUseConfig.mockReturnValue({
       enforcePatientListLocationMatch: true,
-    } as ConfigSchema);
+    });
 
     mockUseSession.mockReturnValue({
       sessionLocation: mockSessionLocation,
@@ -186,7 +186,7 @@ describe('AddGroupModal - enforcePatientListLocationMatch', () => {
     mockUseConfig.mockReturnValue({
       enforcePatientListLocationMatch: true,
       patientLocationMismatchCheck: true,
-    } as ConfigSchema);
+    });
 
     const config = mockUseConfig() as ConfigSchema;
 
