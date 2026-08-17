@@ -2,7 +2,7 @@ import openmrs from '@openmrs/eslint-config';
 import tseslint from 'typescript-eslint';
 
 export default [
-  { ignores: ['dist/**', 'coverage/**', '**/*.d.tsx'] },
+  { ignores: ['dist/**', 'coverage/**'] },
   ...openmrs,
   {
     rules: {
