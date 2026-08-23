@@ -2204,6 +2204,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@openmrs/esm-fast-data-entry-app@workspace:."
   dependencies:
+    "@carbon/icons-react": "npm:^11.68.0"
     "@carbon/react": "npm:^1.83.0"
     "@openmrs/eslint-config": "npm:^2.1.0"
     "@openmrs/esm-framework": "npm:next"
