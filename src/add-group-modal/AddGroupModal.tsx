@@ -134,7 +134,7 @@ const AddGroupModal = ({
   );
 
   const validate = useCallback(
-    (field?: string | undefined) => {
+    (field?: string) => {
       let valid = true;
       if (field) {
         valid = field === 'name' ? !!name : !!patientList.length;
