@@ -10,15 +10,13 @@ import { v4 as uuid } from 'uuid';
 import FormWorkflowContext, { FormWorkflowProvider } from '../context/FormWorkflowContext';
 import WorkflowReview from './workflow-review';
 import PatientBanner from './patient-banner';
-import CompleteModal from '../CompleteModal';
-import CancelModal from '../CancelModal';
+import useModalLauncher from '../hooks/useModalLauncher';
 import useStartVisit from '../hooks/useStartVisit';
 
 const WorkflowNavigationButtons = () => {
   const context = useContext(FormWorkflowContext);
   const { workflowState, destroySession } = context;
-  const [cancelModalOpen, setCancelModalOpen] = useState(false);
-  const [completeModalOpen, setCompleteModalOpen] = useState(false);
+  const launchModal = useModalLauncher(context.activeFormUuid);
   const { t } = useTranslation();
 
   if (!workflowState) return null;
@@ -28,16 +26,26 @@ const WorkflowNavigationButtons = () => {
       <div className={styles.rightPanelActionButtons}>
         <Button
           kind="secondary"
-          onClick={workflowState === 'NEW_PATIENT' ? () => destroySession() : () => setCompleteModalOpen(true)}
+          onClick={
+            workflowState === 'NEW_PATIENT'
+              ? () => destroySession()
+              : () => launchModal('fde-complete-session-modal', { onComplete: context.submitForComplete })
+          }
         >
           {t('saveAndComplete', 'Save & Complete')}
         </Button>
-        <Button kind="tertiary" onClick={() => setCancelModalOpen(true)}>
+        <Button
+          kind="tertiary"
+          onClick={() =>
+            launchModal('fde-cancel-session-modal', {
+              onDiscard: context.destroySession,
+              onSaveAndClose: context.closeSession,
+            })
+          }
+        >
           {t('cancel', 'Cancel')}
         </Button>
       </div>
-      <CancelModal open={cancelModalOpen} setOpen={setCancelModalOpen} context={context} />
-      <CompleteModal open={completeModalOpen} setOpen={setCompleteModalOpen} context={context} />
     </>
   );
 };

@@ -25,3 +25,11 @@ export function startupApp() {
     },
   ]);
 }
+
+export const cancelSessionModal = getAsyncLifecycle(() => import('./cancel-session.modal'), options);
+export const completeSessionModal = getAsyncLifecycle(() => import('./complete-session.modal'), options);
+export const addGroupModal = getAsyncLifecycle(() => import('./add-group-modal/add-group.modal'), options);
+export const patientLocationMismatchModal = getAsyncLifecycle(
+  () => import('./form-entry-workflow/patient-search-header/patient-location-mismatch.modal'),
+  options,
+);

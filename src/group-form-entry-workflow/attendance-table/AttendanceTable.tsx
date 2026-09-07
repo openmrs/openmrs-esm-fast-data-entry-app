@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useMemo, useState } from 'react';
+import React, { useContext, useMemo } from 'react';
 import { Edit } from '@carbon/react/icons';
 
 import {
@@ -15,7 +15,7 @@ import {
 } from '@carbon/react';
 import { useTranslation } from 'react-i18next';
 import GroupFormWorkflowContext from '../../context/GroupFormWorkflowContext';
-import AddGroupModal from '../../add-group-modal/AddGroupModal';
+import useModalLauncher from '../../hooks/useModalLauncher';
 
 const PatientRow = ({ patient }) => {
   const { patientUuids, addPatientUuid, removePatientUuid } = useContext(GroupFormWorkflowContext);
@@ -66,19 +66,12 @@ const PatientRow = ({ patient }) => {
 
 const AttendanceTable = ({ patients }) => {
   const { t } = useTranslation();
-  const { activeGroupUuid, activeGroupName, activeGroupMembers } = useContext(GroupFormWorkflowContext);
+  const { activeFormUuid, activeGroupUuid, activeGroupName, activeGroupMembers, setGroup } =
+    useContext(GroupFormWorkflowContext);
 
-  const [isOpen, setOpen] = useState(false);
+  const launchModal = useModalLauncher(activeFormUuid);
 
   const headers = [t('name', 'Name'), t('identifier', 'Patient ID'), t('patientIsPresent', 'Patient is present')];
-
-  const onPostCancel = useCallback(() => {
-    setOpen(false);
-  }, []);
-
-  const onPostSubmit = useCallback(() => {
-    setOpen(false);
-  }, []);
 
   const newArr = useMemo(() => {
     return activeGroupMembers.map(function (value) {
@@ -94,21 +87,22 @@ const AttendanceTable = ({ patients }) => {
   return (
     <div>
       <span style={{ flexGrow: 1 }} />
-      <Button kind="ghost" onClick={() => setOpen(true)}>
+      <Button
+        kind="ghost"
+        onClick={() =>
+          launchModal('fde-add-group-modal', {
+            cohortUuid: activeGroupUuid,
+            patients: newArr,
+            isCreate: false,
+            groupName: activeGroupName,
+            setGroup,
+          })
+        }
+      >
         {t('editGroup', 'Edit Group')}&nbsp;
         <Edit size={20} />
       </Button>
-      <AddGroupModal
-        {...{
-          cohortUuid: activeGroupUuid,
-          patients: newArr,
-          isCreate: false,
-          groupName: activeGroupName,
-          isOpen: isOpen,
-          onPostCancel: onPostCancel,
-          onPostSubmit: onPostSubmit,
-        }}
-      />
+
       <Table>
         <TableHead>
           <TableRow>

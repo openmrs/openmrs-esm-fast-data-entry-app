@@ -1,17 +1,17 @@
 import { Button } from '@carbon/react';
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect } from 'react';
 import styles from './styles.scss';
 import { useTranslation } from 'react-i18next';
 import GroupFormWorkflowContext from '../context/GroupFormWorkflowContext';
 import { FormProvider, useForm, useFormContext } from 'react-hook-form';
-import CancelModal from '../CancelModal';
+import useModalLauncher from '../hooks/useModalLauncher';
 import SessionDetailsForm from './SessionDetailsForm';
 
 const NewGroupWorkflowButtons = () => {
   const { t } = useTranslation();
   const context = useContext(GroupFormWorkflowContext);
   const { workflowState, patientUuids } = context;
-  const [cancelModalOpen, setCancelModalOpen] = useState(false);
+  const launchModal = useModalLauncher(context.activeFormUuid);
   if (workflowState !== 'NEW_GROUP_SESSION') return null;
 
   return (
@@ -23,13 +23,15 @@ const NewGroupWorkflowButtons = () => {
         <Button
           kind="tertiary"
           onClick={() => {
-            setCancelModalOpen(true);
+            launchModal('fde-cancel-session-modal', {
+              onDiscard: context.destroySession,
+              onSaveAndClose: context.closeSession,
+            });
           }}
         >
           {t('cancel', 'Cancel')}
         </Button>
       </div>
-      <CancelModal open={cancelModalOpen} setOpen={setCancelModalOpen} context={context} />
     </>
   );
 };

@@ -13,6 +13,7 @@ const usePostEndpoint = ({ endpointUrl }) => {
         setError(null);
       }
       setResult(result.data);
+      return result.data;
     },
     [error],
   );
@@ -23,13 +24,15 @@ const usePostEndpoint = ({ endpointUrl }) => {
       if (result) {
         setResult(null);
       }
-      setError(error?.responseBody?.error ?? error?.responseBody ?? error);
+      const submissionError = error?.responseBody?.error ?? error?.responseBody ?? error;
+      setError(submissionError);
+      return submissionError;
     },
     [result],
   );
 
   const post = useCallback(
-    async (data) => {
+    async (data, onFailure?: (error: Error) => void) => {
       setSubmissionInProgress(true);
 
       let path = endpointUrl;
@@ -45,7 +48,10 @@ const usePostEndpoint = ({ endpointUrl }) => {
         body: data,
       })
         .then(onFormPosted)
-        .catch(onError);
+        .catch((error) => {
+          const submissionError = onError(error);
+          onFailure?.(submissionError);
+        });
     },
     [endpointUrl, onError, onFormPosted],
   );

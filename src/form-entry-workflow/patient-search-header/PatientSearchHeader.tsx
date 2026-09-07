@@ -7,16 +7,16 @@ import FormWorkflowContext from '../../context/FormWorkflowContext';
 import styles from './styles.scss';
 import { useTranslation } from 'react-i18next';
 import { useHsuIdIdentifier } from '../../hooks/location-tag.resource';
-import PatientLocationMismatchModal from './PatienMismatchedLocationModal';
+import useModalLauncher from '../../hooks/useModalLauncher';
 
 const PatientSearchHeader = () => {
-  const [patientLocationMismatchModalOpen, setPatientLocationMismatchModalOpen] = useState(false);
   const [selectedPatientUuid, setSelectedPatientUuid] = useState();
   const { hsuIdentifier } = useHsuIdIdentifier(selectedPatientUuid);
   const { sessionLocation } = useSession();
   const config = useConfig();
   const { addPatient, workflowState, activeFormUuid } = useContext(FormWorkflowContext);
   const { t } = useTranslation();
+  const launchModal = useModalLauncher(activeFormUuid);
 
   const onPatientMismatchedLocationModalConfirm = useCallback(() => {
     addPatient(selectedPatientUuid);
@@ -24,7 +24,6 @@ const PatientSearchHeader = () => {
   }, [addPatient, selectedPatientUuid]);
 
   const onPatientMismatchedLocationModalCancel = useCallback(() => {
-    setPatientLocationMismatchModalOpen(false);
     setSelectedPatientUuid(null);
   }, []);
 
@@ -52,7 +51,15 @@ const PatientSearchHeader = () => {
       });
       setSelectedPatientUuid(null);
     } else if (config.patientLocationMismatchCheck && locationMismatch) {
-      setPatientLocationMismatchModalOpen(true);
+      return launchModal(
+        'fde-patient-location-mismatch-modal',
+        {
+          onConfirm: onPatientMismatchedLocationModalConfirm,
+          sessionLocation,
+          hsuLocation: hsuIdentifier.location,
+        },
+        onPatientMismatchedLocationModalCancel,
+      );
     } else {
       addPatient(selectedPatientUuid);
       setSelectedPatientUuid(null);
@@ -65,6 +72,9 @@ const PatientSearchHeader = () => {
     config.patientLocationMismatchCheck,
     config.enforcePatientListLocationMatch,
     t,
+    launchModal,
+    onPatientMismatchedLocationModalConfirm,
+    onPatientMismatchedLocationModalCancel,
   ]);
 
   if (workflowState !== 'NEW_PATIENT') return null;
@@ -102,14 +112,6 @@ const PatientSearchHeader = () => {
           </Link>
         </span>
       </div>
-      <PatientLocationMismatchModal
-        open={patientLocationMismatchModalOpen}
-        setOpen={setPatientLocationMismatchModalOpen}
-        onConfirm={onPatientMismatchedLocationModalConfirm}
-        onCancel={onPatientMismatchedLocationModalCancel}
-        sessionLocation={sessionLocation}
-        hsuLocation={hsuIdentifier?.location}
-      />
     </>
   );
 };

@@ -8,6 +8,7 @@ import GroupFormWorkflowContext from '../context/GroupFormWorkflowContext';
 import GroupSessionWorkspace from './GroupSessionWorkspace';
 
 vi.mock('@openmrs/esm-framework', () => ({
+  showModal: vi.fn(() => vi.fn()),
   getGlobalStore: vi.fn(),
   useConfig: vi.fn(),
   useSession: vi.fn(),
@@ -30,16 +31,6 @@ vi.mock('../patient-card/PatientCard', () => ({
       {patientUuid}
     </button>
   ),
-}));
-
-vi.mock('../CancelModal', () => ({
-  __esModule: true,
-  default: () => null,
-}));
-
-vi.mock('../CompleteModal', () => ({
-  __esModule: true,
-  default: () => null,
 }));
 
 const mockGetGlobalStore = vi.mocked(getGlobalStore);

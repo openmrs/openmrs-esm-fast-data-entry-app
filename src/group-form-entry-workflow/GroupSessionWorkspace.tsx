@@ -1,14 +1,13 @@
 import { getGlobalStore, useConfig, useSession, useStore } from '@openmrs/esm-framework';
 import { Button } from '@carbon/react';
-import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useMemo } from 'react';
 import PatientCard from '../patient-card/PatientCard';
 import styles from './styles.scss';
 import { useTranslation } from 'react-i18next';
 import { v4 as uuid } from 'uuid';
 import GroupFormWorkflowContext from '../context/GroupFormWorkflowContext';
 import FormBootstrap from '../FormBootstrap';
-import CompleteModal from '../CompleteModal';
-import CancelModal from '../CancelModal';
+import useModalLauncher from '../hooks/useModalLauncher';
 
 const formStore = getGlobalStore('ampath-form-state');
 
@@ -18,8 +17,7 @@ const WorkflowNavigationButtons = () => {
   const store = useStore(formStore);
   const formState = store[activeFormUuid];
 
-  const [cancelModalOpen, setCancelModalOpen] = useState(false);
-  const [completeModalOpen, setCompleteModalOpen] = useState(false);
+  const launchModal = useModalLauncher(context.activeFormUuid);
   const { t } = useTranslation();
 
   const navigationDisabled = useMemo(() => {
@@ -43,15 +41,24 @@ const WorkflowNavigationButtons = () => {
         <Button kind="primary" onClick={handleClickNext} disabled={navigationDisabled}>
           {isLastPatient ? t('saveForm', 'Save Form') : t('nextPatient', 'Next patient')}
         </Button>
-        <Button kind="secondary" onClick={() => setCompleteModalOpen(true)}>
+        <Button
+          kind="secondary"
+          onClick={() => launchModal('fde-complete-session-modal', { onComplete: context.submitForComplete })}
+        >
           {t('saveAndComplete', 'Save & Complete')}
         </Button>
-        <Button kind="tertiary" onClick={() => setCancelModalOpen(true)}>
+        <Button
+          kind="tertiary"
+          onClick={() =>
+            launchModal('fde-cancel-session-modal', {
+              onDiscard: context.destroySession,
+              onSaveAndClose: context.closeSession,
+            })
+          }
+        >
           {t('cancel', 'Cancel')}
         </Button>
       </div>
-      <CancelModal open={cancelModalOpen} setOpen={setCancelModalOpen} context={context} />
-      <CompleteModal open={completeModalOpen} setOpen={setCompleteModalOpen} context={context} validateFirst={false} />
     </>
   );
 };

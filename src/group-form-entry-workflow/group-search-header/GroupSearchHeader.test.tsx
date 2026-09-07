@@ -2,7 +2,7 @@ import React from 'react';
 import { vi, describe, it, expect, beforeEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { showSnackbar, useConfig, useSession } from '@openmrs/esm-framework';
+import { showModal, showSnackbar, useConfig, useSession } from '@openmrs/esm-framework';
 import GroupFormWorkflowContext from '../../context/GroupFormWorkflowContext';
 import GroupSearchHeader from './GroupSearchHeader';
 
@@ -15,11 +15,6 @@ vi.mock('../group-search/CompactGroupSearch', () => ({
       Select group
     </button>
   ),
-}));
-
-vi.mock('../../add-group-modal/AddGroupModal', () => ({
-  __esModule: true,
-  default: ({ isOpen }) => (isOpen ? <div data-testid="add-group-modal" /> : null),
 }));
 
 const mockShowSnackbar = vi.mocked(showSnackbar);
@@ -44,6 +39,7 @@ const renderGroupSearchHeader = (contextOverrides = {}) =>
 
 describe('GroupSearchHeader', () => {
   beforeEach(() => {
+    vi.mocked(showModal).mockReturnValue(vi.fn());
     mockUseSession.mockReturnValue({
       sessionLocation: {
         uuid: 'session-location',
@@ -114,7 +110,11 @@ describe('GroupSearchHeader', () => {
     renderGroupSearchHeader({ destroySession });
 
     await user.click(screen.getByRole('button', { name: 'Create New Group' }));
-    expect(screen.getByTestId('add-group-modal')).toBeInTheDocument();
+    expect(showModal).toHaveBeenCalledWith(
+      'fde-add-group-modal',
+      expect.objectContaining({ isCreate: true, setGroup: expect.any(Function) }),
+      expect.any(Function),
+    );
 
     await user.click(screen.getByRole('button', { name: 'Cancel' }));
     expect(destroySession).toHaveBeenCalledTimes(1);

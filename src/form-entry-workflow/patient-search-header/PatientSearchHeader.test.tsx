@@ -3,10 +3,18 @@ import { vi, describe, it, expect, beforeEach, afterEach, type MockedFunction } 
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import PatientSearchHeader from './PatientSearchHeader';
 import FormWorkflowContext from '../../context/FormWorkflowContext';
-import { showSnackbar, useConfig, useSession, type ConfigSchema, type Session } from '@openmrs/esm-framework';
+import {
+  showModal,
+  showSnackbar,
+  useConfig,
+  useSession,
+  type ConfigSchema,
+  type Session,
+} from '@openmrs/esm-framework';
 import { useHsuIdIdentifier } from '../../hooks/location-tag.resource';
 
 vi.mock('@openmrs/esm-framework', () => ({
+  showModal: vi.fn(() => vi.fn()),
   ExtensionSlot: ({ state }) => (
     <button data-testid="mock-search-select" onClick={() => state.selectPatientAction('patient-123')}>
       Select Patient
@@ -116,5 +124,32 @@ describe('PatientSearchHeader - Enforcement Feature', () => {
       expect(mockContext.addPatient).toHaveBeenCalledWith('patient-123');
       expect(mockShowSnackbar).not.toHaveBeenCalled();
     });
+  });
+  it('preserves confirmation when identifier data revalidates', () => {
+    mockUseConfig.mockReturnValue({ patientLocationMismatchCheck: true });
+    mockUseHsuIdIdentifier.mockReturnValue({ hsuIdentifier: mismatchedHsuLocation } as ReturnType<
+      typeof useHsuIdIdentifier
+    >);
+    const live = new Set<string>();
+    vi.mocked(showModal).mockImplementation((name, props, onClose) => {
+      live.add(name);
+      return () => {
+        live.delete(name);
+        onClose?.();
+      };
+    });
+    const content = () => (
+      <FormWorkflowContext.Provider value={mockContext as never}>
+        <PatientSearchHeader />
+      </FormWorkflowContext.Provider>
+    );
+    const { rerender } = render(content());
+    fireEvent.click(screen.getByTestId('mock-search-select'));
+    expect(live.size).toBe(1);
+    mockUseHsuIdIdentifier.mockReturnValue({
+      hsuIdentifier: { ...mismatchedHsuLocation, identifier: 'updated' },
+    } as ReturnType<typeof useHsuIdIdentifier>);
+    rerender(content());
+    expect(live.size).toBe(1);
   });
 });

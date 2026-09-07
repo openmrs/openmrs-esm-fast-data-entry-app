@@ -6,11 +6,6 @@ import { useFormContext } from 'react-hook-form';
 import GroupFormWorkflowContext from '../context/GroupFormWorkflowContext';
 import SessionMetaWorkspace from './SessionMetaWorkspace';
 
-vi.mock('../CancelModal', () => ({
-  __esModule: true,
-  default: () => null,
-}));
-
 vi.mock('./SessionDetailsForm', () => ({
   __esModule: true,
   default: function MockSessionDetailsForm() {

@@ -1,5 +1,5 @@
-import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
-import { ComposedModal, Button, ModalHeader, ModalFooter, ModalBody, TextInput, FormLabel } from '@carbon/react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { Button, ModalHeader, ModalFooter, ModalBody, TextInput, FormLabel } from '@carbon/react';
 import { TrashCan } from '@carbon/react/icons';
 import { useTranslation } from 'react-i18next';
 import {
@@ -11,9 +11,8 @@ import {
   useSession,
 } from '@openmrs/esm-framework';
 import styles from './styles.scss';
-import GroupFormWorkflowContext from '../context/GroupFormWorkflowContext';
 import { usePostCohort } from '../hooks';
-import PatientLocationMismatchModal from '../form-entry-workflow/patient-search-header/PatienMismatchedLocationModal';
+import useModalLauncher from '../hooks/useModalLauncher';
 import { useHsuIdIdentifier } from '../hooks/location-tag.resource';
 
 const PatientRow = ({ patient, removePatient }) => {
@@ -111,18 +110,17 @@ const AddGroupModal = ({
   isCreate = undefined,
   groupName = '',
   cohortUuid = undefined,
-  isOpen,
-  onPostCancel,
-  onPostSubmit,
+  close,
+  setGroup,
+  isOwnerMounted = () => true,
 }) => {
-  const { setGroup } = useContext(GroupFormWorkflowContext);
+  const launchModal = useModalLauncher();
   const { t } = useTranslation();
   const [errors, setErrors] = useState({});
   const [name, setName] = useState(groupName);
   const [patientList, setPatientList] = useState(patients || []);
-  const { post, result, error } = usePostCohort();
+  const { post, error, isPosting } = usePostCohort();
   const config = useConfig();
-  const [patientLocationMismatchModalOpen, setPatientLocationMismatchModalOpen] = useState(false);
   const [selectedPatientUuid, setSelectedPatientUuid] = useState();
   const { hsuIdentifier } = useHsuIdIdentifier(selectedPatientUuid);
   const { sessionLocation } = useSession();
@@ -205,7 +203,15 @@ const AddGroupModal = ({
       });
       setSelectedPatientUuid(null);
     } else if (config.patientLocationMismatchCheck && locationMismatch) {
-      setPatientLocationMismatchModalOpen(true);
+      return launchModal(
+        'fde-patient-location-mismatch-modal',
+        {
+          onConfirm: addSelectedPatientToList,
+          sessionLocation,
+          hsuLocation: hsuIdentifier.location,
+        },
+        () => setSelectedPatientUuid(null),
+      );
     } else {
       addSelectedPatientToList();
     }
@@ -217,48 +223,38 @@ const AddGroupModal = ({
     config.patientLocationMismatchCheck,
     config.enforcePatientListLocationMatch,
     t,
+    launchModal,
   ]);
 
   const handleSubmit = () => {
     if (validate()) {
-      post({
-        uuid: cohortUuid,
-        name: name,
-        cohortType: config?.groupSessionConcepts?.cohortTypeId,
-        location: sessionLocation?.uuid,
-        cohortMembers: patientList.map((p) => ({ patient: p.uuid, startDate: new Date().toISOString() })),
-      });
-      if (onPostSubmit) {
-        onPostSubmit();
-      }
-    }
-  };
-
-  const handleCancel = () => {
-    setPatientList(patients || []);
-    if (onPostCancel) {
-      onPostCancel();
-    }
-  };
-
-  useEffect(() => {
-    if (result) {
-      setGroup({
-        ...result,
-        // the result doesn't come with cohortMembers.
-        // need to add it in based on our local state
-        cohortMembers: patientList.map((p) => ({ patient: { uuid: p.uuid } })),
+      const members = patientList.map((p) => ({ patient: { uuid: p.uuid } }));
+      post(
+        {
+          uuid: cohortUuid,
+          name: name,
+          cohortType: config?.groupSessionConcepts?.cohortTypeId,
+          location: sessionLocation?.uuid,
+          cohortMembers: patientList.map((p) => ({ patient: p.uuid, startDate: new Date().toISOString() })),
+        },
+        (error) => {
+          showSnackbar({
+            kind: 'error',
+            title: t('postError', 'POST Error'),
+            subtitle: error.message ?? t('unknownPostError', 'An unknown error occurred while saving data'),
+          });
+        },
+      ).then((savedGroup) => {
+        if (savedGroup && isOwnerMounted()) {
+          setGroup({ ...savedGroup, cohortMembers: members });
+          close();
+        }
       });
     }
-  }, [result, setGroup, patientList]);
+  };
 
   useEffect(() => {
     if (error) {
-      showSnackbar({
-        kind: 'error',
-        title: t('postError', 'POST Error'),
-        subtitle: error.message ?? t('unknownPostError', 'An unknown error occurred while saving data'),
-      });
       if (error.fieldErrors) {
         setErrors(
           Object.fromEntries(Object.entries(error.fieldErrors).map(([key, value]) => [key, value?.[0]?.message])),
@@ -267,46 +263,32 @@ const AddGroupModal = ({
     }
   }, [error, t]);
 
-  const onPatientLocationMismatchModalCancel = () => {
-    setSelectedPatientUuid(null);
-  };
-
   return (
     <>
-      <div className={styles.modal}>
-        <ComposedModal open={isOpen} onClose={handleCancel}>
-          <ModalHeader>{isCreate ? t('createNewGroup', 'Create New Group') : t('editGroup', 'Edit Group')}</ModalHeader>
-          <ModalBody>
-            <NewGroupForm
-              {...{
-                name,
-                setName,
-                patientList,
-                updatePatientList,
-                errors,
-                validate,
-                removePatient,
-              }}
-            />
-          </ModalBody>
-          <ModalFooter>
-            <Button kind="secondary" onClick={handleCancel}>
-              {t('cancel', 'Cancel')}
-            </Button>
-            <Button kind="primary" onClick={handleSubmit}>
-              {isCreate ? t('createGroup', 'Create Group') : t('save', 'Save')}
-            </Button>
-          </ModalFooter>
-        </ComposedModal>
-      </div>
-      <PatientLocationMismatchModal
-        open={patientLocationMismatchModalOpen}
-        setOpen={setPatientLocationMismatchModalOpen}
-        onConfirm={addSelectedPatientToList}
-        onCancel={onPatientLocationMismatchModalCancel}
-        sessionLocation={sessionLocation}
-        hsuLocation={hsuIdentifier?.location}
-      />
+      <ModalHeader closeModal={close}>
+        {isCreate ? t('createNewGroup', 'Create New Group') : t('editGroup', 'Edit Group')}
+      </ModalHeader>
+      <ModalBody>
+        <NewGroupForm
+          {...{
+            name,
+            setName,
+            patientList,
+            updatePatientList,
+            errors,
+            validate,
+            removePatient,
+          }}
+        />
+      </ModalBody>
+      <ModalFooter>
+        <Button kind="secondary" onClick={close}>
+          {t('cancel', 'Cancel')}
+        </Button>
+        <Button kind="primary" onClick={handleSubmit} disabled={isPosting}>
+          {isCreate ? t('createGroup', 'Create Group') : t('save', 'Save')}
+        </Button>
+      </ModalFooter>
     </>
   );
 };

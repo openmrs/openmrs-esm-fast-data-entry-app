@@ -1,19 +1,19 @@
 import { Close, Add } from '@carbon/react/icons';
 import { Button } from '@carbon/react';
-import React, { useCallback, useContext, useState } from 'react';
+import React, { useCallback, useContext } from 'react';
 import { useConfig, useSession, showSnackbar } from '@openmrs/esm-framework';
 import GroupFormWorkflowContext from '../../context/GroupFormWorkflowContext';
 import styles from './styles.scss';
 import { useTranslation } from 'react-i18next';
 import CompactGroupSearch from '../group-search/CompactGroupSearch';
-import AddGroupModal from '../../add-group-modal/AddGroupModal';
+import useModalLauncher from '../../hooks/useModalLauncher';
 
 const GroupSearchHeader = () => {
   const { t } = useTranslation();
   const config = useConfig();
   const { sessionLocation } = useSession();
-  const { activeGroupUuid, setGroup, destroySession } = useContext(GroupFormWorkflowContext);
-  const [isOpen, setOpen] = useState(false);
+  const { activeFormUuid, activeGroupUuid, setGroup, destroySession } = useContext(GroupFormWorkflowContext);
+  const launchModal = useModalLauncher(activeFormUuid);
 
   const handleSelectGroup = useCallback(
     (group) => {
@@ -45,17 +45,7 @@ const GroupSearchHeader = () => {
     [config.enforcePatientListLocationMatch, sessionLocation, setGroup, t],
   );
 
-  const handleCancel = useCallback(() => {
-    setOpen(false);
-  }, []);
-
-  const onPostSubmit = useCallback(() => {
-    setOpen(false);
-  }, []);
-
-  const handleOpenClick = useCallback(() => {
-    setOpen(true);
-  }, []);
+  const handleOpenClick = () => launchModal('fde-add-group-modal', { isCreate: true, setGroup });
 
   if (activeGroupUuid) return null;
 
@@ -70,14 +60,6 @@ const GroupSearchHeader = () => {
         <Button onClick={handleOpenClick} renderIcon={Add} iconDescription="Add">
           {t('createNewGroup', 'Create New Group')}
         </Button>
-        <AddGroupModal
-          {...{
-            isCreate: true,
-            isOpen: isOpen,
-            onPostCancel: handleCancel,
-            onPostSubmit: onPostSubmit,
-          }}
-        />
       </span>
       <span style={{ flexGrow: 1 }} />
       <span>
