@@ -27,17 +27,6 @@ vi.mock('@openmrs/esm-framework', () => ({
   useSession: vi.fn(),
 }));
 
-vi.mock('react-i18next', () => ({
-  useTranslation: () => ({
-    t: (key: string, defaultValue: string, interpolation: { hsuLocation?: string; sessionLocation?: string }) => {
-      if (interpolation?.hsuLocation) {
-        return `Error: Patient at ${interpolation.hsuLocation} cannot be added to session at ${interpolation.sessionLocation}`;
-      }
-      return defaultValue || key;
-    },
-  }),
-}));
-
 vi.mock('../../hooks/location-tag.resource', () => ({
   useHsuIdIdentifier: vi.fn(),
 }));
@@ -133,14 +122,8 @@ describe('PatientSearchHeader - Enforcement Feature', () => {
       typeof useHsuIdIdentifier
     >);
 
-    const live = new Set<string>();
-    vi.mocked(showModal).mockImplementation((name, props, onClose) => {
-      live.add(name);
-      return () => {
-        live.delete(name);
-        onClose?.();
-      };
-    });
+    const dispose = vi.fn();
+    vi.mocked(showModal).mockReturnValue(dispose);
     const content = () => (
       <FormWorkflowContext.Provider value={mockContext as never}>
         <PatientSearchHeader />
@@ -151,14 +134,28 @@ describe('PatientSearchHeader - Enforcement Feature', () => {
 
     fireEvent.click(screen.getByTestId('mock-search-select'));
 
-    expect(live.size).toBe(1);
+    expect(showModal).toHaveBeenCalledOnce();
+    expect(dispose).not.toHaveBeenCalled();
 
     mockUseHsuIdIdentifier.mockReturnValue({
-      hsuIdentifier: { ...mismatchedHsuLocation, identifier: 'updated' },
+      hsuIdentifier: {
+        ...mismatchedHsuLocation,
+        identifier: 'updated',
+        location: { ...mismatchedHsuLocation.location },
+      },
     } as ReturnType<typeof useHsuIdIdentifier>);
     rerender(content());
 
-    expect(live.size).toBe(1);
+    expect(showModal).toHaveBeenCalledOnce();
+    expect(dispose).not.toHaveBeenCalled();
+    mockUseHsuIdIdentifier.mockReturnValue({
+      hsuIdentifier: { location: { ...sessionLocation } },
+    } as ReturnType<typeof useHsuIdIdentifier>);
+    rerender(content());
+
+    expect(dispose).toHaveBeenCalledOnce();
+    expect(showModal).toHaveBeenCalledOnce();
+    expect(mockContext.addPatient).toHaveBeenCalledWith('patient-123');
   });
 
   it('clears a pending confirmation when the workflow changes', () => {

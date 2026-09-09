@@ -20,6 +20,8 @@ const PatientSearchHeader = () => {
   const [selectedPatientUuid, setSelectedPatientUuid] = useState();
   const { hsuIdentifier } = useHsuIdIdentifier(selectedPatientUuid);
   const { sessionLocation } = useSession();
+  const { uuid: sessionLocationUuid, display: sessionLocationDisplay } = sessionLocation ?? {};
+  const { uuid: hsuLocationUuid, display: hsuLocationDisplay } = hsuIdentifier?.location ?? {};
   const config = useConfig();
   const { addPatient, workflowState, activeFormUuid } = useContext(FormWorkflowContext);
   const { t } = useTranslation();
@@ -38,9 +40,9 @@ const PatientSearchHeader = () => {
   }, []);
 
   useEffect(() => {
-    if (!selectedPatientUuid || !hsuIdentifier) return;
+    if (!selectedPatientUuid || !hsuLocationUuid) return;
 
-    const locationMismatch = sessionLocation.uuid !== hsuIdentifier.location.uuid;
+    const locationMismatch = sessionLocationUuid !== hsuLocationUuid;
 
     if (config.enforcePatientListLocationMatch && locationMismatch) {
       showSnackbar({
@@ -50,8 +52,8 @@ const PatientSearchHeader = () => {
           'patientLocationMismatchEnforced',
           'Cannot add patient from {{hsuLocation}} to a session at {{sessionLocation}}',
           {
-            hsuLocation: hsuIdentifier.location?.display,
-            sessionLocation: sessionLocation?.display,
+            hsuLocation: hsuLocationDisplay,
+            sessionLocation: sessionLocationDisplay,
           },
         ),
       });
@@ -62,8 +64,8 @@ const PatientSearchHeader = () => {
         'fde-patient-location-mismatch-modal',
         {
           onConfirm: onPatientMismatchedLocationModalConfirm,
-          sessionLocation,
-          hsuLocation: hsuIdentifier.location,
+          sessionLocation: { uuid: sessionLocationUuid, display: sessionLocationDisplay },
+          hsuLocation: { uuid: hsuLocationUuid, display: hsuLocationDisplay },
         },
         () => {
           if (active) setSelectedPatientUuid(null);
@@ -79,8 +81,10 @@ const PatientSearchHeader = () => {
     }
   }, [
     selectedPatientUuid,
-    sessionLocation,
-    hsuIdentifier,
+    sessionLocationUuid,
+    sessionLocationDisplay,
+    hsuLocationUuid,
+    hsuLocationDisplay,
     addPatient,
     config.patientLocationMismatchCheck,
     config.enforcePatientListLocationMatch,

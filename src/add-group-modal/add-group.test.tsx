@@ -2,12 +2,21 @@ import React from 'react';
 import { act, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { openmrsFetch, showSnackbar, useConfig, usePatient, useSession } from '@openmrs/esm-framework';
+import { openmrsFetch, showModal, showSnackbar, useConfig, usePatient, useSession } from '@openmrs/esm-framework';
+import { useHsuIdIdentifier } from '../hooks/location-tag.resource';
 import AddGroupModal from './add-group.modal';
 
-vi.mock('../hooks/location-tag.resource', () => ({ useHsuIdIdentifier: () => ({ hsuIdentifier: null }) }));
+vi.mock('../hooks/location-tag.resource', () => ({ useHsuIdIdentifier: vi.fn() }));
+
+vi.mock('@openmrs/esm-framework', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('@openmrs/esm-framework')>()),
+  ExtensionSlot: ({ state }) => (
+    <button onClick={() => state.selectPatientAction('patient-123')}>Select Patient</button>
+  ),
+}));
 
 beforeEach(() => {
+  vi.mocked(useHsuIdIdentifier).mockReturnValue({ hsuIdentifier: null } as ReturnType<typeof useHsuIdIdentifier>);
   vi.mocked(useConfig).mockReturnValue({ groupSessionConcepts: { cohortTypeId: 'cohort-type' } });
   vi.mocked(useSession).mockReturnValue({ sessionLocation: { uuid: 'clinic' } } as ReturnType<typeof useSession>);
   vi.mocked(usePatient).mockReturnValue({ patient: null, error: null, isLoading: true } as ReturnType<
@@ -16,6 +25,50 @@ beforeEach(() => {
 });
 
 describe('group modal', () => {
+  it('preserves confirmation when identifier data revalidates', async () => {
+    const user = userEvent.setup();
+    const location = { uuid: 'other-clinic', display: 'Other clinic' };
+    vi.mocked(useConfig).mockReturnValue({ patientLocationMismatchCheck: true });
+    vi.mocked(useHsuIdIdentifier).mockReturnValue({ hsuIdentifier: { location } } as ReturnType<
+      typeof useHsuIdIdentifier
+    >);
+    const dispose = vi.fn();
+    vi.mocked(showModal).mockReturnValue(dispose);
+    const close = vi.fn();
+    const onSave = vi.fn();
+    const { rerender, unmount } = render(<AddGroupModal close={close} onSave={onSave} />);
+
+    await user.click(screen.getByRole('button', { name: 'Select Patient' }));
+
+    expect(showModal).toHaveBeenCalledOnce();
+    expect(dispose).not.toHaveBeenCalled();
+
+    vi.mocked(useHsuIdIdentifier).mockReturnValue({
+      hsuIdentifier: { identifier: 'updated', location: { ...location } },
+    } as ReturnType<typeof useHsuIdIdentifier>);
+    rerender(<AddGroupModal close={close} onSave={onSave} />);
+
+    expect(showModal).toHaveBeenCalledOnce();
+    expect(dispose).not.toHaveBeenCalled();
+
+    vi.mocked(useHsuIdIdentifier).mockReturnValue({
+      hsuIdentifier: { location: { uuid: 'new-clinic', display: 'New clinic' } },
+    } as ReturnType<typeof useHsuIdIdentifier>);
+    rerender(<AddGroupModal close={close} onSave={onSave} />);
+
+    expect(dispose).toHaveBeenCalledOnce();
+    expect(showModal).toHaveBeenCalledTimes(2);
+    expect(showModal).toHaveBeenLastCalledWith(
+      'fde-patient-location-mismatch-modal',
+      expect.objectContaining({ hsuLocation: { uuid: 'new-clinic', display: 'New clinic' } }),
+      expect.any(Function),
+    );
+
+    unmount();
+
+    expect(dispose).toHaveBeenCalledTimes(2);
+  });
+
   it('reports a successful save after dismissal', async () => {
     const user = userEvent.setup();
     let resolve: (value: unknown) => void;

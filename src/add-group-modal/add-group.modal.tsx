@@ -122,6 +122,8 @@ const AddGroupModal = ({
   const [selectedPatientUuid, setSelectedPatientUuid] = useState();
   const { hsuIdentifier } = useHsuIdIdentifier(selectedPatientUuid);
   const { sessionLocation } = useSession();
+  const { uuid: sessionLocationUuid, display: sessionLocationDisplay } = sessionLocation ?? {};
+  const { uuid: hsuLocationUuid, display: hsuLocationDisplay } = hsuIdentifier?.location ?? {};
 
   const removePatient = useCallback(
     (patientUuid: string) =>
@@ -182,9 +184,9 @@ const AddGroupModal = ({
   };
 
   useEffect(() => {
-    if (!selectedPatientUuid || !hsuIdentifier) return;
+    if (!selectedPatientUuid || !hsuLocationUuid) return;
 
-    const locationMismatch = sessionLocation.uuid != hsuIdentifier.location.uuid;
+    const locationMismatch = sessionLocationUuid !== hsuLocationUuid;
 
     if (locationMismatch && config.enforcePatientListLocationMatch) {
       showSnackbar({
@@ -194,8 +196,8 @@ const AddGroupModal = ({
           'patientLocationMismatchEnforced',
           'Cannot add patient from {{hsuLocation}} to a session at {{sessionLocation}}',
           {
-            hsuLocation: hsuIdentifier.location?.display,
-            sessionLocation: sessionLocation?.display,
+            hsuLocation: hsuLocationDisplay,
+            sessionLocation: sessionLocationDisplay,
           },
         ),
       });
@@ -206,8 +208,8 @@ const AddGroupModal = ({
         'fde-patient-location-mismatch-modal',
         {
           onConfirm: addSelectedPatientToList,
-          sessionLocation,
-          hsuLocation: hsuIdentifier.location,
+          sessionLocation: { uuid: sessionLocationUuid, display: sessionLocationDisplay },
+          hsuLocation: { uuid: hsuLocationUuid, display: hsuLocationDisplay },
         },
         () => {
           if (active) setSelectedPatientUuid(null);
@@ -222,8 +224,10 @@ const AddGroupModal = ({
     }
   }, [
     selectedPatientUuid,
-    sessionLocation,
-    hsuIdentifier,
+    sessionLocationUuid,
+    sessionLocationDisplay,
+    hsuLocationUuid,
+    hsuLocationDisplay,
     addSelectedPatientToList,
     config.patientLocationMismatchCheck,
     config.enforcePatientListLocationMatch,
