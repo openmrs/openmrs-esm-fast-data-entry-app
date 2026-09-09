@@ -1,20 +1,12 @@
 import React from 'react';
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
-import { afterEach, beforeEach, describe, expect, it, type MockedFunction, vi } from 'vitest';
-import {
-  type ConfigSchema,
-  type Session,
-  showModal,
-  showSnackbar,
-  useConfig,
-  useSession,
-} from '@openmrs/esm-framework';
-import FormWorkflowContext from '../../context/FormWorkflowContext';
-import { useHsuIdIdentifier } from '../../hooks/location-tag.resource';
+import { vi, describe, it, expect, beforeEach, afterEach, type MockedFunction } from 'vitest';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import PatientSearchHeader from './PatientSearchHeader';
+import FormWorkflowContext from '../../context/FormWorkflowContext';
+import { showSnackbar, useConfig, useSession, type ConfigSchema, type Session } from '@openmrs/esm-framework';
+import { useHsuIdIdentifier } from '../../hooks/location-tag.resource';
 
 vi.mock('@openmrs/esm-framework', () => ({
-  showModal: vi.fn(() => vi.fn()),
   ExtensionSlot: ({ state }) => (
     <button data-testid="mock-search-select" onClick={() => state.selectPatientAction('patient-123')}>
       Select Patient
@@ -88,7 +80,6 @@ describe('PatientSearchHeader - Enforcement Feature', () => {
     );
 
     const searchBar = screen.getByTestId('mock-search-select');
-
     fireEvent.click(searchBar);
 
     await waitFor(() => {
@@ -125,68 +116,5 @@ describe('PatientSearchHeader - Enforcement Feature', () => {
       expect(mockContext.addPatient).toHaveBeenCalledWith('patient-123');
       expect(mockShowSnackbar).not.toHaveBeenCalled();
     });
-  });
-
-  it('preserves confirmation when identifier data revalidates', () => {
-    mockUseConfig.mockReturnValue({ patientLocationMismatchCheck: true });
-    mockUseHsuIdIdentifier.mockReturnValue({ hsuIdentifier: mismatchedHsuLocation } as ReturnType<
-      typeof useHsuIdIdentifier
-    >);
-
-    const live = new Set<string>();
-    vi.mocked(showModal).mockImplementation((name, props, onClose) => {
-      live.add(name);
-      return () => {
-        live.delete(name);
-        onClose?.();
-      };
-    });
-    const content = () => (
-      <FormWorkflowContext.Provider value={mockContext as never}>
-        <PatientSearchHeader />
-      </FormWorkflowContext.Provider>
-    );
-
-    const { rerender } = render(content());
-
-    fireEvent.click(screen.getByTestId('mock-search-select'));
-
-    expect(live.size).toBe(1);
-
-    mockUseHsuIdIdentifier.mockReturnValue({
-      hsuIdentifier: { ...mismatchedHsuLocation, identifier: 'updated' },
-    } as ReturnType<typeof useHsuIdIdentifier>);
-    rerender(content());
-
-    expect(live.size).toBe(1);
-  });
-
-  it('clears a pending confirmation when the workflow changes', () => {
-    mockUseConfig.mockReturnValue({ patientLocationMismatchCheck: true });
-    mockUseHsuIdIdentifier.mockReturnValue({ hsuIdentifier: mismatchedHsuLocation } as ReturnType<
-      typeof useHsuIdIdentifier
-    >);
-
-    const dispose = vi.fn();
-    vi.mocked(showModal).mockReturnValue(dispose);
-    const content = (activeFormUuid: string) => (
-      <FormWorkflowContext.Provider value={{ ...mockContext, activeFormUuid } as never}>
-        <PatientSearchHeader />
-      </FormWorkflowContext.Provider>
-    );
-
-    const { rerender } = render(content('first-form'));
-
-    fireEvent.click(screen.getByTestId('mock-search-select'));
-    rerender(content('second-form'));
-
-    expect(dispose).toHaveBeenCalled();
-    expect(mockContext.addPatient).not.toHaveBeenCalled();
-
-    const opened = vi.mocked(showModal).mock.calls.length;
-
-    rerender(content('second-form'));
-
-    expect(showModal).toHaveBeenCalledTimes(opened);
   });
 });

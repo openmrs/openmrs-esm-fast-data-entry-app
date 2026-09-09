@@ -1,22 +1,16 @@
-import React, { useCallback, useContext, useEffect, useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
-import { Button } from '@carbon/react';
 import { Add, Close } from '@carbon/react/icons';
-import {
-  ExtensionSlot,
-  interpolateUrl,
-  navigate,
-  showModal,
-  showSnackbar,
-  useConfig,
-  useSession,
-} from '@openmrs/esm-framework';
+import { ExtensionSlot, interpolateUrl, navigate, useConfig, useSession, showSnackbar } from '@openmrs/esm-framework';
+import { Button } from '@carbon/react';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import FormWorkflowContext from '../../context/FormWorkflowContext';
-import { useHsuIdIdentifier } from '../../hooks/location-tag.resource';
 import styles from './styles.scss';
+import { useTranslation } from 'react-i18next';
+import { useHsuIdIdentifier } from '../../hooks/location-tag.resource';
+import PatientLocationMismatchModal from './PatienMismatchedLocationModal';
 
 const PatientSearchHeader = () => {
+  const [patientLocationMismatchModalOpen, setPatientLocationMismatchModalOpen] = useState(false);
   const [selectedPatientUuid, setSelectedPatientUuid] = useState();
   const { hsuIdentifier } = useHsuIdIdentifier(selectedPatientUuid);
   const { sessionLocation } = useSession();
@@ -29,9 +23,10 @@ const PatientSearchHeader = () => {
     setSelectedPatientUuid(null);
   }, [addPatient, selectedPatientUuid]);
 
-  useEffect(() => {
+  const onPatientMismatchedLocationModalCancel = useCallback(() => {
+    setPatientLocationMismatchModalOpen(false);
     setSelectedPatientUuid(null);
-  }, [activeFormUuid]);
+  }, []);
 
   const handleSelectPatient = useCallback((patientUuid) => {
     setSelectedPatientUuid(patientUuid);
@@ -57,22 +52,7 @@ const PatientSearchHeader = () => {
       });
       setSelectedPatientUuid(null);
     } else if (config.patientLocationMismatchCheck && locationMismatch) {
-      let active = true;
-      const dispose = showModal(
-        'fde-patient-location-mismatch-modal',
-        {
-          onConfirm: onPatientMismatchedLocationModalConfirm,
-          sessionLocation,
-          hsuLocation: hsuIdentifier.location,
-        },
-        () => {
-          if (active) setSelectedPatientUuid(null);
-        },
-      );
-      return () => {
-        active = false;
-        dispose();
-      };
+      setPatientLocationMismatchModalOpen(true);
     } else {
       addPatient(selectedPatientUuid);
       setSelectedPatientUuid(null);
@@ -85,7 +65,6 @@ const PatientSearchHeader = () => {
     config.patientLocationMismatchCheck,
     config.enforcePatientListLocationMatch,
     t,
-    onPatientMismatchedLocationModalConfirm,
   ]);
 
   if (workflowState !== 'NEW_PATIENT') return null;
@@ -123,6 +102,14 @@ const PatientSearchHeader = () => {
           </Link>
         </span>
       </div>
+      <PatientLocationMismatchModal
+        open={patientLocationMismatchModalOpen}
+        setOpen={setPatientLocationMismatchModalOpen}
+        onConfirm={onPatientMismatchedLocationModalConfirm}
+        onCancel={onPatientMismatchedLocationModalCancel}
+        sessionLocation={sessionLocation}
+        hsuLocation={hsuIdentifier?.location}
+      />
     </>
   );
 };

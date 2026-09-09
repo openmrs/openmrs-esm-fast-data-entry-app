@@ -1,23 +1,17 @@
-import React, { useContext, useEffect, useRef } from 'react';
-import { FormProvider, useForm, useFormContext } from 'react-hook-form';
-import { useTranslation } from 'react-i18next';
 import { Button } from '@carbon/react';
-import { showModal } from '@openmrs/esm-framework';
-import GroupFormWorkflowContext from '../context/GroupFormWorkflowContext';
-import SessionDetailsForm from './SessionDetailsForm';
+import React, { useContext, useEffect, useState } from 'react';
 import styles from './styles.scss';
+import { useTranslation } from 'react-i18next';
+import GroupFormWorkflowContext from '../context/GroupFormWorkflowContext';
+import { FormProvider, useForm, useFormContext } from 'react-hook-form';
+import CancelModal from '../CancelModal';
+import SessionDetailsForm from './SessionDetailsForm';
 
 const NewGroupWorkflowButtons = () => {
   const { t } = useTranslation();
   const context = useContext(GroupFormWorkflowContext);
   const { workflowState, patientUuids } = context;
-  const disposeModal = useRef<() => void>();
-  useEffect(
-    () => () => {
-      disposeModal.current?.();
-    },
-    [context.activeFormUuid],
-  );
+  const [cancelModalOpen, setCancelModalOpen] = useState(false);
   if (workflowState !== 'NEW_GROUP_SESSION') return null;
 
   return (
@@ -29,16 +23,13 @@ const NewGroupWorkflowButtons = () => {
         <Button
           kind="tertiary"
           onClick={() => {
-            disposeModal.current?.();
-            disposeModal.current = showModal('fde-cancel-session-modal', {
-              onDiscard: context.destroySession,
-              onSaveAndClose: context.closeSession,
-            });
+            setCancelModalOpen(true);
           }}
         >
           {t('cancel', 'Cancel')}
         </Button>
       </div>
+      <CancelModal open={cancelModalOpen} setOpen={setCancelModalOpen} context={context} />
     </>
   );
 };

@@ -1,20 +1,21 @@
-import React, { useContext, useEffect, useMemo, useRef } from 'react';
-import { useTranslation } from 'react-i18next';
+import React, { useCallback, useContext, useMemo, useState } from 'react';
+import { Edit } from '@carbon/react/icons';
+
 import {
-  Button,
-  Checkbox,
   CheckboxSkeleton,
+  Checkbox,
   SkeletonText,
   Table,
+  TableHead,
+  TableRow,
+  TableHeader,
   TableBody,
   TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
+  Button,
 } from '@carbon/react';
-import { Edit } from '@carbon/react/icons';
-import { showModal } from '@openmrs/esm-framework';
+import { useTranslation } from 'react-i18next';
 import GroupFormWorkflowContext from '../../context/GroupFormWorkflowContext';
+import AddGroupModal from '../../add-group-modal/AddGroupModal';
 
 const PatientRow = ({ patient }) => {
   const { patientUuids, addPatientUuid, removePatientUuid } = useContext(GroupFormWorkflowContext);
@@ -65,20 +66,19 @@ const PatientRow = ({ patient }) => {
 
 const AttendanceTable = ({ patients }) => {
   const { t } = useTranslation();
-  const { activeFormUuid, activeGroupUuid, activeGroupName, activeGroupMembers, setGroup } =
-    useContext(GroupFormWorkflowContext);
+  const { activeGroupUuid, activeGroupName, activeGroupMembers } = useContext(GroupFormWorkflowContext);
 
-  const disposeModal = useRef<() => void>();
-  const workflowVersion = useRef(0);
-  useEffect(
-    () => () => {
-      workflowVersion.current += 1;
-      disposeModal.current?.();
-    },
-    [activeFormUuid],
-  );
+  const [isOpen, setOpen] = useState(false);
 
   const headers = [t('name', 'Name'), t('identifier', 'Patient ID'), t('patientIsPresent', 'Patient is present')];
+
+  const onPostCancel = useCallback(() => {
+    setOpen(false);
+  }, []);
+
+  const onPostSubmit = useCallback(() => {
+    setOpen(false);
+  }, []);
 
   const newArr = useMemo(() => {
     return activeGroupMembers.map(function (value) {
@@ -94,26 +94,21 @@ const AttendanceTable = ({ patients }) => {
   return (
     <div>
       <span style={{ flexGrow: 1 }} />
-      <Button
-        kind="ghost"
-        onClick={() => {
-          const version = workflowVersion.current;
-          disposeModal.current?.();
-          disposeModal.current = showModal('fde-add-group-modal', {
-            cohortUuid: activeGroupUuid,
-            patients: newArr,
-            isCreate: false,
-            groupName: activeGroupName,
-            onSave: (group) => {
-              if (version === workflowVersion.current) setGroup(group);
-            },
-          });
-        }}
-      >
+      <Button kind="ghost" onClick={() => setOpen(true)}>
         {t('editGroup', 'Edit Group')}&nbsp;
         <Edit size={20} />
       </Button>
-
+      <AddGroupModal
+        {...{
+          cohortUuid: activeGroupUuid,
+          patients: newArr,
+          isCreate: false,
+          groupName: activeGroupName,
+          isOpen: isOpen,
+          onPostCancel: onPostCancel,
+          onPostSubmit: onPostSubmit,
+        }}
+      />
       <Table>
         <TableHead>
           <TableRow>

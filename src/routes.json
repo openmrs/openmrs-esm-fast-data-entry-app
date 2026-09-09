@@ -20,23 +20,5 @@
       "online": true,
       "offline": true
     }
-  ],
-  "modals": [
-    {
-      "name": "fde-cancel-session-modal",
-      "component": "cancelSessionModal"
-    },
-    {
-      "name": "fde-complete-session-modal",
-      "component": "completeSessionModal"
-    },
-    {
-      "name": "fde-add-group-modal",
-      "component": "addGroupModal"
-    },
-    {
-      "name": "fde-patient-location-mismatch-modal",
-      "component": "patientLocationMismatchModal"
-    }
   ]
 }

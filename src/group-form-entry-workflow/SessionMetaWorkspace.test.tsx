@@ -1,10 +1,15 @@
 import React, { useEffect } from 'react';
+import { vi, describe, it, expect } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { useFormContext } from 'react-hook-form';
-import { describe, expect, it, vi } from 'vitest';
 import GroupFormWorkflowContext from '../context/GroupFormWorkflowContext';
 import SessionMetaWorkspace from './SessionMetaWorkspace';
+
+vi.mock('../CancelModal', () => ({
+  __esModule: true,
+  default: () => null,
+}));
 
 vi.mock('./SessionDetailsForm', () => ({
   __esModule: true,
@@ -49,7 +54,6 @@ describe('SessionMetaWorkspace', () => {
   it('submits the session metadata with the normalized session date', async () => {
     const user = userEvent.setup();
     const setSessionMeta = vi.fn();
-
     renderSessionMetaWorkspace({ setSessionMeta });
 
     await user.click(screen.getByRole('button', { name: 'Create New Session' }));
@@ -70,7 +74,6 @@ describe('SessionMetaWorkspace', () => {
   it('shows the group selection error when submitted without a chosen group', async () => {
     const user = userEvent.setup();
     const setSessionMeta = vi.fn();
-
     renderSessionMetaWorkspace({
       activeGroupUuid: null,
       setSessionMeta,

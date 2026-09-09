@@ -1,21 +1,26 @@
+import { Button, ComposedModal, ModalBody, ModalFooter, ModalHeader } from '@carbon/react';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Button, ModalBody, ModalFooter, ModalHeader } from '@carbon/react';
 
-const PatientLocationMismatchModal = ({ close, onConfirm, sessionLocation, hsuLocation }) => {
+const PatientLocationMismatchModal = ({ open, setOpen, onConfirm, onCancel, sessionLocation, hsuLocation }) => {
   const { t } = useTranslation();
 
   const hsuDisplay = hsuLocation?.display || t('unknown', 'Unknown');
   const sessionDisplay = sessionLocation?.display || t('unknown', 'Unknown');
 
+  const handleCancel = () => {
+    onCancel?.();
+    setOpen(false);
+  };
+
   const handleConfirm = () => {
     onConfirm?.();
-    close();
+    setOpen(false);
   };
 
   return (
-    <>
-      <ModalHeader closeModal={close}>{t('confirmPatientSelection', 'Confirm patient selection')}</ModalHeader>
+    <ComposedModal open={open} onClose={handleCancel}>
+      <ModalHeader>{t('confirmPatientSelection', 'Confirm patient selection')}</ModalHeader>
       <ModalBody>
         {t(
           'patientLocationMismatch',
@@ -27,14 +32,14 @@ const PatientLocationMismatchModal = ({ close, onConfirm, sessionLocation, hsuLo
         )}
       </ModalBody>
       <ModalFooter>
-        <Button kind="secondary" onClick={close}>
+        <Button kind="secondary" onClick={handleCancel}>
           {t('cancel', 'Cancel')}
         </Button>
         <Button kind="primary" onClick={handleConfirm}>
           {t('continue', 'Continue')}
         </Button>
       </ModalFooter>
-    </>
+    </ComposedModal>
   );
 };
 
