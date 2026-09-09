@@ -1,13 +1,14 @@
 import React from 'react';
-import { vi, describe, it, expect, beforeEach, type Mock } from 'vitest';
 import { act, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { beforeEach, describe, expect, it, type Mock, vi } from 'vitest';
 import { getGlobalStore, useConfig, useSession, useStore } from '@openmrs/esm-framework';
-import FormBootstrap from '../FormBootstrap';
 import GroupFormWorkflowContext from '../context/GroupFormWorkflowContext';
+import FormBootstrap from '../FormBootstrap';
 import GroupSessionWorkspace from './GroupSessionWorkspace';
 
 vi.mock('@openmrs/esm-framework', () => ({
+  showModal: vi.fn(() => vi.fn()),
   getGlobalStore: vi.fn(),
   useConfig: vi.fn(),
   useSession: vi.fn(),
@@ -30,16 +31,6 @@ vi.mock('../patient-card/PatientCard', () => ({
       {patientUuid}
     </button>
   ),
-}));
-
-vi.mock('../CancelModal', () => ({
-  __esModule: true,
-  default: () => null,
-}));
-
-vi.mock('../CompleteModal', () => ({
-  __esModule: true,
-  default: () => null,
 }));
 
 const mockGetGlobalStore = vi.mocked(getGlobalStore);
@@ -106,6 +97,7 @@ describe('GroupSessionWorkspace', () => {
 
   it('builds encounter payloads with group-session metadata when no visit exists yet', () => {
     const updateVisitUuid = vi.fn();
+
     renderWorkspace({ updateVisitUuid });
 
     const [formBootstrapProps] = mockFormBootstrap.mock.calls[0];
@@ -172,6 +164,7 @@ describe('GroupSessionWorkspace', () => {
     const user = userEvent.setup();
     const saveEncounter = vi.fn();
     const submitForNext = vi.fn();
+
     renderWorkspace({ saveEncounter, submitForNext });
 
     const [formBootstrapProps] = mockFormBootstrap.mock.calls[0];
@@ -183,9 +176,11 @@ describe('GroupSessionWorkspace', () => {
     expect(saveEncounter).toHaveBeenCalledWith('encounter-1');
 
     await user.click(screen.getByTestId('patient-card-patient-b'));
+
     expect(submitForNext).toHaveBeenCalledWith('patient-b');
 
     await user.click(screen.getByRole('button', { name: 'Next patient' }));
+
     expect(submitForNext).toHaveBeenCalledWith();
   });
 });

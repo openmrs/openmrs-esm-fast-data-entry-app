@@ -1,19 +1,26 @@
-import { Close, Add } from '@carbon/react/icons';
-import { Button } from '@carbon/react';
-import React, { useCallback, useContext, useState } from 'react';
-import { useConfig, useSession, showSnackbar } from '@openmrs/esm-framework';
-import GroupFormWorkflowContext from '../../context/GroupFormWorkflowContext';
-import styles from './styles.scss';
+import React, { useCallback, useContext, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Button } from '@carbon/react';
+import { Add, Close } from '@carbon/react/icons';
+import { showModal, showSnackbar, useConfig, useSession } from '@openmrs/esm-framework';
+import GroupFormWorkflowContext from '../../context/GroupFormWorkflowContext';
 import CompactGroupSearch from '../group-search/CompactGroupSearch';
-import AddGroupModal from '../../add-group-modal/AddGroupModal';
+import styles from './styles.scss';
 
 const GroupSearchHeader = () => {
   const { t } = useTranslation();
   const config = useConfig();
   const { sessionLocation } = useSession();
-  const { activeGroupUuid, setGroup, destroySession } = useContext(GroupFormWorkflowContext);
-  const [isOpen, setOpen] = useState(false);
+  const { activeFormUuid, activeGroupUuid, setGroup, destroySession } = useContext(GroupFormWorkflowContext);
+  const disposeModal = useRef<() => void>();
+  const workflowVersion = useRef(0);
+  useEffect(
+    () => () => {
+      workflowVersion.current += 1;
+      disposeModal.current?.();
+    },
+    [activeFormUuid],
+  );
 
   const handleSelectGroup = useCallback(
     (group) => {
@@ -45,17 +52,16 @@ const GroupSearchHeader = () => {
     [config.enforcePatientListLocationMatch, sessionLocation, setGroup, t],
   );
 
-  const handleCancel = useCallback(() => {
-    setOpen(false);
-  }, []);
-
-  const onPostSubmit = useCallback(() => {
-    setOpen(false);
-  }, []);
-
-  const handleOpenClick = useCallback(() => {
-    setOpen(true);
-  }, []);
+  const handleOpenClick = () => {
+    const version = workflowVersion.current;
+    disposeModal.current?.();
+    disposeModal.current = showModal('fde-add-group-modal', {
+      isCreate: true,
+      onSave: (group) => {
+        if (version === workflowVersion.current) setGroup(group);
+      },
+    });
+  };
 
   if (activeGroupUuid) return null;
 
@@ -70,14 +76,6 @@ const GroupSearchHeader = () => {
         <Button onClick={handleOpenClick} renderIcon={Add} iconDescription="Add">
           {t('createNewGroup', 'Create New Group')}
         </Button>
-        <AddGroupModal
-          {...{
-            isCreate: true,
-            isOpen: isOpen,
-            onPostCancel: handleCancel,
-            onPostSubmit: onPostSubmit,
-          }}
-        />
       </span>
       <span style={{ flexGrow: 1 }} />
       <span>
