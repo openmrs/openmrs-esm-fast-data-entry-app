@@ -1,4 +1,5 @@
-import React, { useContext, useMemo } from 'react';
+import { showModal } from '@openmrs/esm-framework';
+import React, { useEffect, useRef, useContext, useMemo } from 'react';
 import { Edit } from '@carbon/react/icons';
 
 import {
@@ -15,7 +16,6 @@ import {
 } from '@carbon/react';
 import { useTranslation } from 'react-i18next';
 import GroupFormWorkflowContext from '../../context/GroupFormWorkflowContext';
-import useModalLauncher from '../../hooks/useModalLauncher';
 
 const PatientRow = ({ patient }) => {
   const { patientUuids, addPatientUuid, removePatientUuid } = useContext(GroupFormWorkflowContext);
@@ -69,7 +69,15 @@ const AttendanceTable = ({ patients }) => {
   const { activeFormUuid, activeGroupUuid, activeGroupName, activeGroupMembers, setGroup } =
     useContext(GroupFormWorkflowContext);
 
-  const launchModal = useModalLauncher(activeFormUuid);
+  const disposeModal = useRef<() => void>();
+  const workflowVersion = useRef(0);
+  useEffect(
+    () => () => {
+      workflowVersion.current += 1;
+      disposeModal.current?.();
+    },
+    [activeFormUuid],
+  );
 
   const headers = [t('name', 'Name'), t('identifier', 'Patient ID'), t('patientIsPresent', 'Patient is present')];
 
@@ -89,15 +97,19 @@ const AttendanceTable = ({ patients }) => {
       <span style={{ flexGrow: 1 }} />
       <Button
         kind="ghost"
-        onClick={() =>
-          launchModal('fde-add-group-modal', {
+        onClick={() => {
+          const version = workflowVersion.current;
+          disposeModal.current?.();
+          disposeModal.current = showModal('fde-add-group-modal', {
             cohortUuid: activeGroupUuid,
             patients: newArr,
             isCreate: false,
             groupName: activeGroupName,
-            setGroup,
-          })
-        }
+            onSave: (group) => {
+              if (version === workflowVersion.current) setGroup(group);
+            },
+          });
+        }}
       >
         {t('editGroup', 'Edit Group')}&nbsp;
         <Edit size={20} />

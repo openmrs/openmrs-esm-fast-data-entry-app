@@ -6,13 +6,13 @@ import {
   ExtensionSlot,
   fetchCurrentPatient,
   showSnackbar,
+  showModal,
   useConfig,
   usePatient,
   useSession,
 } from '@openmrs/esm-framework';
 import styles from './styles.scss';
-import { usePostCohort } from '../hooks';
-import useModalLauncher from '../hooks/useModalLauncher';
+import { saveCohort } from './add-group.resource';
 import { useHsuIdIdentifier } from '../hooks/location-tag.resource';
 
 const PatientRow = ({ patient, removePatient }) => {
@@ -111,15 +111,13 @@ const AddGroupModal = ({
   groupName = '',
   cohortUuid = undefined,
   close,
-  setGroup,
-  isOwnerMounted = () => true,
+  onSave,
 }) => {
-  const launchModal = useModalLauncher();
   const { t } = useTranslation();
   const [errors, setErrors] = useState({});
   const [name, setName] = useState(groupName);
   const [patientList, setPatientList] = useState(patients || []);
-  const { post, error, isPosting } = usePostCohort();
+  const [isPosting, setIsPosting] = useState(false);
   const config = useConfig();
   const [selectedPatientUuid, setSelectedPatientUuid] = useState();
   const { hsuIdentifier } = useHsuIdIdentifier(selectedPatientUuid);
@@ -203,15 +201,22 @@ const AddGroupModal = ({
       });
       setSelectedPatientUuid(null);
     } else if (config.patientLocationMismatchCheck && locationMismatch) {
-      return launchModal(
+      let active = true;
+      const dispose = showModal(
         'fde-patient-location-mismatch-modal',
         {
           onConfirm: addSelectedPatientToList,
           sessionLocation,
           hsuLocation: hsuIdentifier.location,
         },
-        () => setSelectedPatientUuid(null),
+        () => {
+          if (active) setSelectedPatientUuid(null);
+        },
       );
+      return () => {
+        active = false;
+        dispose();
+      };
     } else {
       addSelectedPatientToList();
     }
@@ -223,45 +228,44 @@ const AddGroupModal = ({
     config.patientLocationMismatchCheck,
     config.enforcePatientListLocationMatch,
     t,
-    launchModal,
   ]);
 
-  const handleSubmit = () => {
-    if (validate()) {
-      const members = patientList.map((p) => ({ patient: { uuid: p.uuid } }));
-      post(
-        {
-          uuid: cohortUuid,
-          name: name,
-          cohortType: config?.groupSessionConcepts?.cohortTypeId,
-          location: sessionLocation?.uuid,
-          cohortMembers: patientList.map((p) => ({ patient: p.uuid, startDate: new Date().toISOString() })),
-        },
-        (error) => {
-          showSnackbar({
-            kind: 'error',
-            title: t('postError', 'POST Error'),
-            subtitle: error.message ?? t('unknownPostError', 'An unknown error occurred while saving data'),
-          });
-        },
-      ).then((savedGroup) => {
-        if (savedGroup && isOwnerMounted()) {
-          setGroup({ ...savedGroup, cohortMembers: members });
-          close();
-        }
-      });
-    }
-  };
+  const handleSubmit = async () => {
+    if (!validate()) return;
 
-  useEffect(() => {
-    if (error) {
-      if (error.fieldErrors) {
+    setIsPosting(true);
+    const members = patientList.map((p) => ({ patient: { uuid: p.uuid } }));
+    try {
+      const savedGroup = await saveCohort({
+        uuid: cohortUuid,
+        name,
+        cohortType: config?.groupSessionConcepts?.cohortTypeId,
+        location: sessionLocation?.uuid,
+        cohortMembers: patientList.map((p) => ({ patient: p.uuid, startDate: new Date().toISOString() })),
+      });
+      onSave({ ...savedGroup, cohortMembers: members });
+      close();
+    } catch (error) {
+      const submissionError: {
+        message?: string;
+        fieldErrors?: Record<string, Array<{ message: string }>>;
+      } = error?.responseBody?.error ?? error?.responseBody ?? error;
+      showSnackbar({
+        kind: 'error',
+        title: t('postError', 'POST Error'),
+        subtitle: submissionError?.message ?? t('unknownPostError', 'An unknown error occurred while saving data'),
+      });
+      if (submissionError?.fieldErrors) {
         setErrors(
-          Object.fromEntries(Object.entries(error.fieldErrors).map(([key, value]) => [key, value?.[0]?.message])),
+          Object.fromEntries(
+            Object.entries(submissionError.fieldErrors).map(([key, value]) => [key, value?.[0]?.message]),
+          ),
         );
       }
+    } finally {
+      setIsPosting(false);
     }
-  }, [error, t]);
+  };
 
   return (
     <>

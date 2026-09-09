@@ -49,6 +49,7 @@ describe('SessionMetaWorkspace', () => {
   it('submits the session metadata with the normalized session date', async () => {
     const user = userEvent.setup();
     const setSessionMeta = vi.fn();
+
     renderSessionMetaWorkspace({ setSessionMeta });
 
     await user.click(screen.getByRole('button', { name: 'Create New Session' }));
@@ -69,6 +70,7 @@ describe('SessionMetaWorkspace', () => {
   it('shows the group selection error when submitted without a chosen group', async () => {
     const user = userEvent.setup();
     const setSessionMeta = vi.fn();
+
     renderSessionMetaWorkspace({
       activeGroupUuid: null,
       setSessionMeta,

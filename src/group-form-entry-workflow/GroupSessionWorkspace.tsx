@@ -1,14 +1,12 @@
-import { getGlobalStore, useConfig, useSession, useStore } from '@openmrs/esm-framework';
+import { showModal, getGlobalStore, useConfig, useSession, useStore } from '@openmrs/esm-framework';
 import { Button } from '@carbon/react';
-import React, { useCallback, useContext, useEffect, useMemo } from 'react';
+import React, { useRef, useCallback, useContext, useEffect, useMemo } from 'react';
 import PatientCard from '../patient-card/PatientCard';
 import styles from './styles.scss';
 import { useTranslation } from 'react-i18next';
 import { v4 as uuid } from 'uuid';
 import GroupFormWorkflowContext from '../context/GroupFormWorkflowContext';
 import FormBootstrap from '../FormBootstrap';
-import useModalLauncher from '../hooks/useModalLauncher';
-
 const formStore = getGlobalStore('ampath-form-state');
 
 const WorkflowNavigationButtons = () => {
@@ -17,7 +15,13 @@ const WorkflowNavigationButtons = () => {
   const store = useStore(formStore);
   const formState = store[activeFormUuid];
 
-  const launchModal = useModalLauncher(context.activeFormUuid);
+  const disposeModal = useRef<() => void>();
+  useEffect(
+    () => () => {
+      disposeModal.current?.();
+    },
+    [context.activeFormUuid],
+  );
   const { t } = useTranslation();
 
   const navigationDisabled = useMemo(() => {
@@ -43,18 +47,22 @@ const WorkflowNavigationButtons = () => {
         </Button>
         <Button
           kind="secondary"
-          onClick={() => launchModal('fde-complete-session-modal', { onComplete: context.submitForComplete })}
+          onClick={() => {
+            disposeModal.current?.();
+            disposeModal.current = showModal('fde-complete-session-modal', { onComplete: context.submitForComplete });
+          }}
         >
           {t('saveAndComplete', 'Save & Complete')}
         </Button>
         <Button
           kind="tertiary"
-          onClick={() =>
-            launchModal('fde-cancel-session-modal', {
+          onClick={() => {
+            disposeModal.current?.();
+            disposeModal.current = showModal('fde-cancel-session-modal', {
               onDiscard: context.destroySession,
               onSaveAndClose: context.closeSession,
-            })
-          }
+            });
+          }}
         >
           {t('cancel', 'Cancel')}
         </Button>

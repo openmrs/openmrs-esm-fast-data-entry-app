@@ -97,6 +97,7 @@ describe('GroupSessionWorkspace', () => {
 
   it('builds encounter payloads with group-session metadata when no visit exists yet', () => {
     const updateVisitUuid = vi.fn();
+
     renderWorkspace({ updateVisitUuid });
 
     const [formBootstrapProps] = mockFormBootstrap.mock.calls[0];
@@ -163,6 +164,7 @@ describe('GroupSessionWorkspace', () => {
     const user = userEvent.setup();
     const saveEncounter = vi.fn();
     const submitForNext = vi.fn();
+
     renderWorkspace({ saveEncounter, submitForNext });
 
     const [formBootstrapProps] = mockFormBootstrap.mock.calls[0];
@@ -174,9 +176,11 @@ describe('GroupSessionWorkspace', () => {
     expect(saveEncounter).toHaveBeenCalledWith('encounter-1');
 
     await user.click(screen.getByTestId('patient-card-patient-b'));
+
     expect(submitForNext).toHaveBeenCalledWith('patient-b');
 
     await user.click(screen.getByRole('button', { name: 'Next patient' }));
+
     expect(submitForNext).toHaveBeenCalledWith();
   });
 });

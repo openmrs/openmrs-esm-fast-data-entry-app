@@ -1,19 +1,26 @@
 import { Close, Add } from '@carbon/react/icons';
 import { Button } from '@carbon/react';
-import React, { useCallback, useContext } from 'react';
-import { useConfig, useSession, showSnackbar } from '@openmrs/esm-framework';
+import React, { useEffect, useRef, useCallback, useContext } from 'react';
+import { showModal, useConfig, useSession, showSnackbar } from '@openmrs/esm-framework';
 import GroupFormWorkflowContext from '../../context/GroupFormWorkflowContext';
 import styles from './styles.scss';
 import { useTranslation } from 'react-i18next';
 import CompactGroupSearch from '../group-search/CompactGroupSearch';
-import useModalLauncher from '../../hooks/useModalLauncher';
 
 const GroupSearchHeader = () => {
   const { t } = useTranslation();
   const config = useConfig();
   const { sessionLocation } = useSession();
   const { activeFormUuid, activeGroupUuid, setGroup, destroySession } = useContext(GroupFormWorkflowContext);
-  const launchModal = useModalLauncher(activeFormUuid);
+  const disposeModal = useRef<() => void>();
+  const workflowVersion = useRef(0);
+  useEffect(
+    () => () => {
+      workflowVersion.current += 1;
+      disposeModal.current?.();
+    },
+    [activeFormUuid],
+  );
 
   const handleSelectGroup = useCallback(
     (group) => {
@@ -45,7 +52,16 @@ const GroupSearchHeader = () => {
     [config.enforcePatientListLocationMatch, sessionLocation, setGroup, t],
   );
 
-  const handleOpenClick = () => launchModal('fde-add-group-modal', { isCreate: true, setGroup });
+  const handleOpenClick = () => {
+    const version = workflowVersion.current;
+    disposeModal.current?.();
+    disposeModal.current = showModal('fde-add-group-modal', {
+      isCreate: true,
+      onSave: (group) => {
+        if (version === workflowVersion.current) setGroup(group);
+      },
+    });
+  };
 
   if (activeGroupUuid) return null;
 

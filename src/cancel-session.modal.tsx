@@ -4,8 +4,8 @@ import { useTranslation } from 'react-i18next';
 
 interface CancelSessionModalProps {
   close: () => void;
-  onDiscard: () => void | Promise<void>;
-  onSaveAndClose: () => void | Promise<void>;
+  onDiscard: () => void;
+  onSaveAndClose: () => void;
 }
 
 const CancelModal: React.FC<CancelSessionModalProps> = ({ close, onDiscard, onSaveAndClose }) => {
@@ -26,8 +26,8 @@ const CancelModal: React.FC<CancelSessionModalProps> = ({ close, onDiscard, onSa
         </Button>
         <Button
           kind="danger"
-          onClick={async () => {
-            await onDiscard();
+          onClick={() => {
+            onDiscard();
             close();
           }}
         >
@@ -35,8 +35,8 @@ const CancelModal: React.FC<CancelSessionModalProps> = ({ close, onDiscard, onSa
         </Button>
         <Button
           kind="primary"
-          onClick={async () => {
-            await onSaveAndClose();
+          onClick={() => {
+            onSaveAndClose();
             close();
           }}
         >

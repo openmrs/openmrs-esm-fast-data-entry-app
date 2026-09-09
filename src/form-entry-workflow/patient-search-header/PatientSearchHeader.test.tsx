@@ -88,6 +88,7 @@ describe('PatientSearchHeader - Enforcement Feature', () => {
     );
 
     const searchBar = screen.getByTestId('mock-search-select');
+
     fireEvent.click(searchBar);
 
     await waitFor(() => {
@@ -125,11 +126,13 @@ describe('PatientSearchHeader - Enforcement Feature', () => {
       expect(mockShowSnackbar).not.toHaveBeenCalled();
     });
   });
+
   it('preserves confirmation when identifier data revalidates', () => {
     mockUseConfig.mockReturnValue({ patientLocationMismatchCheck: true });
     mockUseHsuIdIdentifier.mockReturnValue({ hsuIdentifier: mismatchedHsuLocation } as ReturnType<
       typeof useHsuIdIdentifier
     >);
+
     const live = new Set<string>();
     vi.mocked(showModal).mockImplementation((name, props, onClose) => {
       live.add(name);
@@ -143,13 +146,47 @@ describe('PatientSearchHeader - Enforcement Feature', () => {
         <PatientSearchHeader />
       </FormWorkflowContext.Provider>
     );
+
     const { rerender } = render(content());
+
     fireEvent.click(screen.getByTestId('mock-search-select'));
+
     expect(live.size).toBe(1);
+
     mockUseHsuIdIdentifier.mockReturnValue({
       hsuIdentifier: { ...mismatchedHsuLocation, identifier: 'updated' },
     } as ReturnType<typeof useHsuIdIdentifier>);
     rerender(content());
+
     expect(live.size).toBe(1);
+  });
+
+  it('clears a pending confirmation when the workflow changes', () => {
+    mockUseConfig.mockReturnValue({ patientLocationMismatchCheck: true });
+    mockUseHsuIdIdentifier.mockReturnValue({ hsuIdentifier: mismatchedHsuLocation } as ReturnType<
+      typeof useHsuIdIdentifier
+    >);
+
+    const dispose = vi.fn();
+    vi.mocked(showModal).mockReturnValue(dispose);
+    const content = (activeFormUuid: string) => (
+      <FormWorkflowContext.Provider value={{ ...mockContext, activeFormUuid } as never}>
+        <PatientSearchHeader />
+      </FormWorkflowContext.Provider>
+    );
+
+    const { rerender } = render(content('first-form'));
+
+    fireEvent.click(screen.getByTestId('mock-search-select'));
+    rerender(content('second-form'));
+
+    expect(dispose).toHaveBeenCalled();
+    expect(mockContext.addPatient).not.toHaveBeenCalled();
+
+    const opened = vi.mocked(showModal).mock.calls.length;
+
+    rerender(content('second-form'));
+
+    expect(showModal).toHaveBeenCalledTimes(opened);
   });
 });

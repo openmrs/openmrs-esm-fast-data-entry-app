@@ -54,6 +54,7 @@ describe('GroupSearchHeader', () => {
   it('blocks group selection when location enforcement is enabled and locations mismatch', async () => {
     const user = userEvent.setup();
     const setGroup = vi.fn();
+
     selectedGroup = {
       uuid: 'group-1',
       location: {
@@ -79,6 +80,7 @@ describe('GroupSearchHeader', () => {
   it('sorts cohort members by display name before storing the selected group', async () => {
     const user = userEvent.setup();
     const setGroup = vi.fn();
+
     selectedGroup = {
       uuid: 'group-1',
       location: {
@@ -107,16 +109,64 @@ describe('GroupSearchHeader', () => {
   it('opens the add-group modal and lets the user cancel the session', async () => {
     const user = userEvent.setup();
     const destroySession = vi.fn();
+
     renderGroupSearchHeader({ destroySession });
 
     await user.click(screen.getByRole('button', { name: 'Create New Group' }));
+
     expect(showModal).toHaveBeenCalledWith(
       'fde-add-group-modal',
-      expect.objectContaining({ isCreate: true, setGroup: expect.any(Function) }),
-      expect.any(Function),
+      expect.objectContaining({ isCreate: true, onSave: expect.any(Function) }),
     );
 
     await user.click(screen.getByRole('button', { name: 'Cancel' }));
+
     expect(destroySession).toHaveBeenCalledTimes(1);
+  });
+
+  it.each(['unmount', 'workflow change'])('ignores a pending save after %s', async (change) => {
+    const user = userEvent.setup();
+    const setGroup = vi.fn();
+    const dispose = vi.fn();
+    vi.mocked(showModal).mockReturnValue(dispose);
+    const content = (activeFormUuid: string) => (
+      <GroupFormWorkflowContext.Provider value={{ activeFormUuid, setGroup } as never}>
+        <GroupSearchHeader />
+      </GroupFormWorkflowContext.Provider>
+    );
+
+    const { rerender, unmount } = render(content('first-form'));
+
+    await user.click(screen.getByRole('button', { name: 'Create New Group' }));
+
+    const onSave = vi.mocked(showModal).mock.calls.at(-1)[1].onSave as (group: { uuid: string }) => void;
+
+    if (change === 'unmount') {
+      unmount();
+    } else {
+      rerender(content('second-form'));
+    }
+
+    expect(dispose).toHaveBeenCalledOnce();
+
+    onSave({ uuid: 'saved-group' });
+
+    expect(setGroup).not.toHaveBeenCalled();
+  });
+
+  it('applies a save after the dialog closes while the workflow is still active', async () => {
+    const user = userEvent.setup();
+    const setGroup = vi.fn();
+
+    renderGroupSearchHeader({ setGroup });
+
+    await user.click(screen.getByRole('button', { name: 'Create New Group' }));
+
+    const onSave = vi.mocked(showModal).mock.calls.at(-1)[1].onSave as (group: { uuid: string }) => void;
+
+    vi.mocked(showModal).mock.results.at(-1).value();
+    onSave({ uuid: 'saved-group' });
+
+    expect(setGroup).toHaveBeenCalledWith({ uuid: 'saved-group' });
   });
 });

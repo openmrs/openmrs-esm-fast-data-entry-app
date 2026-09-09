@@ -5,4 +5,3 @@ import useGetEncounter from './useGetEncounter';
 import useSpecificQuestions from './useSpecificQuestions';
 
 export { useGetAllForms, useGetPatient, useFormState, useGetEncounter, useSpecificQuestions };
-export * from './usePostEndpoint';
