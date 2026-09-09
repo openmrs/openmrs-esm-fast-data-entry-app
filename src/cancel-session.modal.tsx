@@ -1,6 +1,6 @@
-import { Button, ModalBody, ModalFooter, ModalHeader } from '@carbon/react';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
+import { Button, ModalBody, ModalFooter, ModalHeader } from '@carbon/react';
 
 interface CancelSessionModalProps {
   close: () => void;

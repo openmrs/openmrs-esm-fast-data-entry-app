@@ -1,16 +1,16 @@
-import { showModal, ExtensionSlot, useSession } from '@openmrs/esm-framework';
-import { Button } from '@carbon/react';
-import React, { useRef, useCallback, useContext, useEffect, useState } from 'react';
-import FormBootstrap from '../FormBootstrap';
-import PatientCard from '../patient-card/PatientCard';
-import styles from './styles.scss';
-import PatientSearchHeader from './patient-search-header';
+import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { v4 as uuid } from 'uuid';
+import { Button } from '@carbon/react';
+import { ExtensionSlot, showModal, useSession } from '@openmrs/esm-framework';
 import FormWorkflowContext, { FormWorkflowProvider } from '../context/FormWorkflowContext';
-import WorkflowReview from './workflow-review';
-import PatientBanner from './patient-banner';
+import FormBootstrap from '../FormBootstrap';
 import useStartVisit from '../hooks/useStartVisit';
+import PatientCard from '../patient-card/PatientCard';
+import PatientBanner from './patient-banner';
+import PatientSearchHeader from './patient-search-header';
+import WorkflowReview from './workflow-review';
+import styles from './styles.scss';
 
 const WorkflowNavigationButtons = () => {
   const context = useContext(FormWorkflowContext);

@@ -1,19 +1,19 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { Button, ModalHeader, ModalFooter, ModalBody, TextInput, FormLabel } from '@carbon/react';
-import { TrashCan } from '@carbon/react/icons';
 import { useTranslation } from 'react-i18next';
+import { Button, FormLabel, ModalBody, ModalFooter, ModalHeader, TextInput } from '@carbon/react';
+import { TrashCan } from '@carbon/react/icons';
 import {
   ExtensionSlot,
   fetchCurrentPatient,
-  showSnackbar,
   showModal,
+  showSnackbar,
   useConfig,
   usePatient,
   useSession,
 } from '@openmrs/esm-framework';
-import styles from './styles.scss';
-import { saveCohort } from './add-group.resource';
 import { useHsuIdIdentifier } from '../hooks/location-tag.resource';
+import { saveCohort } from './add-group.resource';
+import styles from './styles.scss';
 
 const PatientRow = ({ patient, removePatient }) => {
   const { t } = useTranslation();

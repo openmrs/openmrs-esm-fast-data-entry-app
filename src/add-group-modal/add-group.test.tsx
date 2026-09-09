@@ -1,8 +1,8 @@
 import React from 'react';
-import { render, screen, waitFor, act } from '@testing-library/react';
+import { act, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { showSnackbar, openmrsFetch, useConfig, useSession, usePatient } from '@openmrs/esm-framework';
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { openmrsFetch, showSnackbar, useConfig, usePatient, useSession } from '@openmrs/esm-framework';
 import AddGroupModal from './add-group.modal';
 
 vi.mock('../hooks/location-tag.resource', () => ({ useHsuIdIdentifier: () => ({ hsuIdentifier: null }) }));

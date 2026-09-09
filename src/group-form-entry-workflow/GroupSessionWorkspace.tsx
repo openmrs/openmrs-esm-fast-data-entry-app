@@ -1,12 +1,13 @@
-import { showModal, getGlobalStore, useConfig, useSession, useStore } from '@openmrs/esm-framework';
-import { Button } from '@carbon/react';
-import React, { useRef, useCallback, useContext, useEffect, useMemo } from 'react';
-import PatientCard from '../patient-card/PatientCard';
-import styles from './styles.scss';
+import React, { useCallback, useContext, useEffect, useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { v4 as uuid } from 'uuid';
+import { Button } from '@carbon/react';
+import { getGlobalStore, showModal, useConfig, useSession, useStore } from '@openmrs/esm-framework';
 import GroupFormWorkflowContext from '../context/GroupFormWorkflowContext';
 import FormBootstrap from '../FormBootstrap';
+import PatientCard from '../patient-card/PatientCard';
+import styles from './styles.scss';
+
 const formStore = getGlobalStore('ampath-form-state');
 
 const WorkflowNavigationButtons = () => {

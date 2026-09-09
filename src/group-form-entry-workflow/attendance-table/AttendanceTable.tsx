@@ -1,20 +1,19 @@
-import { showModal } from '@openmrs/esm-framework';
-import React, { useEffect, useRef, useContext, useMemo } from 'react';
-import { Edit } from '@carbon/react/icons';
-
+import React, { useContext, useEffect, useMemo, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
-  CheckboxSkeleton,
+  Button,
   Checkbox,
+  CheckboxSkeleton,
   SkeletonText,
   Table,
-  TableHead,
-  TableRow,
-  TableHeader,
   TableBody,
   TableCell,
-  Button,
+  TableHead,
+  TableHeader,
+  TableRow,
 } from '@carbon/react';
-import { useTranslation } from 'react-i18next';
+import { Edit } from '@carbon/react/icons';
+import { showModal } from '@openmrs/esm-framework';
 import GroupFormWorkflowContext from '../../context/GroupFormWorkflowContext';
 
 const PatientRow = ({ patient }) => {

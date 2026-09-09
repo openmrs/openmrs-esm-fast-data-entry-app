@@ -1,10 +1,10 @@
 import React from 'react';
-import { vi, describe, it, expect, beforeEach, type Mock } from 'vitest';
 import { act, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { beforeEach, describe, expect, it, type Mock, vi } from 'vitest';
 import { getGlobalStore, useConfig, useSession, useStore } from '@openmrs/esm-framework';
-import FormBootstrap from '../FormBootstrap';
 import GroupFormWorkflowContext from '../context/GroupFormWorkflowContext';
+import FormBootstrap from '../FormBootstrap';
 import GroupSessionWorkspace from './GroupSessionWorkspace';
 
 vi.mock('@openmrs/esm-framework', () => ({

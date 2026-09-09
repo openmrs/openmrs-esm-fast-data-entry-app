@@ -1,17 +1,17 @@
 import React from 'react';
-import { vi, describe, it, expect, beforeEach, afterEach, type MockedFunction } from 'vitest';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import PatientSearchHeader from './PatientSearchHeader';
-import FormWorkflowContext from '../../context/FormWorkflowContext';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { afterEach, beforeEach, describe, expect, it, type MockedFunction, vi } from 'vitest';
 import {
+  type ConfigSchema,
+  type Session,
   showModal,
   showSnackbar,
   useConfig,
   useSession,
-  type ConfigSchema,
-  type Session,
 } from '@openmrs/esm-framework';
+import FormWorkflowContext from '../../context/FormWorkflowContext';
 import { useHsuIdIdentifier } from '../../hooks/location-tag.resource';
+import PatientSearchHeader from './PatientSearchHeader';
 
 vi.mock('@openmrs/esm-framework', () => ({
   showModal: vi.fn(() => vi.fn()),
