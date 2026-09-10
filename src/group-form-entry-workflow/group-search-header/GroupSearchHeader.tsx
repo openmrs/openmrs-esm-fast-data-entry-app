@@ -19,7 +19,7 @@ const GroupSearchHeader = () => {
       workflowVersion.current += 1;
       disposeModal.current?.();
     },
-    [activeFormUuid],
+    [activeFormUuid, activeGroupUuid],
   );
 
   const handleSelectGroup = useCallback(
@@ -53,7 +53,7 @@ const GroupSearchHeader = () => {
   );
 
   const handleOpenClick = () => {
-    const version = workflowVersion.current;
+    const version = ++workflowVersion.current;
     disposeModal.current?.();
     disposeModal.current = showModal('fde-add-group-modal', {
       isCreate: true,

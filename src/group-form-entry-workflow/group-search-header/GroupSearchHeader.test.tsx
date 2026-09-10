@@ -154,6 +154,53 @@ describe('GroupSearchHeader', () => {
     expect(setGroup).not.toHaveBeenCalled();
   });
 
+  it('ignores a pending save after another group is selected on the same form', async () => {
+    const user = userEvent.setup();
+    const setGroup = vi.fn();
+    const content = (activeGroupUuid: string | null) => (
+      <GroupFormWorkflowContext.Provider value={{ activeFormUuid: 'same-form', activeGroupUuid, setGroup } as never}>
+        <GroupSearchHeader />
+      </GroupFormWorkflowContext.Provider>
+    );
+    const { rerender } = render(content(null));
+
+    await user.click(screen.getByRole('button', { name: 'Create New Group' }));
+
+    const onSave = vi.mocked(showModal).mock.calls.at(-1)[1].onSave as (group: { uuid: string }) => void;
+    vi.mocked(showModal).mock.results.at(-1).value();
+    selectedGroup = { uuid: 'selected-group', location: { uuid: 'session-location' } };
+
+    await user.click(screen.getByTestId('compact-group-search'));
+    rerender(content(selectedGroup.uuid));
+    onSave({ uuid: 'stale-group' });
+
+    expect(setGroup).toHaveBeenCalledOnce();
+    expect(setGroup).toHaveBeenCalledWith(selectedGroup);
+  });
+
+  it('ignores a pending save after a replacement creation modal opens', async () => {
+    const user = userEvent.setup();
+    const setGroup = vi.fn();
+    renderGroupSearchHeader({ setGroup });
+
+    await user.click(screen.getByRole('button', { name: 'Create New Group' }));
+
+    const firstOnSave = vi.mocked(showModal).mock.calls.at(-1)[1].onSave as (group: { uuid: string }) => void;
+    vi.mocked(showModal).mock.results.at(-1).value();
+
+    await user.click(screen.getByRole('button', { name: 'Create New Group' }));
+
+    const latestOnSave = vi.mocked(showModal).mock.calls.at(-1)[1].onSave as (group: { uuid: string }) => void;
+    firstOnSave({ uuid: 'stale-group' });
+
+    expect(setGroup).not.toHaveBeenCalled();
+
+    latestOnSave({ uuid: 'latest-group' });
+
+    expect(setGroup).toHaveBeenCalledOnce();
+    expect(setGroup).toHaveBeenCalledWith({ uuid: 'latest-group' });
+  });
+
   it('applies a save after the dialog closes while the workflow is still active', async () => {
     const user = userEvent.setup();
     const setGroup = vi.fn();
