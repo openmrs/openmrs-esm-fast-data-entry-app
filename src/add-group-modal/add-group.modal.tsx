@@ -239,16 +239,15 @@ const AddGroupModal = ({
 
     setIsPosting(true);
     const members = patientList.map((p) => ({ patient: { uuid: p.uuid } }));
+    let savedGroup: Awaited<ReturnType<typeof saveCohort>>;
     try {
-      const savedGroup = await saveCohort({
+      savedGroup = await saveCohort({
         uuid: cohortUuid,
         name,
         cohortType: config?.groupSessionConcepts?.cohortTypeId,
         location: sessionLocation?.uuid,
         cohortMembers: patientList.map((p) => ({ patient: p.uuid, startDate: new Date().toISOString() })),
       });
-      onSave({ ...savedGroup, cohortMembers: members });
-      close();
     } catch (error) {
       const submissionError: {
         message?: string;
@@ -266,9 +265,13 @@ const AddGroupModal = ({
           ),
         );
       }
+      return;
     } finally {
       setIsPosting(false);
     }
+
+    onSave({ ...savedGroup, cohortMembers: members });
+    close();
   };
 
   return (

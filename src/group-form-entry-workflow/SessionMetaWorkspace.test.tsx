@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { showModal } from '@openmrs/esm-framework';
 import { useFormContext } from 'react-hook-form';
 import { describe, expect, it, vi } from 'vitest';
 import GroupFormWorkflowContext from '../context/GroupFormWorkflowContext';
@@ -46,6 +47,21 @@ const renderSessionMetaWorkspace = (contextOverrides = {}) =>
   );
 
 describe('SessionMetaWorkspace', () => {
+  it('opens the cancel session modal with the workflow actions', async () => {
+    const user = userEvent.setup();
+    const destroySession = vi.fn();
+    const closeSession = vi.fn();
+
+    renderSessionMetaWorkspace({ destroySession, closeSession });
+
+    await user.click(screen.getByRole('button', { name: 'Cancel' }));
+
+    expect(showModal).toHaveBeenCalledWith('fde-cancel-session-modal', {
+      onDiscard: destroySession,
+      onSaveAndClose: closeSession,
+    });
+  });
+
   it('submits the session metadata with the normalized session date', async () => {
     const user = userEvent.setup();
     const setSessionMeta = vi.fn();

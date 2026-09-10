@@ -2,7 +2,7 @@ import React from 'react';
 import { act, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, it, type Mock, vi } from 'vitest';
-import { getGlobalStore, useConfig, useSession, useStore } from '@openmrs/esm-framework';
+import { getGlobalStore, showModal, useConfig, useSession, useStore } from '@openmrs/esm-framework';
 import GroupFormWorkflowContext from '../context/GroupFormWorkflowContext';
 import FormBootstrap from '../FormBootstrap';
 import GroupSessionWorkspace from './GroupSessionWorkspace';
@@ -92,6 +92,32 @@ describe('GroupSessionWorkspace', () => {
         cohortName: 'concept-cohort-name',
         sessionUuid: 'concept-session-uuid',
       },
+    });
+  });
+
+  it('opens the complete session modal with the workflow action', async () => {
+    const user = userEvent.setup();
+    const submitForComplete = vi.fn();
+
+    renderWorkspace({ submitForComplete });
+
+    await user.click(screen.getByRole('button', { name: 'Save & Complete' }));
+
+    expect(showModal).toHaveBeenCalledWith('fde-complete-session-modal', { onComplete: submitForComplete });
+  });
+
+  it('opens the cancel session modal with the workflow actions', async () => {
+    const user = userEvent.setup();
+    const destroySession = vi.fn();
+    const closeSession = vi.fn();
+
+    renderWorkspace({ destroySession, closeSession });
+
+    await user.click(screen.getByRole('button', { name: 'Cancel' }));
+
+    expect(showModal).toHaveBeenCalledWith('fde-cancel-session-modal', {
+      onDiscard: destroySession,
+      onSaveAndClose: closeSession,
     });
   });
 

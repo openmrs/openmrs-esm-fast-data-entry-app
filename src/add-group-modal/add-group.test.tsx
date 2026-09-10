@@ -25,6 +25,25 @@ beforeEach(() => {
 });
 
 describe('group modal', () => {
+  it('blocks a patient from another location when enforcement is on', async () => {
+    const user = userEvent.setup();
+    vi.mocked(useConfig).mockReturnValue({
+      enforcePatientListLocationMatch: true,
+      patientLocationMismatchCheck: true,
+    });
+    vi.mocked(useHsuIdIdentifier).mockReturnValue({
+      hsuIdentifier: { location: { uuid: 'other-clinic', display: 'Other clinic' } },
+    } as ReturnType<typeof useHsuIdIdentifier>);
+
+    render(<AddGroupModal close={vi.fn()} onSave={vi.fn()} />);
+
+    await user.click(screen.getByRole('button', { name: 'Select Patient' }));
+
+    expect(showSnackbar).toHaveBeenCalledWith(expect.objectContaining({ kind: 'error', title: 'Location Mismatch' }));
+    expect(showModal).not.toHaveBeenCalled();
+    expect(screen.getByText('0 Patients in group')).toBeInTheDocument();
+  });
+
   it('preserves confirmation when identifier data revalidates', async () => {
     const user = userEvent.setup();
     const location = { uuid: 'other-clinic', display: 'Other clinic' };
