@@ -35,7 +35,7 @@ At the end, data from the group session will be visible on the patient's chart
 
 ### Group Builder
 
-This app also contains a Group Builder for quickly putting together a group of patients and storing them as a cohort. While this feature arose to meet the needs of the workflow the concept is valid for the broader platform and could, some day, be moved to a more central location so more apps could make use of it. [AddGroupModal](https://github.com/openmrs/openmrs-esm-fast-data-entry-app/blob/main/src/add-group-modal/AddGroupModal.tsx) was created in a way to reduce external dependencies so this eventual transition would be easier.
+This app also contains a Group Builder for quickly putting together a group of patients and storing them as a cohort. While this feature arose to meet the needs of the workflow the concept is valid for the broader platform and could, some day, be moved to a more central location so more apps could make use of it. [AddGroupModal](src/add-group-modal/add-group.modal.tsx) was created in a way to reduce external dependencies so this eventual transition would be easier.
 
 https://user-images.githubusercontent.com/5445264/190840219-ec032792-0479-4676-8312-24064edb6afc.mov
 
