@@ -1,0 +1,38 @@
+@use '@carbon/colors';
+@use '@carbon/layout';
+@use '@carbon/type';
+
+.inlineName {
+  @include type.type-style('heading-compact-02');
+  color: colors.$gray-100;
+  flex: 0 1 auto;
+  max-width: 20rem;
+  min-width: 0;
+  overflow: hidden;
+  padding-left: layout.$spacing-05;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.divider {
+  align-self: stretch;
+  background-color: colors.$gray-20;
+  flex-shrink: 0;
+  margin: layout.$spacing-05 0 layout.$spacing-05 layout.$spacing-05;
+  width: 1px;
+}
+
+.panel {
+  margin-bottom: layout.$spacing-05;
+}
+
+.label {
+  @include type.type-style('label-01');
+  color: colors.$gray-70;
+}
+
+.panelName {
+  @include type.type-style('heading-compact-02');
+  color: colors.$gray-100;
+  overflow-wrap: anywhere;
+}
