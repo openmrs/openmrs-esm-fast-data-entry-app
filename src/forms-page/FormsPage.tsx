@@ -1,6 +1,6 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { useConfig, useSession } from '@openmrs/esm-framework';
+import { DataEntryPictogram, PageHeader, PageHeaderContent, useConfig, useSession } from '@openmrs/esm-framework';
 import { Tab, Tabs, TabList, TabPanels, TabPanel } from '@carbon/react';
 import { fdeWorkflowStorageName, fdeWorkflowStorageVersion } from '../context/FormWorkflowReducer';
 import { fdeGroupWorkflowStorageName, fdeGroupWorkflowStorageVersion } from '../context/GroupFormWorkflowReducer';
@@ -88,30 +88,34 @@ const FormsPage = () => {
   });
 
   return (
-    <div className={styles.mainContent}>
-      <h3 className={styles.pageTitle}>{t('fastDataEntry', 'Fast Data Entry')}</h3>
-      <Tabs>
-        <TabList>
-          <Tab aria-label={t('allForms', 'All Forms')}>
-            {`${t('allForms', 'All Forms')} (${cleanRows ? cleanRows?.length : '??'})`}
-          </Tab>
-          {categoryRows?.map((category, index) => (
-            <Tab aria-label={category.name} key={index}>
-              {`${t(category.name, category.name)} (${category.rows.length})`}
+    <div>
+      <PageHeader className={styles.header}>
+        <PageHeaderContent illustration={<DataEntryPictogram />} title={t('fastDataEntry', 'Fast Data Entry')} />
+      </PageHeader>
+      <div className={styles.mainContent}>
+        <Tabs>
+          <TabList>
+            <Tab aria-label={t('allForms', 'All Forms')}>
+              {`${t('allForms', 'All Forms')} (${cleanRows ? cleanRows?.length : '??'})`}
             </Tab>
-          ))}
-        </TabList>
-        <TabPanels>
-          <TabPanel>
-            <FormsTable rows={cleanRows} {...{ error, isLoading, activeForms, activeGroupForms }} />
-          </TabPanel>
-          {categoryRows?.map((category, index) => (
-            <TabPanel key={index}>
-              <FormsTable rows={category.rows} {...{ error, isLoading, activeForms, activeGroupForms }} />
+            {categoryRows?.map((category, index) => (
+              <Tab aria-label={category.name} key={index}>
+                {`${t(category.name, category.name)} (${category.rows.length})`}
+              </Tab>
+            ))}
+          </TabList>
+          <TabPanels>
+            <TabPanel>
+              <FormsTable rows={cleanRows} {...{ error, isLoading, activeForms, activeGroupForms }} />
             </TabPanel>
-          ))}
-        </TabPanels>
-      </Tabs>
+            {categoryRows?.map((category, index) => (
+              <TabPanel key={index}>
+                <FormsTable rows={category.rows} {...{ error, isLoading, activeForms, activeGroupForms }} />
+              </TabPanel>
+            ))}
+          </TabPanels>
+        </Tabs>
+      </div>
     </div>
   );
 };

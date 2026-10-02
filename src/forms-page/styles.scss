@@ -1,9 +1,12 @@
+@use '@carbon/colors';
 @use '@carbon/layout';
 
-.mainContent {
-  padding: layout.$spacing-07;
+.header {
+  background-color: colors.$white;
+  border-bottom: 1px solid colors.$gray-20;
+  margin-bottom: layout.$spacing-05;
 }
 
-.pageTitle {
-  margin-bottom: layout.$spacing-06;
+.mainContent {
+  padding: 0 layout.$spacing-07 layout.$spacing-07;
 }
