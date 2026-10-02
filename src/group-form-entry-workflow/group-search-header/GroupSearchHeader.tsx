@@ -5,6 +5,7 @@ import { Add, Close } from '@carbon/react/icons';
 import { showModal, showSnackbar, useConfig, useSession } from '@openmrs/esm-framework';
 import GroupFormWorkflowContext from '../../context/GroupFormWorkflowContext';
 import CompactGroupSearch from '../group-search/CompactGroupSearch';
+import FormName from '../../form-name/FormName';
 import styles from './styles.scss';
 
 const GroupSearchHeader = () => {
@@ -67,6 +68,7 @@ const GroupSearchHeader = () => {
 
   return (
     <div className={styles.searchHeaderContainer}>
+      <FormName formUuid={activeFormUuid} variant="inline" />
       <span className={styles.padded}>{t('findGroup', 'Find group')}:</span>
       <span className={styles.searchBarWrapper}>
         <CompactGroupSearch selectGroupAction={handleSelectGroup} />

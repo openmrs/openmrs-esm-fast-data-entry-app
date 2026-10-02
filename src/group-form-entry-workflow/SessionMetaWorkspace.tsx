@@ -6,6 +6,7 @@ import { showModal } from '@openmrs/esm-framework';
 import GroupFormWorkflowContext from '../context/GroupFormWorkflowContext';
 import SessionDetailsForm from './SessionDetailsForm';
 import styles from './styles.scss';
+import FormName from '../form-name/FormName';
 
 const NewGroupWorkflowButtons = () => {
   const { t } = useTranslation();
@@ -74,7 +75,7 @@ const GroupIdField = () => {
 
 const SessionMetaWorkspace = () => {
   const { t } = useTranslation();
-  const { setSessionMeta, workflowState } = useContext(GroupFormWorkflowContext);
+  const { activeFormUuid, activeGroupUuid, setSessionMeta, workflowState } = useContext(GroupFormWorkflowContext);
   const methods = useForm();
 
   const onSubmit = (data) => {
@@ -93,6 +94,7 @@ const SessionMetaWorkspace = () => {
               <SessionDetailsForm />
             </div>
             <div className={styles.rightPanel}>
+              {activeGroupUuid && <FormName formUuid={activeFormUuid} variant="panel" />}
               <h4>{t('newGroupSession', 'New Group Session')}</h4>
               <GroupIdField />
               <hr style={{ width: '100%' }} />

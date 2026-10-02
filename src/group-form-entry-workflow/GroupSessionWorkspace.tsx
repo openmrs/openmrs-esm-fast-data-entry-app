@@ -5,6 +5,7 @@ import { Button } from '@carbon/react';
 import { getGlobalStore, showModal, useConfig, useSession, useStore } from '@openmrs/esm-framework';
 import GroupFormWorkflowContext from '../context/GroupFormWorkflowContext';
 import FormBootstrap from '../FormBootstrap';
+import FormName from '../form-name/FormName';
 import PatientCard from '../patient-card/PatientCard';
 import styles from './styles.scss';
 
@@ -206,6 +207,7 @@ const GroupSessionWorkspace = () => {
           />
         </div>
         <div className={styles.rightPanel}>
+          <FormName formUuid={activeFormUuid} variant="panel" />
           <h4>{t('formsFilled', 'Forms filled')}</h4>
           <div className={styles.patientCardsSection}>
             {patientUuids?.map((patientUuid) => (

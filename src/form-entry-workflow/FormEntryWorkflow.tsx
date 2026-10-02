@@ -5,6 +5,7 @@ import { Button } from '@carbon/react';
 import { ExtensionSlot, showModal, useSession } from '@openmrs/esm-framework';
 import FormWorkflowContext, { FormWorkflowProvider } from '../context/FormWorkflowContext';
 import FormBootstrap from '../FormBootstrap';
+import FormName from '../form-name/FormName';
 import useStartVisit from '../hooks/useStartVisit';
 import PatientCard from '../patient-card/PatientCard';
 import PatientBanner from './patient-banner';
@@ -150,6 +151,7 @@ const FormWorkspace = () => {
             />
           </div>
           <div className={styles.rightPanel}>
+            <FormName formUuid={activeFormUuid} variant="panel" />
             <h4>{t('formsFilled', 'Forms filled')}</h4>
             <div className={styles.patientCardsSection}>
               {patientUuids.map((patientUuid) => (

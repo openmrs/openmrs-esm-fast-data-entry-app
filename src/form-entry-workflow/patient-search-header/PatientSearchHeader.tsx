@@ -14,6 +14,7 @@ import {
 } from '@openmrs/esm-framework';
 import FormWorkflowContext from '../../context/FormWorkflowContext';
 import { useHsuIdIdentifier } from '../../hooks/location-tag.resource';
+import FormName from '../../form-name/FormName';
 import styles from './styles.scss';
 
 const PatientSearchHeader = () => {
@@ -100,6 +101,7 @@ const PatientSearchHeader = () => {
   return (
     <>
       <div className={styles.searchHeaderContainer}>
+        <FormName formUuid={activeFormUuid} variant="inline" />
         <span className={styles.padded}>{t('nextPatient', 'Next patient')}:</span>
         <span className={styles.searchBarWrapper}>
           <ExtensionSlot
