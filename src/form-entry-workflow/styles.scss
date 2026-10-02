@@ -2,12 +2,6 @@
 @use '@carbon/layout';
 @use '@carbon/type';
 
-.breadcrumbsContainer > div > div > nav {
-  background-color: colors.$white-0;
-  padding: layout.$spacing-04 layout.$spacing-05;
-  height: layout.$spacing-08;
-}
-
 .workspaceWrapper {
   display: flex;
   justify-content: center;
