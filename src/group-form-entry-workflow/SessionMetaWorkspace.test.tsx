@@ -7,6 +7,11 @@ import { describe, expect, it, vi } from 'vitest';
 import GroupFormWorkflowContext from '../context/GroupFormWorkflowContext';
 import SessionMetaWorkspace from './SessionMetaWorkspace';
 
+vi.mock('../form-name/FormName', () => ({
+  __esModule: true,
+  default: ({ formUuid }) => <p>Form name for {formUuid}</p>,
+}));
+
 vi.mock('./SessionDetailsForm', () => ({
   __esModule: true,
   default: function MockSessionDetailsForm() {
@@ -104,5 +109,17 @@ describe('SessionMetaWorkspace', () => {
     });
 
     expect(screen.getByRole('button', { name: 'Create New Session' })).toBeDisabled();
+  });
+
+  it('shows the form name once a group is picked', () => {
+    renderSessionMetaWorkspace({ activeFormUuid: 'form-1' });
+
+    expect(screen.getByText('Form name for form-1')).toBeInTheDocument();
+  });
+
+  it('does not show the form name before a group is picked', () => {
+    renderSessionMetaWorkspace({ activeFormUuid: 'form-1', activeGroupUuid: null });
+
+    expect(screen.queryByText(/Form name for/)).not.toBeInTheDocument();
   });
 });

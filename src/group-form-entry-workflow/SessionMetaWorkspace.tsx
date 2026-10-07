@@ -4,9 +4,9 @@ import { useTranslation } from 'react-i18next';
 import { Button } from '@carbon/react';
 import { showModal } from '@openmrs/esm-framework';
 import GroupFormWorkflowContext from '../context/GroupFormWorkflowContext';
+import FormName from '../form-name/FormName';
 import SessionDetailsForm from './SessionDetailsForm';
 import styles from './styles.scss';
-import FormName from '../form-name/FormName';
 
 const NewGroupWorkflowButtons = () => {
   const { t } = useTranslation();
