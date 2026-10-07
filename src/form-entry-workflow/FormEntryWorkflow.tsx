@@ -2,7 +2,7 @@ import React, { useCallback, useContext, useEffect, useRef, useState } from 'rea
 import { useTranslation } from 'react-i18next';
 import { v4 as uuid } from 'uuid';
 import { Button } from '@carbon/react';
-import { ExtensionSlot, showModal, useSession } from '@openmrs/esm-framework';
+import { showModal, useSession } from '@openmrs/esm-framework';
 import FormWorkflowContext, { FormWorkflowProvider } from '../context/FormWorkflowContext';
 import FormBootstrap from '../FormBootstrap';
 import useStartVisit from '../hooks/useStartVisit';
@@ -176,9 +176,6 @@ const FormEntryWorkflow = () => {
   const { workflowState } = useContext(FormWorkflowContext);
   return (
     <>
-      <div className={styles.breadcrumbsContainer}>
-        <ExtensionSlot name="breadcrumbs-slot" />
-      </div>
       {workflowState === 'REVIEW' && <WorkflowReview />}
       {workflowState !== 'REVIEW' && (
         <>

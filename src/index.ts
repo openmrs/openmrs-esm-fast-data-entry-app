@@ -1,4 +1,4 @@
-import { defineConfigSchema, getAsyncLifecycle, registerBreadcrumbs } from '@openmrs/esm-framework';
+import { defineConfigSchema, getAsyncLifecycle } from '@openmrs/esm-framework';
 import { configSchema } from './config-schema';
 
 const moduleName = '@openmrs/esm-fast-data-entry-app';
@@ -16,14 +16,6 @@ export const formsAppMenuLink = getAsyncLifecycle(() => import('./forms-app-menu
 
 export function startupApp() {
   defineConfigSchema(moduleName, configSchema);
-
-  registerBreadcrumbs([
-    {
-      path: `${window.spaBase}/forms`,
-      title: 'Forms',
-      parent: `${window.spaBase}/home`,
-    },
-  ]);
 }
 
 export const cancelSessionModal = getAsyncLifecycle(() => import('./cancel-session.modal'), options);
