@@ -7,6 +7,10 @@ import GroupFormWorkflowContext from '../context/GroupFormWorkflowContext';
 import FormBootstrap from '../FormBootstrap';
 import GroupSessionWorkspace from './GroupSessionWorkspace';
 
+vi.mock('../form-name/FormName', () => ({
+  default: () => null,
+}));
+
 vi.mock('@openmrs/esm-framework', () => ({
   showModal: vi.fn(() => vi.fn()),
   getGlobalStore: vi.fn(),

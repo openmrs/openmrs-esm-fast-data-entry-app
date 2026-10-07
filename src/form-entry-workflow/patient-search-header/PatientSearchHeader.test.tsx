@@ -13,6 +13,10 @@ import FormWorkflowContext from '../../context/FormWorkflowContext';
 import { useHsuIdIdentifier } from '../../hooks/location-tag.resource';
 import PatientSearchHeader from './PatientSearchHeader';
 
+vi.mock('../../form-name/FormName', () => ({
+  default: () => null,
+}));
+
 vi.mock('@openmrs/esm-framework', () => ({
   showModal: vi.fn(() => vi.fn()),
   ExtensionSlot: ({ state }) => (
