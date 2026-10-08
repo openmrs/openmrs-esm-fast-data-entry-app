@@ -30,7 +30,6 @@ jobs:
     uses: openmrs/openmrs-contrib-gha-workflows/.github/workflows/build-frontend-module.yml@main
 
   release:
-    if: github.event_name != 'workflow_dispatch'
     needs: build
     uses: openmrs/openmrs-contrib-gha-workflows/.github/workflows/release-frontend-module.yml@main
     with:
