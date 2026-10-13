@@ -95,24 +95,24 @@ const FormsPage = () => {
       <div className={styles.mainContent}>
         <Tabs>
           <TabList>
-            <Tab aria-label={t('allForms', 'All Forms')}>
-              {`${t('allForms', 'All Forms')} (${cleanRows ? cleanRows?.length : '??'})`}
-            </Tab>
             {categoryRows?.map((category, index) => (
               <Tab aria-label={category.name} key={index}>
                 {`${t(category.name, category.name)} (${category.rows.length})`}
               </Tab>
             ))}
+            <Tab aria-label={t('allForms', 'All Forms')}>
+              {`${t('allForms', 'All Forms')} (${cleanRows ? cleanRows?.length : '??'})`}
+            </Tab>
           </TabList>
           <TabPanels>
-            <TabPanel>
-              <FormsTable rows={cleanRows} {...{ error, isLoading, activeForms, activeGroupForms }} />
-            </TabPanel>
             {categoryRows?.map((category, index) => (
               <TabPanel key={index}>
                 <FormsTable rows={category.rows} {...{ error, isLoading, activeForms, activeGroupForms }} />
               </TabPanel>
             ))}
+            <TabPanel>
+              <FormsTable rows={cleanRows} {...{ error, isLoading, activeForms, activeGroupForms }} />
+            </TabPanel>
           </TabPanels>
         </Tabs>
       </div>
