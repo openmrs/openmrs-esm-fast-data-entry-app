@@ -39,7 +39,7 @@
     "access": "public"
   },
   "bugs": {
-    "url": "https://github.com/openmrs/openmrs-esm-fast-data-entry-app/issues"
+    "url": "https://openmrs.atlassian.net/jira/software/c/projects/O3/boards/37"
   },
   "peerDependencies": {
     "@carbon/react": "1.x",
@@ -96,7 +96,7 @@
     "turbo": "^2.5.2",
     "uuid": "^9.0.1"
   },
-  "packageManager": "yarn@4.9.1",
+  "packageManager": "yarn@4.10.3",
   "lint-staged": {
     "*.{ts,tsx}": "eslint --cache --fix --max-warnings 0",
     "*.{css,scss,ts,tsx}": "prettier --write --list-different"
