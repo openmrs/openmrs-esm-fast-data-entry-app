@@ -105,14 +105,14 @@ const FormsPage = () => {
             </Tab>
           </TabList>
           <TabPanels>
-            <TabPanel>
-              <FormsTable rows={cleanRows} {...{ error, isLoading, activeForms, activeGroupForms }} />
-            </TabPanel>
             {categoryRows?.map((category, index) => (
               <TabPanel key={index}>
                 <FormsTable rows={category.rows} {...{ error, isLoading, activeForms, activeGroupForms }} />
               </TabPanel>
             ))}
+            <TabPanel>
+              <FormsTable rows={cleanRows} {...{ error, isLoading, activeForms, activeGroupForms }} />
+            </TabPanel>
           </TabPanels>
         </Tabs>
       </div>
