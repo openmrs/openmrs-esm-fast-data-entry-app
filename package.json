@@ -39,7 +39,7 @@
     "access": "public"
   },
   "bugs": {
-    "url": "https://github.com/openmrs/openmrs-esm-fast-data-entry-app/issues"
+    "url": "https://openmrs.atlassian.net/jira/software/c/projects/O3/boards/37"
   },
   "peerDependencies": {
     "@carbon/react": "1.x",
