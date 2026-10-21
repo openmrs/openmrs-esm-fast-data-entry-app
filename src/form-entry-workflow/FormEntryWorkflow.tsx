@@ -6,6 +6,7 @@ import { showModal, useSession } from '@openmrs/esm-framework';
 import FormWorkflowContext, { FormWorkflowProvider } from '../context/FormWorkflowContext';
 import FormBootstrap from '../FormBootstrap';
 import FormName from '../form-name/FormName';
+import useIsFormSubmitting from '../hooks/useIsFormSubmitting';
 import useStartVisit from '../hooks/useStartVisit';
 import PatientCard from '../patient-card/PatientCard';
 import PatientBanner from './patient-banner';
@@ -15,7 +16,8 @@ import styles from './styles.scss';
 
 const WorkflowNavigationButtons = () => {
   const context = useContext(FormWorkflowContext);
-  const { workflowState, destroySession } = context;
+  const { workflowState, destroySession, activeFormUuid } = context;
+  const isSubmitting = useIsFormSubmitting(activeFormUuid, workflowState);
   const disposeModal = useRef<() => void>();
   useEffect(
     () => () => {
@@ -32,6 +34,7 @@ const WorkflowNavigationButtons = () => {
       <div className={styles.rightPanelActionButtons}>
         <Button
           kind="secondary"
+          disabled={isSubmitting}
           onClick={
             workflowState === 'NEW_PATIENT'
               ? () => destroySession()
