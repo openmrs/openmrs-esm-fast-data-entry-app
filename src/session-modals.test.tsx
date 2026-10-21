@@ -54,6 +54,19 @@ describe('workflow modals', () => {
     expect(close).toHaveBeenCalledOnce();
   });
 
+  it('only completes once when Complete is clicked repeatedly', async () => {
+    const user = userEvent.setup();
+    const close = vi.fn();
+    const onComplete = vi.fn();
+
+    render(<CompleteSessionModal {...{ close, onComplete }} />);
+
+    const completeButton = screen.getByRole('button', { name: 'Complete' });
+    await user.tripleClick(completeButton);
+
+    expect(onComplete).toHaveBeenCalledOnce();
+  });
+
   it('only confirms a mismatched patient when Continue is chosen', async () => {
     const user = userEvent.setup();
     const close = vi.fn();
