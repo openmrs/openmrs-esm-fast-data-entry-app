@@ -1,17 +1,19 @@
-import React, { useEffect, useMemo, useReducer } from 'react';
+/* eslint-disable no-console */
+import React, { useEffect, useMemo, useReducer, useRef } from 'react';
 import reducer from './FormWorkflowReducer';
 import { useParams, useLocation } from 'react-router-dom';
 import useGetSystemSetting from '../hooks/useGetSystemSetting';
 import { useSession } from '@openmrs/esm-framework';
+
 interface ParamTypes {
   formUuid?: string;
 }
 
 const initialActions = {
-  addPatient: (uuid: string | number) => undefined,
+  addPatient: (_uuid: string | number) => undefined,
   openPatientSearch: () => undefined,
-  saveEncounter: (encounterUuid: string | number) => undefined,
-  editEncounter: (patientUuid: string | number) => undefined,
+  saveEncounter: (_encounterUuid: string | number) => undefined,
+  editEncounter: (_patientUuid: string | number) => undefined,
   submitForNext: () => undefined,
   submitForReview: () => undefined,
   submitForComplete: () => undefined,
@@ -21,19 +23,15 @@ const initialActions = {
 };
 
 export const initialWorkflowState = {
-  // activeFormUuid and forms are the only two real values stored at state root level
-  activeFormUuid: null, // the corrently open form
-  forms: {}, // object containing all forms session data
-  // the following fields will be available in context but are not stored at the
-  //     state root level, but refer to nested values for the current
-  //     aciveFormUuid
-  workflowState: null, // pseudo field from state[activeFormUuid].workflowState
-  activePatientUuid: null, // pseudo field from state[activeFormUuid].activePatientUuid
-  activeEncounterUuid: null, // pseudo field from state[activeFormUuid].encounterUuid
-  patientUuids: [], // pseudo field from state[activeFormUuid].patientUuids
-  encounters: {}, // pseudo field from state[activeFormUuid].encounters
+  activeFormUuid: null,
+  forms: {},
+  workflowState: null,
+  activePatientUuid: null,
+  activeEncounterUuid: null,
+  patientUuids: [],
+  encounters: {},
   singleSessionVisitTypeUuid: null,
-  userUuid: null, // UUID of the user to which this workflow state belongs to
+  userUuid: null,
 };
 
 const FormWorkflowContext = React.createContext({
@@ -44,15 +42,24 @@ const FormWorkflowContext = React.createContext({
 const FormWorkflowProvider = ({ children }) => {
   const { user } = useSession();
   const { formUuid } = useParams() as ParamTypes;
-  const activeFormUuid = formUuid.split('&')[0];
+  const activeFormUuid = formUuid?.split('&')[0] ?? null;
+
   const { search } = useLocation();
   const newPatientUuid = new URLSearchParams(search).get('patientUuid');
+
   const [state, dispatch] = useReducer(reducer, {
     ...initialWorkflowState,
     ...initialActions,
   });
+
   const systemSetting = useGetSystemSetting('@openmrs/esm-fast-data-entry-app.groupSessionVisitTypeUuid');
-  const singleSessionVisitTypeUuid = systemSetting?.result?.data?.results?.[0]?.value;
+
+  const singleSessionVisitTypeUuid = systemSetting?.result?.data?.results?.[0]?.value ?? null;
+
+  // Diagnostic refs
+  const lastSeenPatientUuidRef = useRef<string | null>(null);
+  const hasLoggedLossRef = useRef(false);
+  const hasLoggedRecoveryRef = useRef(false);
 
   const actions = useMemo(
     () => ({
@@ -65,11 +72,7 @@ const FormWorkflowProvider = ({ children }) => {
         }),
       addPatient: (patientUuid) => dispatch({ type: 'ADD_PATIENT', patientUuid }),
       openPatientSearch: () => dispatch({ type: 'OPEN_PATIENT_SEARCH' }),
-      saveEncounter: (encounterUuid) =>
-        dispatch({
-          type: 'SAVE_ENCOUNTER',
-          encounterUuid,
-        }),
+      saveEncounter: (encounterUuid) => dispatch({ type: 'SAVE_ENCOUNTER', encounterUuid }),
       submitForNext: () => dispatch({ type: 'SUBMIT_FOR_NEXT' }),
       submitForReview: () => dispatch({ type: 'SUBMIT_FOR_REVIEW' }),
       submitForComplete: () => dispatch({ type: 'SUBMIT_FOR_COMPLETE' }),
@@ -81,13 +84,53 @@ const FormWorkflowProvider = ({ children }) => {
     [user],
   );
 
-  // if formUuid isn't a part of state yet, grab it from the url params
-  // this is the entry into the workflow system
+  // Initialization
   useEffect(() => {
+    console.debug('[FDE TRACE] Checking workflow initialization', {
+      workflowState: state?.workflowState,
+      activeFormUuid,
+      patientUuidFromUrl: newPatientUuid,
+    });
+
     if (state?.workflowState === null && activeFormUuid) {
       actions.initializeWorkflowState({ activeFormUuid, newPatientUuid });
     }
   }, [activeFormUuid, newPatientUuid, state?.workflowState, actions]);
+
+  // Diagnostic: patient context loss & recovery
+  useEffect(() => {
+    const currentPatient = state.forms?.[state.activeFormUuid]?.activePatientUuid ?? null;
+
+    if (newPatientUuid) {
+      lastSeenPatientUuidRef.current = newPatientUuid;
+    }
+
+    if (
+      lastSeenPatientUuidRef.current &&
+      !currentPatient &&
+      state?.workflowState === null &&
+      activeFormUuid &&
+      !hasLoggedLossRef.current
+    ) {
+      hasLoggedLossRef.current = true;
+
+      console.warn('[FDE WARNING] Workflow lost patient context after registration', {
+        patientUuid: lastSeenPatientUuidRef.current,
+        activeFormUuid,
+        workflowState: state?.workflowState,
+      });
+    }
+
+    if (lastSeenPatientUuidRef.current && currentPatient && hasLoggedLossRef.current && !hasLoggedRecoveryRef.current) {
+      hasLoggedRecoveryRef.current = true;
+
+      console.info('[FDE INFO] Workflow patient context recovered', {
+        patientUuid: currentPatient,
+        activeFormUuid,
+        workflowState: state?.workflowState,
+      });
+    }
+  }, [state.activeFormUuid, state.forms, state.workflowState, activeFormUuid, newPatientUuid]);
 
   return (
     <FormWorkflowContext.Provider
