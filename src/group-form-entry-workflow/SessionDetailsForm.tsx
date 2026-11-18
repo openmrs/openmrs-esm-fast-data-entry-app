@@ -49,7 +49,7 @@ const SessionDetailsForm = () => {
                   }}
                 >
                   <TextInput
-                    id="text"
+                    id="session-name"
                     type="text"
                     labelText={t('sessionName', 'Session Name')}
                     {...register('sessionName', { required: true })}
@@ -57,7 +57,7 @@ const SessionDetailsForm = () => {
                     invalidText={t('requiredField', 'This field is required')}
                   />
                   <TextInput
-                    id="text"
+                    id="practitioner-name"
                     type="text"
                     labelText={t('practitionerName', 'Practitioner Name')}
                     {...register('practitionerName', { required: true })}
@@ -82,7 +82,7 @@ const SessionDetailsForm = () => {
                     )}
                   />
                   <TextArea
-                    id="text"
+                    id="session-notes"
                     type="text"
                     labelText={t('sessionNotes', 'Session Notes')}
                     {...register('sessionNotes', { required: true })}
