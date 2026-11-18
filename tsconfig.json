@@ -23,5 +23,6 @@
     // "paths": {
     //   "@openmrs/*": ["./node_modules/@openmrs/*"]
     // }
-  }
+  },
+  "exclude": ["node_modules", "dist"]
 }
