@@ -99,9 +99,6 @@ const renderSessionForm = (contextOverrides = {}) =>
     </GroupFormWorkflowContext.Provider>,
   );
 
-// The text fields share an id, so their labels all point at the first one. Find them by name instead.
-const getField = (name: string) => screen.getAllByRole('textbox').find((field) => field.getAttribute('name') === name);
-
 describe('SessionDetailsForm', () => {
   beforeEach(() => {
     mockUseConfig.mockReturnValue({ specificQuestions: [] });
@@ -116,9 +113,9 @@ describe('SessionDetailsForm', () => {
 
     await user.click(screen.getByRole('button', { name: 'Create New Session' }));
 
-    await waitFor(() => expect(getField('sessionName')).toHaveAttribute('aria-invalid', 'true'));
-    expect(getField('practitionerName')).toHaveAttribute('aria-invalid', 'true');
-    expect(getField('sessionNotes')).toHaveAttribute('aria-invalid', 'true');
+    await waitFor(() => expect(screen.getByLabelText('Session Name')).toHaveAttribute('aria-invalid', 'true'));
+    expect(screen.getByLabelText('Practitioner Name')).toHaveAttribute('aria-invalid', 'true');
+    expect(screen.getByLabelText('Session Notes')).toHaveAttribute('aria-invalid', 'true');
     expect(setSessionMeta).not.toHaveBeenCalled();
   });
 
@@ -128,9 +125,9 @@ describe('SessionDetailsForm', () => {
 
     renderSessionForm({ setSessionMeta });
 
-    await user.type(getField('sessionName'), 'April Session');
-    await user.type(getField('practitionerName'), 'Alice');
-    await user.type(getField('sessionNotes'), 'Bring notebooks');
+    await user.type(screen.getByLabelText('Session Name'), 'April Session');
+    await user.type(screen.getByLabelText('Practitioner Name'), 'Alice');
+    await user.type(screen.getByLabelText('Session Notes'), 'Bring notebooks');
     await user.click(screen.getByRole('button', { name: 'Create New Session' }));
 
     expect(setSessionMeta).not.toHaveBeenCalled();
@@ -147,11 +144,11 @@ describe('SessionDetailsForm', () => {
 
     renderSessionForm({ setSessionMeta });
 
-    await user.type(getField('sessionName'), 'April Session');
-    await user.type(getField('practitionerName'), 'Alice');
+    await user.type(screen.getByLabelText('Session Name'), 'April Session');
+    await user.type(screen.getByLabelText('Practitioner Name'), 'Alice');
     await user.type(screen.getByLabelText('Session Date'), '04/15/2026');
     await user.tab();
-    await user.type(getField('sessionNotes'), 'Bring notebooks');
+    await user.type(screen.getByLabelText('Session Notes'), 'Bring notebooks');
     await user.click(screen.getByRole('button', { name: 'Create New Session' }));
 
     await waitFor(() => expect(setSessionMeta).toHaveBeenCalledTimes(1));
@@ -181,11 +178,11 @@ describe('SessionDetailsForm', () => {
     expect(screen.getByLabelText('Venue')).toHaveValue('Community hall');
     expect(screen.getByLabelText('Programme')).toHaveValue('concept-hiv');
 
-    await user.type(getField('sessionName'), 'April Session');
-    await user.type(getField('practitionerName'), 'Alice');
+    await user.type(screen.getByLabelText('Session Name'), 'April Session');
+    await user.type(screen.getByLabelText('Practitioner Name'), 'Alice');
     await user.type(screen.getByLabelText('Session Date'), '04/15/2026');
     await user.tab();
-    await user.type(getField('sessionNotes'), 'Bring notebooks');
+    await user.type(screen.getByLabelText('Session Notes'), 'Bring notebooks');
     await user.selectOptions(screen.getByLabelText('Session type'), 'concept-group');
     await user.click(screen.getByRole('button', { name: 'Create New Session' }));
 
@@ -211,11 +208,11 @@ describe('SessionDetailsForm', () => {
 
     renderSessionForm({ setSessionMeta });
 
-    await user.type(getField('sessionName'), 'April Session');
-    await user.type(getField('practitionerName'), 'Alice');
+    await user.type(screen.getByLabelText('Session Name'), 'April Session');
+    await user.type(screen.getByLabelText('Practitioner Name'), 'Alice');
     await user.type(screen.getByLabelText('Session Date'), '04/15/2026');
     await user.tab();
-    await user.type(getField('sessionNotes'), 'Bring notebooks');
+    await user.type(screen.getByLabelText('Session Notes'), 'Bring notebooks');
     await user.click(screen.getByRole('button', { name: 'Create New Session' }));
 
     await waitFor(() => expect(setSessionMeta).toHaveBeenCalledTimes(1));
