@@ -6,6 +6,7 @@ import { getGlobalStore, showModal, useConfig, useSession, useStore } from '@ope
 import GroupFormWorkflowContext from '../context/GroupFormWorkflowContext';
 import FormBootstrap from '../FormBootstrap';
 import FormName from '../form-name/FormName';
+import useIsFormSubmitting from '../hooks/useIsFormSubmitting';
 import PatientCard from '../patient-card/PatientCard';
 import styles from './styles.scss';
 
@@ -16,6 +17,7 @@ const WorkflowNavigationButtons = () => {
   const { activeFormUuid, submitForNext, patientUuids, activePatientUuid, workflowState } = context;
   const store = useStore(formStore);
   const formState = store[activeFormUuid];
+  const isSubmitting = useIsFormSubmitting(activeFormUuid, workflowState);
 
   const disposeModal = useRef<() => void>();
   useEffect(
@@ -27,15 +29,21 @@ const WorkflowNavigationButtons = () => {
   const { t } = useTranslation();
 
   const navigationDisabled = useMemo(() => {
+    if (isSubmitting) {
+      return true;
+    }
     if (!formState) {
       return false;
     }
     return (formState !== 'ready' || workflowState !== 'EDIT_FORM') && formState !== 'readyWithValidationErrors';
-  }, [formState, workflowState]);
+  }, [formState, workflowState, isSubmitting]);
 
   const isLastPatient = activePatientUuid === patientUuids[patientUuids.length - 1];
 
   const handleClickNext = () => {
+    if (isSubmitting) {
+      return;
+    }
     if (workflowState === 'EDIT_FORM' || formState === 'readyWithValidationErrors') {
       submitForNext();
     }
@@ -49,6 +57,7 @@ const WorkflowNavigationButtons = () => {
         </Button>
         <Button
           kind="secondary"
+          disabled={isSubmitting}
           onClick={() => {
             disposeModal.current?.();
             disposeModal.current = showModal('fde-complete-session-modal', { onComplete: context.submitForComplete });
