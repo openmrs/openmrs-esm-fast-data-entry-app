@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button, ModalBody, ModalFooter, ModalHeader } from '@carbon/react';
 
@@ -9,6 +9,16 @@ interface CompleteSessionModalProps {
 
 const CompleteModal: React.FC<CompleteSessionModalProps> = ({ close, onComplete }) => {
   const { t } = useTranslation();
+  const completeRequested = useRef(false);
+
+  const handleComplete = () => {
+    if (completeRequested.current) {
+      return;
+    }
+    completeRequested.current = true;
+    onComplete();
+    close();
+  };
 
   return (
     <>
@@ -18,13 +28,7 @@ const CompleteModal: React.FC<CompleteSessionModalProps> = ({ close, onComplete 
         <Button kind="secondary" onClick={close}>
           {t('cancel', 'Cancel')}
         </Button>
-        <Button
-          kind="primary"
-          onClick={() => {
-            onComplete();
-            close();
-          }}
-        >
+        <Button kind="primary" onClick={handleComplete}>
           {t('complete', 'Complete')}
         </Button>
       </ModalFooter>
